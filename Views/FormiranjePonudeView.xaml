@@ -1,0 +1,98 @@
+﻿<UserControl x:Class="PetkusApplication.Views.FormiranjePonudeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PetkusApplication.Views"
+             Height="450" Width="800">
+    <Grid>
+        <TabControl x:Name="mainTabControl">
+            <TabItem Header="Motor">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Način pokretanja" HorizontalAlignment="Center" Margin="3" />
+                            <ComboBox x:Name="comboBox1" Width="100" SelectionChanged="ComboBox_SelectionChanged">
+                                <ComboBoxItem Content="Opcija 1-1" />
+                                <ComboBoxItem Content="Opcija 1-2" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Broj smerova" HorizontalAlignment="Center" Margin="3"/>
+                            <ComboBox x:Name="comboBox2" Width="100" SelectionChanged="ComboBox_SelectionChanged">
+                                <ComboBoxItem Content="Opcija 2-1" />
+                                <ComboBoxItem Content="Opcija 2-2" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Snaga" HorizontalAlignment="Center" Margin="3"/>
+                            <ComboBox x:Name="comboBox3" Width="100" SelectionChanged="ComboBox_SelectionChanged">
+                                <ComboBoxItem Content="Opcija 3-1" />
+                                <ComboBoxItem Content="Opcija 3-2" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Proizvođač" HorizontalAlignment="Center" Margin="3"/>
+                            <ComboBox x:Name="comboBox4" Width="100" SelectionChanged="ComboBox_SelectionChanged">
+                                <ComboBoxItem Content="Opcija 4-1" />
+                                <ComboBoxItem Content="Opcija 4-2" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Broj komada" HorizontalAlignment="Center" Margin="4"/>
+                            <TextBox x:Name="textBoxNumber" Width="100" Text="{Binding Path=EnteredNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <DataGrid x:Name="dataGrid1" AutoGenerateColumns="False" Margin="10" Height="200" ItemsSource="{Binding Selections}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Način pokretanja" Binding="{Binding ComboBox1Selection}" Width="*" />
+                            <DataGridTextColumn Header="Broj smerova" Binding="{Binding ComboBox2Selection}" Width="*" />
+                            <DataGridTextColumn Header="Snaga" Binding="{Binding ComboBox3Selection}" Width="*" />
+                            <DataGridTextColumn Header="Proizvođač" Binding="{Binding ComboBox4Selection}" Width="*" />
+                            <DataGridTextColumn Header="Broj komada" Binding="{Binding EnteredNumber}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Content="Potvrdi izbor" Click="ConfirmSelectionButton_Click" Margin="10" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Prekidač">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Struja" HorizontalAlignment="Center" Margin="3"/>
+                            <ComboBox x:Name="comboBox6" Width="100" SelectionChanged="ComboBox_SelectionChanged2">
+                                <ComboBoxItem Content="Opcija 1-1" />
+                                <ComboBoxItem Content="Opcija 1-2" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Proizvođač" HorizontalAlignment="Center" Margin="3" />
+                            <ComboBox x:Name="comboBox7" Width="100" SelectionChanged="ComboBox_SelectionChanged2">
+                                <ComboBoxItem Content="Opcija 2-1" />
+                                <ComboBoxItem Content="Opcija 2-2" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Tip" HorizontalAlignment="Center" Margin="3" />
+                            <ComboBox x:Name="comboBox8" Width="100" SelectionChanged="ComboBox_SelectionChanged2">
+                                <ComboBoxItem Content="Opcija 3-1" />
+                                <ComboBoxItem Content="Opcija 3-2" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Broj komada" HorizontalAlignment="Center" Margin="4" />
+                            <TextBox x:Name="textBoxNumber1" Width="100" Text="{Binding Path=EnteredNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <DataGrid x:Name="dataGrid2" AutoGenerateColumns="False" Margin="10" Height="200" ItemsSource="{Binding Selections2}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Struja" Binding="{Binding ComboBox6Selection}" Width="*" />
+                            <DataGridTextColumn Header="Proizvođač" Binding="{Binding ComboBox7Selection}" Width="*" />
+                            <DataGridTextColumn Header="Tip" Binding="{Binding ComboBox8Selection}" Width="*" />
+                            <DataGridTextColumn Header="Broj komada" Binding="{Binding EnteredNumber}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Content="Potvrdi izbor" Click="ConfirmSelectionButton2_Click" Margin="10" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>
