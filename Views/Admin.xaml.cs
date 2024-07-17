@@ -10,27 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 
 namespace PetkusApplication.Views
 {
     /// <summary>
-    /// Interaction logic for MainView.xaml
+    /// Interaction logic for Admin.xaml
     /// </summary>
-    public partial class MainView : Window
+    public partial class Admin : UserControl
     {
-        public MainView()
+        public Admin()
         {
             InitializeComponent();
-            this.DataContext = this;
-            FormiranjePonudeView = new FormiranjePonudeView();
-            MagacinView = new MagacinView();
-            Admin = new Admin();
         }
-
-        public FormiranjePonudeView FormiranjePonudeView { get; set; }
-        public MagacinView MagacinView { get; set; }
-        public Admin Admin { get; set; }
     }
 }

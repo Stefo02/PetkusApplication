@@ -6,7 +6,7 @@
     <Grid>
         <TabControl>
             <TabItem Header="Admin">
-                
+                <ContentControl Content="{Binding Admin}" />
             </TabItem>
             <TabItem Header="FormiranjePonude">
                 <ContentControl Content="{Binding FormiranjePonudeView}" />
