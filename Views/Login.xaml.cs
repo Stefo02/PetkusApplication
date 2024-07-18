@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Microsoft.EntityFrameworkCore;
 using PetkusApplication.Data;
 using PetkusApplication.Models;
-using PetkusApplication.Service;
 
 namespace PetkusApplication.Views
 {
@@ -27,7 +17,12 @@ namespace PetkusApplication.Views
         public Login()
         {
             InitializeComponent();
-            _context = new AppDbContext();
+
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            var serverVersion = new MySqlServerVersion(new Version(10, 4, 32)); // Adjust version as per your MySQL server version
+            optionsBuilder.UseMySql("Server=localhost;Database=myappdb;Uid=root;Pwd=;", serverVersion);
+
+            _context = new AppDbContext(optionsBuilder.Options);
         }
 
         private void LoginBtn_Click(object sender, RoutedEventArgs e)
@@ -40,9 +35,19 @@ namespace PetkusApplication.Views
 
             if (user != null)
             {
-                // Authentication successful, navigate to MainWindow
-                MainView MainView = new MainView();
-                MainView.Show();
+                if (user.IsAdmin)
+                {
+                    // Authentication successful for admin user, navigate to AdminWindow
+                    AdminWindow adminWindow = new AdminWindow();
+                    adminWindow.Show();
+                }
+                else
+                {
+                    // Regular user login (not admin), navigate to MainView or other appropriate window
+                    MainView mainView = new MainView();
+                    mainView.Show();
+                }
+
                 Close(); // Close the Login window
             }
             else

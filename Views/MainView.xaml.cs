@@ -26,11 +26,17 @@ namespace PetkusApplication.Views
             this.DataContext = this;
             FormiranjePonudeView = new FormiranjePonudeView();
             MagacinView = new MagacinView();
-            Admin = new Admin();
+            
         }
 
         public FormiranjePonudeView FormiranjePonudeView { get; set; }
         public MagacinView MagacinView { get; set; }
-        public Admin Admin { get; set; }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            Login loginWindow = new Login();
+            loginWindow.Show();
+            this.Close();
+        }
     }
 }

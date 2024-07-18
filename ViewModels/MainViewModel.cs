@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Microsoft.EntityFrameworkCore;
 using PetkusApplication.Data;
 using PetkusApplication.Models;
 using PetkusApplication.Service;
@@ -14,7 +15,11 @@ namespace PetkusApplication.ViewModels
 
         public MainViewModel()
         {
-            _itemCrud = new ItemCRUD(new AppDbContext());
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            var serverVersion = new MySqlServerVersion(new Version(10, 4, 32)); // Adjust version as per your MySQL server version
+            optionsBuilder.UseMySql("Server=localhost;Database=myappdb;Uid=root;Pwd=;", serverVersion);
+
+            _itemCrud = new ItemCRUD(new AppDbContext(optionsBuilder.Options));
             Items = new ObservableCollection<Item>(_itemCrud.GetAllItems());
         }
 
