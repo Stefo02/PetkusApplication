@@ -10,21 +10,11 @@ namespace PetkusApplication.Data
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<Item> Items { get; set; }
+        
         public DbSet<User> Users { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // Configure concurrency token for Item entity
-            modelBuilder.Entity<Item>()
-                .Property(p => p.Timestamp)
-                .IsRowVersion(); // Configures Timestamp as RowVersion for concurrency
-
-            base.OnModelCreating(modelBuilder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
