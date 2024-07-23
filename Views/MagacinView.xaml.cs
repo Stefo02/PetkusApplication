@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.EntityFrameworkCore;
 using PetkusApplication.Data;
@@ -18,6 +20,7 @@ namespace PetkusApplication.Views
         private Item selectedItem;
         private Dictionary<string, string> tableMap = new Dictionary<string, string>
         {
+            // Table mapping remains the same
             { "compact_nsxm_nsx_2021", "Compact NSXM NSX 2021" },
             { "dodatna_oprema_compact_nsxm_nsx_2021", "Dodatna oprema Compact NSXM NSX 2021" },
             { "dodatna_oprema_d_se", "Dodatna oprema D SE" },
@@ -61,6 +64,7 @@ namespace PetkusApplication.Views
             data = new List<Item>();
             dataGrid.ItemsSource = data;
             LoadTableComboBox();
+            ApplyRowStyle();
         }
 
         private void LoadTableComboBox()
@@ -74,6 +78,28 @@ namespace PetkusApplication.Views
 
             tableComboBox.ItemsSource = tableOptions;
             tableComboBox.SelectedIndex = 0; // Set default selection to 'Svi podaci'
+        }
+
+        private void ApplyRowStyle()
+        {
+            var style = new Style(typeof(DataGridRow));
+            var trigger = new DataTrigger
+            {
+                Binding = new Binding("Kolicina")
+                {
+                    RelativeSource = new RelativeSource(RelativeSourceMode.Self)
+                },
+                Value = 0
+            };
+
+            trigger.Setters.Add(new Setter
+            {
+                Property = DataGridRow.BackgroundProperty,
+                Value = Brushes.LightCoral
+            });
+
+            style.Triggers.Add(trigger);
+            dataGrid.RowStyle = style;
         }
 
         private void tableComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -94,6 +120,28 @@ namespace PetkusApplication.Views
 
             dataGrid.ItemsSource = data;
             dataGrid.Items.Refresh();
+
+            CheckForLowStock();
+        }
+
+        private void CheckForLowStock()
+        {
+            var lowStockItems = data.Where(item => item.Kolicina < item.MinKolicina).ToList();
+
+            if (lowStockItems.Any())
+            {
+                foreach (var item in lowStockItems)
+                {
+                    var index = dataGrid.Items.IndexOf(item);
+                    var row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(index);
+                    if (row != null)
+                    {
+                        row.Background = Brushes.LightCoral;
+                    }
+                }
+
+                MessageBox.Show("Neki redovi imaju količinu ispod minimalne količine. Molimo proverite!", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -113,6 +161,8 @@ namespace PetkusApplication.Views
 
             dataGrid.ItemsSource = filteredData;
             dataGrid.Items.Refresh();
+
+            CheckForLowStock();
         }
 
         private void searchTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -123,32 +173,60 @@ namespace PetkusApplication.Views
             }
         }
 
+        private bool isUpdatingSelection = false;
+
         private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Check if the DataGrid has a selected item
+            if (isUpdatingSelection) return; // Prevent recursive calls
+
             if (dataGrid.SelectedItem != null)
             {
+                isUpdatingSelection = true;
                 selectedItem = dataGrid.SelectedItem as Item;
 
                 if (selectedItem != null)
                 {
-                    // Populate the TextBoxes with the selected item's data
                     opisTextBox.Text = selectedItem.Opis ?? string.Empty;
                     proizvodjacTextBox.Text = selectedItem.Proizvodjac ?? string.Empty;
                     fabrickiKodTextBox.Text = selectedItem.Fabricki_kod ?? string.Empty;
-                    kolicinaTextBox.Text = selectedItem.Kolicina.ToString(); // Assuming Kolicina is int
-                    punaCenaTextBox.Text = selectedItem.Puna_cena.ToString(); // Assuming Puna_cena is decimal
+                    kolicinaTextBox.Text = selectedItem.Kolicina.ToString();
+                    punaCenaTextBox.Text = selectedItem.Puna_cena.ToString();
                     dimenzijeTextBox.Text = selectedItem.Dimenzije ?? string.Empty;
-                    tezinaTextBox.Text = selectedItem.Tezina.ToString(); // Assuming Tezina is int
-                    vrednostRabataTextBox.Text = selectedItem.Vrednost_rabata.ToString(); // Assuming Vrednost_rabata is decimal
+                    tezinaTextBox.Text = selectedItem.Tezina.ToString();
+                    vrednostRabataTextBox.Text = selectedItem.Vrednost_rabata.ToString();
+                    minKolicinaTextBox.Text = selectedItem.MinKolicina.ToString();
+
+                    // Apply visual indicator if Kolicina is less than MinKolicina
+                    if (selectedItem.Kolicina < selectedItem.MinKolicina)
+                    {
+                        dataGrid.SelectedItem = null; // Deselect the current item
+                        dataGrid.Focus(); // Refocus on the DataGrid
+                        dataGrid.SelectedItem = selectedItem; // Re-select the item
+                        MessageBox.Show("Količina u ovom redu je ispod minimalne količine.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
                 }
             }
             else
             {
-                // Clear the TextBoxes if no item is selected
                 ClearTextBoxes();
             }
+
+            isUpdatingSelection = false;
         }
+
+
+        private void kolicinaTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (int.TryParse(kolicinaTextBox.Text, out int kolicina) && int.TryParse(minKolicinaTextBox.Text, out int minKolicina))
+            {
+                var row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(dataGrid.SelectedIndex);
+                if (row != null && kolicina < minKolicina)
+                {
+                    row.Background = Brushes.LightCoral;
+                }
+            }
+        }
+
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -167,16 +245,14 @@ namespace PetkusApplication.Views
                 Puna_cena = decimal.Parse(punaCenaTextBox.Text),
                 Dimenzije = dimenzijeTextBox.Text,
                 Tezina = decimal.Parse(tezinaTextBox.Text),
-                Vrednost_rabata = decimal.Parse(vrednostRabataTextBox.Text)
+                Vrednost_rabata = decimal.Parse(vrednostRabataTextBox.Text),
+                MinKolicina = int.Parse(minKolicinaTextBox.Text)
             };
 
             string tableName = GetTableNameFromComboBox();
             dbContext.AddItem(tableName, newItem);
 
-            // Clear TextBoxes
             ClearTextBoxes();
-
-            // Reload data
             LoadData();
         }
 
@@ -192,14 +268,12 @@ namespace PetkusApplication.Views
                 selectedItem.Dimenzije = dimenzijeTextBox.Text;
                 selectedItem.Tezina = decimal.Parse(tezinaTextBox.Text);
                 selectedItem.Vrednost_rabata = decimal.Parse(vrednostRabataTextBox.Text);
+                selectedItem.MinKolicina = int.Parse(minKolicinaTextBox.Text);
 
                 string tableName = GetTableNameFromComboBox();
                 dbContext.UpdateItem(tableName, selectedItem);
 
-                // Clear TextBoxes
                 ClearTextBoxes();
-
-                // Reload data
                 LoadData();
             }
             else
@@ -215,10 +289,7 @@ namespace PetkusApplication.Views
                 string tableName = GetTableNameFromComboBox();
                 dbContext.DeleteItem(tableName, selectedItem.Id);
 
-                // Clear TextBoxes
                 ClearTextBoxes();
-
-                // Reload data
                 LoadData();
             }
             else
@@ -226,7 +297,6 @@ namespace PetkusApplication.Views
                 MessageBox.Show("Odaberite stavku za brisanje.");
             }
         }
-
 
         private void ClearTextBoxes()
         {
@@ -238,9 +308,9 @@ namespace PetkusApplication.Views
             dimenzijeTextBox.Text = string.Empty;
             tezinaTextBox.Text = string.Empty;
             vrednostRabataTextBox.Text = string.Empty;
+            minKolicinaTextBox.Text = string.Empty; // Added clearing
         }
 
-       
         private void LoadData()
         {
             string tableName = GetTableNameFromComboBox();
@@ -254,6 +324,7 @@ namespace PetkusApplication.Views
             }
             dataGrid.ItemsSource = data;
             dataGrid.Items.Refresh();
+            CheckForLowStock();
         }
 
         private string GetTableNameFromComboBox()

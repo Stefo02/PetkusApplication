@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MySqlConnector; // Use this for MySqlCommand and MySqlConnection
+using MySqlConnector;
 using PetkusApplication.Models;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,6 @@ namespace PetkusApplication.Data
     {
         public DbSet<User> Users { get; set; }
         public DbSet<UserSession> UserSessions { get; set; }
-
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -34,7 +33,6 @@ namespace PetkusApplication.Data
                 .WithMany()
                 .HasForeignKey(us => us.UserId);
         }
-
 
         // Method to get items from all tables
         public List<Item> GetItemsFromAllTables()
@@ -62,9 +60,9 @@ namespace PetkusApplication.Data
                     SELECT DISTINCT TABLE_NAME
                     FROM INFORMATION_SCHEMA.COLUMNS
                     WHERE TABLE_SCHEMA = 'myappdb'
-                    AND COLUMN_NAME IN ('Id', 'Opis', 'Proizvodjac', 'Fabricki_kod', 'Kolicina', 'Puna_cena', 'Dimenzije', 'Tezina', 'Vrednost_rabata')
+                    AND COLUMN_NAME IN ('Id', 'Opis', 'Proizvodjac', 'Fabricki_kod', 'Kolicina', 'Puna_cena', 'Dimenzije', 'Tezina', 'Vrednost_rabata', 'Min_Kolicina')
                     GROUP BY TABLE_NAME
-                    HAVING COUNT(DISTINCT COLUMN_NAME) = 9";
+                    HAVING COUNT(DISTINCT COLUMN_NAME) = 10";
 
                 using (var command = new MySqlCommand(query, connection))
                 {
@@ -90,7 +88,7 @@ namespace PetkusApplication.Data
             {
                 connection.Open();
                 string query = $@"
-                    SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata
+                    SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina
                     FROM `{tableName}`";
 
                 using (var command = new MySqlCommand(query, connection))
@@ -109,7 +107,8 @@ namespace PetkusApplication.Data
                                 Puna_cena = reader.IsDBNull(reader.GetOrdinal("Puna_cena")) ? 0 : reader.GetDecimal("Puna_cena"),
                                 Dimenzije = reader.IsDBNull(reader.GetOrdinal("Dimenzije")) ? string.Empty : reader.GetString("Dimenzije"),
                                 Tezina = reader.IsDBNull(reader.GetOrdinal("Tezina")) ? 0 : reader.GetDecimal("Tezina"),
-                                Vrednost_rabata = reader.IsDBNull(reader.GetOrdinal("Vrednost_rabata")) ? 0 : reader.GetDecimal("Vrednost_rabata")
+                                Vrednost_rabata = reader.IsDBNull(reader.GetOrdinal("Vrednost_rabata")) ? 0 : reader.GetDecimal("Vrednost_rabata"),
+                                MinKolicina = reader.IsDBNull(reader.GetOrdinal("Min_Kolicina")) ? 0 : reader.GetInt32("Min_Kolicina")
                             });
                         }
                     }
@@ -142,7 +141,7 @@ namespace PetkusApplication.Data
             {
                 connection.Open();
                 string query = $@"
-                    SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata
+                    SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina
                     FROM `{tableName}`
                     WHERE Kolicina < @Threshold";
 
@@ -164,7 +163,8 @@ namespace PetkusApplication.Data
                                 Puna_cena = reader.IsDBNull(reader.GetOrdinal("Puna_cena")) ? 0 : reader.GetDecimal("Puna_cena"),
                                 Dimenzije = reader.IsDBNull(reader.GetOrdinal("Dimenzije")) ? string.Empty : reader.GetString("Dimenzije"),
                                 Tezina = reader.IsDBNull(reader.GetOrdinal("Tezina")) ? 0 : reader.GetDecimal("Tezina"),
-                                Vrednost_rabata = reader.IsDBNull(reader.GetOrdinal("Vrednost_rabata")) ? 0 : reader.GetDecimal("Vrednost_rabata")
+                                Vrednost_rabata = reader.IsDBNull(reader.GetOrdinal("Vrednost_rabata")) ? 0 : reader.GetDecimal("Vrednost_rabata"),
+                                MinKolicina = reader.IsDBNull(reader.GetOrdinal("Min_Kolicina")) ? 0 : reader.GetInt32("Min_Kolicina")
                             });
                         }
                     }
@@ -181,8 +181,8 @@ namespace PetkusApplication.Data
             {
                 connection.Open();
                 string query = $@"
-                    INSERT INTO {tableName} (Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata)
-                    VALUES (@Opis, @Proizvodjac, @Fabricki_kod, @Kolicina, @Puna_cena, @Dimenzije, @Tezina, @Vrednost_rabata)";
+                    INSERT INTO {tableName} (Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina)
+                    VALUES (@Opis, @Proizvodjac, @Fabricki_kod, @Kolicina, @Puna_cena, @Dimenzije, @Tezina, @Vrednost_rabata, @Min_Kolicina)";
 
                 using (var command = new MySqlCommand(query, connection))
                 {
@@ -194,6 +194,7 @@ namespace PetkusApplication.Data
                     command.Parameters.AddWithValue("@Dimenzije", item.Dimenzije);
                     command.Parameters.AddWithValue("@Tezina", item.Tezina);
                     command.Parameters.AddWithValue("@Vrednost_rabata", item.Vrednost_rabata);
+                    command.Parameters.AddWithValue("@Min_Kolicina", item.MinKolicina);
 
                     command.ExecuteNonQuery();
                 }
@@ -216,7 +217,8 @@ namespace PetkusApplication.Data
                     Puna_cena = @Puna_cena, 
                     Dimenzije = @Dimenzije, 
                     Tezina = @Tezina, 
-                    Vrednost_rabata = @Vrednost_rabata 
+                    Vrednost_rabata = @Vrednost_rabata,
+                    Min_Kolicina = @Min_Kolicina
                     WHERE Id = @Id";
 
                 using (var cmd = new MySqlCommand(query, connection))
@@ -229,6 +231,7 @@ namespace PetkusApplication.Data
                     cmd.Parameters.AddWithValue("@Dimenzije", item.Dimenzije);
                     cmd.Parameters.AddWithValue("@Tezina", item.Tezina);
                     cmd.Parameters.AddWithValue("@Vrednost_rabata", item.Vrednost_rabata);
+                    cmd.Parameters.AddWithValue("@Min_Kolicina", item.MinKolicina);
                     cmd.Parameters.AddWithValue("@Id", item.Id);
 
                     cmd.ExecuteNonQuery();
@@ -264,6 +267,5 @@ namespace PetkusApplication.Data
                 SaveChanges();
             }
         }
-
     }
 }

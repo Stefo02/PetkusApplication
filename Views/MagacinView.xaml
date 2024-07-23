@@ -17,12 +17,13 @@
         <ComboBox x:Name="tableComboBox" Grid.Row="0" Width="270" Margin="10" SelectionChanged="tableComboBox_SelectionChanged"/>
 
         <!-- DataGrid to display the items -->
-        <DataGrid x:Name="dataGrid" Grid.Row="1" Margin="10" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged">
+        <DataGrid x:Name="dataGrid" Grid.Row="1" Margin="10" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*"/>
                 <DataGridTextColumn Header="Proizvodjac" Binding="{Binding Proizvodjac}" Width="*"/>
                 <DataGridTextColumn Header="Fabricki Kod" Binding="{Binding Fabricki_kod}" Width="*"/>
                 <DataGridTextColumn Header="Kolicina" Binding="{Binding Kolicina}" Width="*"/>
+                <DataGridTextColumn Header="Min Kolicina" Binding="{Binding MinKolicina}" Width="*"/>
                 <DataGridTextColumn Header="Puna Cena" Binding="{Binding Puna_cena}" Width="*"/>
                 <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="*"/>
                 <DataGridTextColumn Header="Tezina" Binding="{Binding Tezina}" Width="*"/>
@@ -50,6 +51,7 @@
             <TextBox x:Name="proizvodjacTextBox" Width="100" Margin="5"/>
             <TextBox x:Name="fabrickiKodTextBox" Width="100" Margin="5"/>
             <TextBox x:Name="kolicinaTextBox" Width="50" Margin="5"/>
+            <TextBox x:Name="minKolicinaTextBox" Width="50" Margin="5"/>
             <TextBox x:Name="punaCenaTextBox" Width="50" Margin="5"/>
             <TextBox x:Name="dimenzijeTextBox" Width="100" Margin="5"/>
             <TextBox x:Name="tezinaTextBox" Width="50" Margin="5"/>

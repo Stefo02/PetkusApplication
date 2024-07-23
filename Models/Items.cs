@@ -17,5 +17,6 @@ namespace PetkusApplication.Models
         public string Dimenzije { get; set; }
         public decimal Tezina { get; set; }
         public decimal Vrednost_rabata { get; set; }
+        public int MinKolicina { get; set; }
     }
 }
