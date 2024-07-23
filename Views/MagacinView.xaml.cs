@@ -7,7 +7,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using Microsoft.EntityFrameworkCore;
 using PetkusApplication.Data;
-using PetkusApplication.Models; // Ensure this namespace is correct for Item and AppDbContext
+using PetkusApplication.Models;
 
 namespace PetkusApplication.Views
 {
@@ -61,7 +61,6 @@ namespace PetkusApplication.Views
             data = new List<Item>();
             dataGrid.ItemsSource = data;
             LoadTableComboBox();
-            StartQuantityCheckTimer();
         }
 
         private void LoadTableComboBox()
@@ -129,8 +128,7 @@ namespace PetkusApplication.Views
             // Check if the DataGrid has a selected item
             if (dataGrid.SelectedItem != null)
             {
-                // Cast the selected item to your Item type
-                var selectedItem = dataGrid.SelectedItem as Item;
+                selectedItem = dataGrid.SelectedItem as Item;
 
                 if (selectedItem != null)
                 {
@@ -204,22 +202,18 @@ namespace PetkusApplication.Views
                 // Reload data
                 LoadData();
             }
+            else
+            {
+                MessageBox.Show("Odaberite stavku za ažuriranje.");
+            }
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            if (dataGrid.SelectedItem == null)
+            if (selectedItem != null)
             {
-                MessageBox.Show("Molimo izaberite red za brisanje.");
-                return;
-            }
-
-            var result = MessageBox.Show("Da li ste sigurni da želite da obrišete izabrani red?", "Potvrda Brisanja", MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes)
-            {
-                var itemToDelete = (Item)dataGrid.SelectedItem;
                 string tableName = GetTableNameFromComboBox();
-                dbContext.DeleteItem(tableName, itemToDelete.Id);
+                dbContext.DeleteItem(tableName, selectedItem.Id);
 
                 // Clear TextBoxes
                 ClearTextBoxes();
@@ -227,74 +221,48 @@ namespace PetkusApplication.Views
                 // Reload data
                 LoadData();
             }
+            else
+            {
+                MessageBox.Show("Odaberite stavku za brisanje.");
+            }
         }
 
-        private string GetTableNameFromComboBox()
+
+        private void ClearTextBoxes()
         {
-            string selectedTable = tableComboBox.SelectedItem.ToString();
-            return tableMap.FirstOrDefault(x => x.Value == selectedTable).Key ?? selectedTable;
+            opisTextBox.Text = string.Empty;
+            proizvodjacTextBox.Text = string.Empty;
+            fabrickiKodTextBox.Text = string.Empty;
+            kolicinaTextBox.Text = string.Empty;
+            punaCenaTextBox.Text = string.Empty;
+            dimenzijeTextBox.Text = string.Empty;
+            tezinaTextBox.Text = string.Empty;
+            vrednostRabataTextBox.Text = string.Empty;
         }
 
+       
         private void LoadData()
         {
-            string selectedTable = tableComboBox.SelectedItem as string;
-            string tableName = tableMap.FirstOrDefault(x => x.Value == selectedTable).Key ?? selectedTable;
-
-            data = dbContext.GetItemsFromTable(tableName);
+            string tableName = GetTableNameFromComboBox();
+            if (string.IsNullOrEmpty(tableName) || tableName == "Svi podaci")
+            {
+                data = dbContext.GetItemsFromAllTables();
+            }
+            else
+            {
+                data = dbContext.GetItemsFromTable(tableName);
+            }
             dataGrid.ItemsSource = data;
             dataGrid.Items.Refresh();
         }
 
-        private void ClearTextBoxes()
+        private string GetTableNameFromComboBox()
         {
-            opisTextBox.Clear();
-            proizvodjacTextBox.Clear();
-            fabrickiKodTextBox.Clear();
-            kolicinaTextBox.Clear();
-            punaCenaTextBox.Clear();
-            dimenzijeTextBox.Clear();
-            tezinaTextBox.Clear();
-            vrednostRabataTextBox.Clear();
-        }
+            var selectedOption = tableComboBox.SelectedItem as string;
+            if (string.IsNullOrEmpty(selectedOption) || selectedOption == "Svi podaci")
+                return null;
 
-        private void StartQuantityCheckTimer()
-        {
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMinutes(15); // Provera svakih 15 minuta
-            timer.Tick += Timer_Tick;
-            timer.Start();
-        }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            CheckLowQuantities();
-        }
-
-        private void CheckLowQuantities()
-        {
-            var lowQuantityItems = dbContext.GetItemsWithLowQuantity(20);
-            if (lowQuantityItems.Any())
-            {
-                string message = "The following items have low quantities:\n" +
-                                 string.Join("\n", lowQuantityItems.Select(item => $"{item.Opis} (Table: {GetTableNameForItem(item)}) - Quantity: {item.Kolicina}"));
-                MessageBox.Show(message, "Low Quantity Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
-
-        private string GetTableNameForItem(Item item)
-        {
-            var tableNames = dbContext.GetTablesWithColumns();
-
-            foreach (var tableName in tableNames)
-            {
-                var items = dbContext.GetItemsFromTable(tableName);
-                if (items.Any(i => i.Id == item.Id))
-                {
-                    return tableMap.ContainsKey(tableName) ? tableMap[tableName] : tableName;
-                }
-            }
-
-            return "Unknown";
+            return tableMap.FirstOrDefault(x => x.Value == selectedOption).Key;
         }
     }
 }
