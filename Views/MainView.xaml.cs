@@ -1,32 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
+using Microsoft.EntityFrameworkCore;
+using PetkusApplication.Data;
+using PetkusApplication.Models;
 
 namespace PetkusApplication.Views
 {
-    /// <summary>
-    /// Interaction logic for MainView.xaml
-    /// </summary>
     public partial class MainView : Window
     {
-        public MainView()
+        private readonly User _currentUser;
+        private readonly AppDbContext _context;
+
+        public MainView(User user)
         {
             InitializeComponent();
+            _currentUser = user;
+
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
+            optionsBuilder.UseMySql("Server=localhost;Database=myappdb;Uid=root;Pwd=;", serverVersion);
+            _context = new AppDbContext(optionsBuilder.Options);
+
             this.DataContext = this;
             FormiranjePonudeView = new FormiranjePonudeView();
             MagacinView = new MagacinView();
-            
+
+            this.Closing += MainView_Closing; // Correct event handler assignment
         }
 
         public FormiranjePonudeView FormiranjePonudeView { get; set; }
@@ -34,9 +34,23 @@ namespace PetkusApplication.Views
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
+            LogOutCurrentUser(); // Make sure this method exists
             Login loginWindow = new Login();
             loginWindow.Show();
             this.Close();
+        }
+
+        private void MainView_Closing(object sender, System.ComponentModel.CancelEventArgs e) // Correct method name
+        {
+            LogOutCurrentUser(); // Make sure this method exists
+        }
+
+        private void LogOutCurrentUser()
+        {
+            _currentUser.LastLogout = DateTime.Now;
+            _currentUser.IsLoggedIn = false;
+            _context.Users.Update(_currentUser);
+            _context.SaveChanges();
         }
     }
 }

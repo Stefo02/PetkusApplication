@@ -10,7 +10,8 @@ namespace PetkusApplication.Data
     public class AppDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
-        // Add DbSets for other models if necessary
+        public DbSet<UserSession> UserSessions { get; set; }
+
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -23,6 +24,17 @@ namespace PetkusApplication.Data
                 optionsBuilder.UseMySql("server=localhost;database=myappdb;user=root;password=;", new MySqlServerVersion(new Version(10, 4, 32)));
             }
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserSession>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(us => us.UserId);
+        }
+
 
         // Method to get items from all tables
         public List<Item> GetItemsFromAllTables()
@@ -242,5 +254,16 @@ namespace PetkusApplication.Data
                 }
             }
         }
+
+        public void EndUserSession(int userId)
+        {
+            var session = UserSessions.FirstOrDefault(s => s.UserId == userId);
+            if (session != null)
+            {
+                UserSessions.Remove(session);
+                SaveChanges();
+            }
+        }
+
     }
 }
