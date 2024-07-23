@@ -11,29 +11,57 @@
                         <StackPanel Margin="5">
                             <TextBlock Text="Način pokretanja" HorizontalAlignment="Center" Margin="3" />
                             <ComboBox x:Name="comboBox1" Width="100" SelectionChanged="ComboBox_SelectionChanged">
-                                <ComboBoxItem Content="Opcija 1-1" />
-                                <ComboBoxItem Content="Opcija 1-2" />
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel Margin="5">
-                            <TextBlock Text="Broj smerova" HorizontalAlignment="Center" Margin="3"/>
-                            <ComboBox x:Name="comboBox2" Width="100" SelectionChanged="ComboBox_SelectionChanged">
-                                <ComboBoxItem Content="Opcija 2-1" />
-                                <ComboBoxItem Content="Opcija 2-2" />
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel Margin="5">
-                            <TextBlock Text="Snaga" HorizontalAlignment="Center" Margin="3"/>
-                            <ComboBox x:Name="comboBox3" Width="100" SelectionChanged="ComboBox_SelectionChanged">
-                                <ComboBoxItem Content="Opcija 3-1" />
-                                <ComboBoxItem Content="Opcija 3-2" />
+                                <ComboBoxItem Content="Direktno" />
+                                <ComboBoxItem Content="Zvezda-Trougao" />
+                                <ComboBoxItem Content="Soft"/>
+                                <ComboBoxItem Content="Frekventno" />
                             </ComboBox>
                         </StackPanel>
                         <StackPanel Margin="5">
                             <TextBlock Text="Proizvođač" HorizontalAlignment="Center" Margin="3"/>
+                            <ComboBox x:Name="comboBox2" Width="100" SelectionChanged="ComboBox_SelectionChanged">
+                                <ComboBoxItem Content="Siemens" />
+                                <ComboBoxItem Content="Schneider" />
+                                <ComboBoxItem Content="Danfoss" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Broj Smerova" HorizontalAlignment="Center" Margin="3"/>
+                            <ComboBox x:Name="comboBox3" Width="100" SelectionChanged="ComboBox_SelectionChanged">
+                                <ComboBoxItem Content="Direktno" />
+                                <ComboBoxItem Content="Reverzibilni" />
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Snaga" HorizontalAlignment="Center" Margin="3"/>
                             <ComboBox x:Name="comboBox4" Width="100" SelectionChanged="ComboBox_SelectionChanged">
-                                <ComboBoxItem Content="Opcija 4-1" />
-                                <ComboBoxItem Content="Opcija 4-2" />
+                                <ComboBoxItem Content="0,09kW" />
+                                <ComboBoxItem Content="0,12kW" />
+                                <ComboBoxItem Content="0,18kW" />
+                                <ComboBoxItem Content="0,25kW" />
+                                <ComboBoxItem Content="0,37kW" />
+                                <ComboBoxItem Content="0,55kW" />
+                                <ComboBoxItem Content="0,75kW" />
+                                <ComboBoxItem Content="1,1kW" />
+                                <ComboBoxItem Content="1,5kW" />
+                                <ComboBoxItem Content="2,2kW" />
+                                <ComboBoxItem Content="3kW" />
+                                <ComboBoxItem Content="4kW" />
+                                <ComboBoxItem Content="5.5kW" />
+                                <ComboBoxItem Content="7.5kW" />
+                                <ComboBoxItem Content="9,2kW" />
+                                <ComboBoxItem Content="11kW" />
+                                <ComboBoxItem Content="15kW" />
+                                <ComboBoxItem Content="18.5kW" />
+                                <ComboBoxItem Content="22kW" />
+                                <ComboBoxItem Content="30kW" />
+                                <ComboBoxItem Content="37kW" />
+                                <ComboBoxItem Content="45kW" />
+                                <ComboBoxItem Content="55(S3)kW" />
+                                <ComboBoxItem Content="55(P)kW" />
+                                <ComboBoxItem Content="75kW" />
+                                <ComboBoxItem Content="90kW" />
+                                <ComboBoxItem Content="110kW" />
                             </ComboBox>
                         </StackPanel>
                         <StackPanel Margin="5">
