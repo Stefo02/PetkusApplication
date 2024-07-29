@@ -13,10 +13,10 @@
 
         <TabControl Grid.Row="1">
             <TabItem Header="FormiranjePonude">
-                <ContentControl Content="{Binding FormiranjePonudeView}" />
+                <views:FormiranjePonudeView />
             </TabItem>
             <TabItem Header="Magacin">
-                <ContentControl Content="{Binding MagacinView}" />
+                <views:MagacinView />
             </TabItem>
         </TabControl>
     </Grid>
