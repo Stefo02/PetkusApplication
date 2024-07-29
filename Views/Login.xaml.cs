@@ -31,7 +31,10 @@ namespace PetkusApplication.Views
 
             if (user != null)
             {
-                user.LastLogin = DateTime.Now;
+                if (!user.IsAdmin)
+                {
+                    user.LastLogin = DateTime.Now;
+                }
                 user.IsLoggedIn = true;
                 _context.SaveChanges();
 
@@ -53,6 +56,7 @@ namespace PetkusApplication.Views
                 MessageBox.Show("Invalid username or password. Please try again.", "Login Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         private void exitApp(object sender, RoutedEventArgs e)
         {
