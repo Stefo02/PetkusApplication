@@ -4,6 +4,13 @@
              xmlns:local="clr-namespace:PetkusApplication.Views"
              Height="Auto" Width="Auto"
              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <UserControl.Resources>
+        <Storyboard x:Key="BlinkingAnimation">
+            <ColorAnimation Storyboard.TargetProperty="(DataGridRow.Background).(SolidColorBrush.Color)" 
+                            From="Yellow" To="Transparent" Duration="0:0:0.5" 
+                            AutoReverse="True" RepeatBehavior="Forever"/>
+        </Storyboard>
+    </UserControl.Resources>
     <Grid>
         <TabControl x:Name="mainTabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <TabItem Header="Motor" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -59,7 +66,7 @@
 
                     <!-- DataGrid with ScrollViewer -->
                     <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="10">
-                        <DataGrid Name="ResultsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="Extended" SelectionChanged="ResultsDataGrid_SelectionChanged">
+                        <DataGrid Name="ResultsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="Extended" SelectionChanged="ResultsDataGrid_SelectionChanged" PreviewMouseLeftButtonUp="DataGridRow_PreviewMouseLeftButtonUp">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Opis" Binding="{Binding Opis}"/>
                                 <DataGridTextColumn Header="Fabricki_kod" Binding="{Binding Fabricki_kod}"/>

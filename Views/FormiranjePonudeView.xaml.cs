@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using MySql.Data.MySqlClient;
 using PetkusApplication.Models;
 
@@ -12,15 +13,14 @@ namespace PetkusApplication.Views
     public partial class FormiranjePonudeView : UserControl
     {
         private MySqlConnection connection;
-        private Dictionary<string, List<string>> relatedItemsMapping = new Dictionary<string, List<string>>()
-{
-    { "3RV2011-0EA10", new List<string> { "3RT2015-1BB42" } },
-    { "3RT2015-1BB42", new List<string> { "3RV2011-0EA10" } },
-    { "3RM1201-1AA04", new List<string> { "3RV2011-1FA10" } },
-    { "3RV2011-1FA10", new List<string> { "3RM1201-1AA04" } }
-};
+        private Dictionary<string, (List<string> RelatedCodes, bool OfferChoice)> relatedItemsMapping = new Dictionary<string, (List<string> RelatedCodes, bool OfferChoice)>()
+        {
+            { "3RV2011-0EA10", (new List<string> { "3RT2015-1BB42" }, false) },
+            { "3RT2015-1BB42", (new List<string> { "3RV2011-0EA10", "3RV2011-0GA10" }, true) },
+            { "3RV2011-0GA10", (new List<string> { "3RT2015-1BB42" }, false) }
+        };
 
-
+        private List<DataGridRow> blinkingRows = new List<DataGridRow>();
 
         public ObservableCollection<PonudaItem> PonudaItems { get; set; }
 
@@ -101,7 +101,7 @@ namespace PetkusApplication.Views
                     Tezina = Convert.ToDecimal(row["Tezina"]),
                     IsSelected = false,
                     RelatedFabricki_kod = relatedItemsMapping.ContainsKey(row["Fabricki_kod"].ToString())
-                        ? relatedItemsMapping[row["Fabricki_kod"].ToString()]
+                        ? relatedItemsMapping[row["Fabricki_kod"].ToString()].RelatedCodes
                         : new List<string>()
                 };
 
@@ -113,42 +113,74 @@ namespace PetkusApplication.Views
 
         private void ResultsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Privremeno onemogućite događaj da biste sprečili rekurziju
-            ResultsDataGrid.SelectionChanged -= ResultsDataGrid_SelectionChanged;
+            var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
 
-            try
+            // Zaustavi animaciju za prethodne trepćuće redove
+            foreach (var row in blinkingRows)
             {
-                // Pronađite sve selektovane redove
-                var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
+                var animation = (Storyboard)FindResource("BlinkingAnimation");
+                animation.Stop(row);
+            }
+            blinkingRows.Clear();
 
-                // Svi redovi koji treba da budu selektovani
-                var allSelectedItems = new HashSet<PonudaItem>(selectedItems);
+            if (selectedItems.Count > 0)
+            {
+                var selectedItem = selectedItems.First();
 
-                foreach (var item in selectedItems)
+                // Pronađi povezane kodove
+                if (relatedItemsMapping.ContainsKey(selectedItem.Fabricki_kod))
                 {
-                    // Pronađite sve povezane redove
-                    var relatedCodes = item.RelatedFabricki_kod;
-                    foreach (var relatedCode in relatedCodes)
+                    var (relatedCodes, offerChoice) = relatedItemsMapping[selectedItem.Fabricki_kod];
+
+                    if (offerChoice && relatedCodes.Count > 1)
                     {
-                        var relatedItem = PonudaItems.FirstOrDefault(x => x.Fabricki_kod == relatedCode);
-                        if (relatedItem != null)
+                        // Ako treba ponuditi izbor između dva koda
+                        foreach (var code in relatedCodes)
                         {
-                            allSelectedItems.Add(relatedItem);
+                            var row = GetRowFromFabrickiKod(code);
+                            if (row != null)
+                            {
+                                blinkingRows.Add(row);
+                                var animation = (Storyboard)FindResource("BlinkingAnimation");
+                                animation.Begin(row, true);
+                            }
+                        }
+                    }
+                    else if (relatedCodes.Count > 0)
+                    {
+                        // Ako treba automatski izabrati prvi kod
+                        var firstCode = relatedCodes.First();
+                        var row = GetRowFromFabrickiKod(firstCode);
+                        if (row != null)
+                        {
+                            ResultsDataGrid.SelectedItems.Add(row.Item);
                         }
                     }
                 }
+            }
+        }
 
-                // Postavite sve redove koje treba da budu selektovani
-                ResultsDataGrid.SelectedItems.Clear();
-                foreach (var selectedItem in allSelectedItems)
+        private DataGridRow GetRowFromFabrickiKod(string fabrickiKod)
+        {
+            foreach (var item in ResultsDataGrid.Items)
+            {
+                if (((PonudaItem)item).Fabricki_kod == fabrickiKod)
                 {
-                    ResultsDataGrid.SelectedItems.Add(selectedItem);
+                    return (DataGridRow)ResultsDataGrid.ItemContainerGenerator.ContainerFromItem(item);
                 }
             }
-            finally
+            return null;
+        }
+
+        private void DataGridRow_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var row = sender as DataGridRow;
+            if (row != null && blinkingRows.Contains(row))
             {
-                // Ponovo omogućite događaj
-                ResultsDataGrid.SelectionChanged += ResultsDataGrid_SelectionChanged;
+                var animation = (Storyboard)FindResource("BlinkingAnimation");
+                animation.Stop(row);
+                blinkingRows.Remove(row);
+                ResultsDataGrid.SelectedItems.Add(row.Item);
             }
         }
 
@@ -165,6 +197,5 @@ namespace PetkusApplication.Views
                 MessageBox.Show("No rows selected.");
             }
         }
-
     }
 }
