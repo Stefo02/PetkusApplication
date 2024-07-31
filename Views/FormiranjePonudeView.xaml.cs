@@ -1,258 +1,170 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using MySql.Data.MySqlClient;
+using PetkusApplication.Models;
 
 namespace PetkusApplication.Views
 {
-    public partial class FormiranjePonudeView : UserControl, INotifyPropertyChanged
+    public partial class FormiranjePonudeView : UserControl
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        private MySqlConnection connection;
+        private Dictionary<string, List<string>> relatedItemsMapping = new Dictionary<string, List<string>>()
+{
+    { "3RV2011-0EA10", new List<string> { "3RT2015-1BB42" } },
+    { "3RT2015-1BB42", new List<string> { "3RV2011-0EA10" } },
+    { "3RM1201-1AA04", new List<string> { "3RV2011-1FA10" } },
+    { "3RV2011-1FA10", new List<string> { "3RM1201-1AA04" } }
+};
 
-        public ObservableCollection<SelectionData> Selections { get; set; }
-        public ObservableCollection<SelectionData2> Selections2 { get; set; }
+
+
+        public ObservableCollection<PonudaItem> PonudaItems { get; set; }
 
         public FormiranjePonudeView()
         {
             InitializeComponent();
+            InitializeDatabaseConnection();
+            PonudaItems = new ObservableCollection<PonudaItem>();
+            DataContext = this; // Set DataContext for data binding
+        }
 
-            Selections = new ObservableCollection<SelectionData>();
-            Selections2 = new ObservableCollection<SelectionData2>();
-
-            Selections.Add(new SelectionData());
-            Selections2.Add(new SelectionData2());
-
-            DataContext = this;
+        private void InitializeDatabaseConnection()
+        {
+            string connectionString = "server=localhost;database=myappdb;user=root;password=;";
+            connection = new MySqlConnection(connectionString);
+            connection.Open();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
+            string procedureName = GetProcedureNameForSelectedOptions();
+            if (procedureName != null)
             {
-                var selectionData = Selections[Selections.Count - 1];
-
-                switch (comboBox.Name)
-                {
-                    case "comboBox1":
-                        selectionData.ComboBox1Selection = selectedItem.Content.ToString();
-                        break;
-                    case "comboBox2":
-                        selectionData.ComboBox2Selection = selectedItem.Content.ToString();
-                        break;
-                    case "comboBox3":
-                        selectionData.ComboBox3Selection = selectedItem.Content.ToString();
-                        break;
-                    case "comboBox4":
-                        selectionData.ComboBox4Selection = selectedItem.Content.ToString();
-                        break;
-                }
-
-                dataGrid1.Items.Refresh();
+                LoadDataFromProcedure(procedureName);
             }
         }
 
-        private void ComboBox_SelectionChanged2(object sender, SelectionChangedEventArgs e)
+        private string GetProcedureNameForSelectedOptions()
         {
-            if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
-            {
-                var selectionData = Selections2[Selections2.Count - 1];
+            string selectedNacinPokretanja = (comboBox1.SelectedItem as ComboBoxItem)?.Content.ToString();
+            string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content.ToString();
+            string selectedBrojSmerova = (comboBox3.SelectedItem as ComboBoxItem)?.Content.ToString();
+            string selectedSnaga = (comboBox4.SelectedItem as ComboBoxItem)?.Content.ToString();
 
-                switch (comboBox.Name)
+            if (selectedNacinPokretanja == "Direktno")
+            {
+                if (selectedProizvodac == "Siemens")
                 {
-                    case "comboBox6":
-                        selectionData.ComboBox6Selection = selectedItem.Content.ToString();
-                        break;
-                    case "comboBox7":
-                        selectionData.ComboBox7Selection = selectedItem.Content.ToString();
-                        break;
-                    case "comboBox8":
-                        selectionData.ComboBox8Selection = selectedItem.Content.ToString();
-                        break;
+                    if (selectedBrojSmerova == "Reverzibilni")
+                    {
+                        if (selectedSnaga == "0,09kW")
+                        {
+                            return "Reverzibilni_D_SI_0_09kW";
+                        }
+                        return "Reverzibilni_D_SI";
+                    }
+                    return "sp_get_d_si";
+                }
+                return "sp_get_direktno";
+            }
+
+            return null;
+        }
+
+        private void LoadDataFromProcedure(string procedureName)
+        {
+            if (procedureName == null) return;
+
+            DataTable resultTable = new DataTable();
+            using (MySqlCommand cmd = new MySqlCommand(procedureName, connection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                adapter.Fill(resultTable);
+            }
+
+            PonudaItems.Clear(); // Clear existing items before adding new ones
+
+            foreach (DataRow row in resultTable.Rows)
+            {
+                var item = new PonudaItem
+                {
+                    Fabricki_kod = row["Fabricki_kod"].ToString(),
+                    Opis = row["Opis"].ToString(),
+                    Puna_cena = Convert.ToDecimal(row["Puna_cena"]),
+                    Dimenzije = row["Dimenzije"].ToString(),
+                    Disipacija = Convert.ToDecimal(row["Disipacija"]),
+                    Tezina = Convert.ToDecimal(row["Tezina"]),
+                    IsSelected = false,
+                    RelatedFabricki_kod = relatedItemsMapping.ContainsKey(row["Fabricki_kod"].ToString())
+                        ? relatedItemsMapping[row["Fabricki_kod"].ToString()]
+                        : new List<string>()
+                };
+
+                PonudaItems.Add(item);
+            }
+
+            ResultsDataGrid.ItemsSource = PonudaItems; // Bind ObservableCollection
+        }
+
+        private void ResultsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Privremeno onemogućite događaj da biste sprečili rekurziju
+            ResultsDataGrid.SelectionChanged -= ResultsDataGrid_SelectionChanged;
+
+            try
+            {
+                // Pronađite sve selektovane redove
+                var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
+
+                // Svi redovi koji treba da budu selektovani
+                var allSelectedItems = new HashSet<PonudaItem>(selectedItems);
+
+                foreach (var item in selectedItems)
+                {
+                    // Pronađite sve povezane redove
+                    var relatedCodes = item.RelatedFabricki_kod;
+                    foreach (var relatedCode in relatedCodes)
+                    {
+                        var relatedItem = PonudaItems.FirstOrDefault(x => x.Fabricki_kod == relatedCode);
+                        if (relatedItem != null)
+                        {
+                            allSelectedItems.Add(relatedItem);
+                        }
+                    }
                 }
 
-                dataGrid2.Items.Refresh();
+                // Postavite sve redove koje treba da budu selektovani
+                ResultsDataGrid.SelectedItems.Clear();
+                foreach (var selectedItem in allSelectedItems)
+                {
+                    ResultsDataGrid.SelectedItems.Add(selectedItem);
+                }
+            }
+            finally
+            {
+                // Ponovo omogućite događaj
+                ResultsDataGrid.SelectionChanged += ResultsDataGrid_SelectionChanged;
             }
         }
 
-        private void ConfirmSelectionButton_Click(object sender, RoutedEventArgs e)
+        private void TransferSelectedRows_Click(object sender, RoutedEventArgs e)
         {
-            var currentSelectionData = Selections[Selections.Count - 1];
-
-            if (int.TryParse(textBoxNumber.Text, out int enteredNumber))
+            var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
+            if (selectedItems.Any())
             {
-                currentSelectionData.EnteredNumber = enteredNumber;
-
-                ResetControlsOnTab1();
-
-                Selections.Add(new SelectionData());
-
-                dataGrid1.Items.Refresh();
+                Racunanjeponude secondWindow = new Racunanjeponude(selectedItems);
+                secondWindow.Show();
             }
             else
             {
-                MessageBox.Show("Molimo unesite ispravan broj.");
+                MessageBox.Show("No rows selected.");
             }
         }
 
-        private void ConfirmSelectionButton2_Click(object sender, RoutedEventArgs e)
-        {
-            var currentSelectionData = Selections2[Selections2.Count - 1];
-
-            if (int.TryParse(textBoxNumber1.Text, out int enteredNumber))
-            {
-                currentSelectionData.EnteredNumber = enteredNumber;
-
-                ResetControlsOnTab2();
-
-                Selections2.Add(new SelectionData2());
-
-                dataGrid2.Items.Refresh();
-            }
-            else
-            {
-                MessageBox.Show("Molimo unesite ispravan broj.");
-            }
-        }
-
-        private void ResetControlsOnTab1()
-        {
-            comboBox1.SelectedIndex = -1;
-            comboBox2.SelectedIndex = -1;
-            comboBox3.SelectedIndex = -1;
-            comboBox4.SelectedIndex = -1;
-            textBoxNumber.Text = "";
-        }
-
-        private void ResetControlsOnTab2()
-        {
-            comboBox6.SelectedIndex = -1;
-            comboBox7.SelectedIndex = -1;
-            comboBox8.SelectedIndex = -1;
-            textBoxNumber1.Text = "";
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class SelectionData : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private string _comboBox1Selection;
-        public string ComboBox1Selection
-        {
-            get { return _comboBox1Selection; }
-            set
-            {
-                _comboBox1Selection = value;
-                OnPropertyChanged(nameof(ComboBox1Selection));
-            }
-        }
-
-        private string _comboBox2Selection;
-        public string ComboBox2Selection
-        {
-            get { return _comboBox2Selection; }
-            set
-            {
-                _comboBox2Selection = value;
-                OnPropertyChanged(nameof(ComboBox2Selection));
-            }
-        }
-
-        private string _comboBox3Selection;
-        public string ComboBox3Selection
-        {
-            get { return _comboBox3Selection; }
-            set
-            {
-                _comboBox3Selection = value;
-                OnPropertyChanged(nameof(ComboBox3Selection));
-            }
-        }
-
-        private string _comboBox4Selection;
-        public string ComboBox4Selection
-        {
-            get { return _comboBox4Selection; }
-            set
-            {
-                _comboBox4Selection = value;
-                OnPropertyChanged(nameof(ComboBox4Selection));
-            }
-        }
-
-        private int _enteredNumber;
-        public int EnteredNumber
-        {
-            get { return _enteredNumber; }
-            set
-            {
-                _enteredNumber = value;
-                OnPropertyChanged(nameof(EnteredNumber));
-            }
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class SelectionData2 : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private string _comboBox6Selection;
-        public string ComboBox6Selection
-        {
-            get { return _comboBox6Selection; }
-            set
-            {
-                _comboBox6Selection = value;
-                OnPropertyChanged(nameof(ComboBox6Selection));
-            }
-        }
-
-        private string _comboBox7Selection;
-        public string ComboBox7Selection
-        {
-            get { return _comboBox7Selection; }
-            set
-            {
-                _comboBox7Selection = value;
-                OnPropertyChanged(nameof(ComboBox7Selection));
-            }
-        }
-
-        private string _comboBox8Selection;
-        public string ComboBox8Selection
-        {
-            get { return _comboBox8Selection; }
-            set
-            {
-                _comboBox8Selection = value;
-                OnPropertyChanged(nameof(ComboBox8Selection));
-            }
-        }
-
-        private int _enteredNumber;
-        public int EnteredNumber
-        {
-            get { return _enteredNumber; }
-            set
-            {
-                _enteredNumber = value;
-                OnPropertyChanged(nameof(EnteredNumber));
-            }
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }
