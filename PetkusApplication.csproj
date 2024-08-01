@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Views\Images\petkus-removebg-previeww.png" />
     <None Remove="Views\Images\petkus.png" />
     <None Remove="Views\Images\pozadina3.jpg" />
   </ItemGroup>
@@ -31,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Views\Images\petkus-removebg-previeww.png" />
     <Resource Include="Views\Images\petkus.png" />
     <Resource Include="Views\Images\pozadina3.jpg" />
   </ItemGroup>

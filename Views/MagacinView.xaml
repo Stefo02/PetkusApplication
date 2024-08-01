@@ -4,8 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PetkusApplication.Views"
+             xmlns:converters="clr-namespace:PetkusApplication.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1600" Background="#ffb81c" MouseDown="Window_MouseDown">
+
+    <UserControl.Resources>
+        <converters:LessThanOrEqualConverter x:Key="LessThanOrEqualConverter" />
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -13,52 +19,89 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- ComboBox for selecting the table -->
-        <ComboBox x:Name="tableComboBox" Grid.Row="0" Width="270" Margin="10" SelectionChanged="tableComboBox_SelectionChanged"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <!-- DataGrid to display the items -->
-        <DataGrid x:Name="dataGrid" Grid.Row="1" Margin="10" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*"/>
-                <DataGridTextColumn Header="Proizvodjac" Binding="{Binding Proizvodjac}" Width="*"/>
-                <DataGridTextColumn Header="Fabricki Kod" Binding="{Binding Fabricki_kod}" Width="*"/>
-                <DataGridTextColumn Header="Kolicina" Binding="{Binding Kolicina}" Width="*"/>
-                <DataGridTextColumn Header="Min Kolicina" Binding="{Binding MinKolicina}" Width="*"/>
-                <DataGridTextColumn Header="Puna Cena" Binding="{Binding Puna_cena}" Width="*"/>
-                <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="*"/>
-                <DataGridTextColumn Header="Tezina" Binding="{Binding Tezina}" Width="*"/>
-                <DataGridTextColumn Header="Vrednost Rabata" Binding="{Binding Vrednost_rabata}" Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <Image Source="Images\petkus-removebg-previeww.png" 
+               Grid.Row="2" Grid.Column="0" 
+               Margin="20 0 0 10" 
+               VerticalAlignment="Bottom" 
+               HorizontalAlignment="Left" 
+               Width="70" 
+               Height="70" 
+               Opacity="1"/>
 
-        <!-- StackPanel for search and CRUD controls -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10">
-            <!-- Grid for search TextBox and placeholder -->
-            <Grid Margin="5">
+        <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="0 30 10 10" HorizontalAlignment="Right">
+            <Grid Margin="70 5 5 5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="searchTextBox" Width="200" VerticalAlignment="Center" Grid.Column="1" KeyDown="searchTextBox_KeyDown"/>
-                <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="5" Foreground="Gray" Text="Pretraži po Opisu ili Fabrickom kodu" IsHitTestVisible="False"/>
+                <TextBox x:Name="searchTextBox" Width="200" VerticalAlignment="Center" Grid.Column="1" KeyDown="searchTextBox_KeyDown" BorderThickness="0 0 0 2"/>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0 0 15 0" Foreground="White" Text="Pretraži po Opisu ili Fabrickom kodu" IsHitTestVisible="False" FontSize="14" FontWeight="Bold"/>
             </Grid>
 
-            <!-- Search Button -->
-            <Button Content="Pretraži" Width="95" Margin="5" Click="SearchButton_Click"/>
+            <Button Content="Pretraži" Width="95" Margin="5" Click="SearchButton_Click" Background="#001f5b"/>
+        </StackPanel>
 
-            <!-- Existing TextBoxes and Buttons for CRUD operations -->
-            <TextBox x:Name="opisTextBox" Width="100" Margin="5"/>
-            <TextBox x:Name="proizvodjacTextBox" Width="100" Margin="5"/>
-            <TextBox x:Name="fabrickiKodTextBox" Width="100" Margin="5"/>
-            <TextBox x:Name="kolicinaTextBox" Width="50" Margin="5"/>
-            <TextBox x:Name="minKolicinaTextBox" Width="50" Margin="5"/>
-            <TextBox x:Name="punaCenaTextBox" Width="50" Margin="5"/>
-            <TextBox x:Name="dimenzijeTextBox" Width="100" Margin="5"/>
-            <TextBox x:Name="tezinaTextBox" Width="50" Margin="5"/>
-            <TextBox x:Name="vrednostRabataTextBox" Width="50" Margin="5"/>
-            <Button Content="Add" Width="80" Margin="5" Click="AddButton_Click"/>
-            <Button Content="Update" Width="80" Margin="5" Click="UpdateButton_Click"/>
-            <Button Content="Delete" Width="80" Margin="5" Click="DeleteButton_Click"/>
+        <ComboBox x:Name="tableComboBox" Width="270" Margin="30,40,0,0" SelectionChanged="tableComboBox_SelectionChanged" BorderThickness="0 0 0 2" VerticalAlignment="Top"/>
+
+        <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="20 10 20 10">
+            <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" IsReadOnly="True" Height="Auto">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#001f5b"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Padding" Value="10,5"/>
+                    </Style>
+                    <Style TargetType="DataGridCell">
+                        <Style.Triggers>
+                            <DataTrigger Value="True">
+                                <DataTrigger.Binding>
+                                    <MultiBinding Converter="{StaticResource LessThanOrEqualConverter}">
+                                        <Binding Path="Kolicina" />
+                                        <Binding Path="MinKolicina" />
+                                    </MultiBinding>
+                                </DataTrigger.Binding>
+                                <Setter Property="Background" Value="Red" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.Background>
+                    <SolidColorBrush Color="White"/>
+                </DataGrid.Background>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="auto" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Proizvodjac" Binding="{Binding Proizvodjac}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Fabricki Kod" Binding="{Binding Fabricki_kod}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Kolicina" Binding="{Binding Kolicina}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Min Kolicina" Binding="{Binding MinKolicina}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Puna Cena" Binding="{Binding Puna_cena}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Tezina" Binding="{Binding Tezina}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Vrednost Rabata" Binding="{Binding Vrednost_rabata}" Width="*" Foreground="#001f5b"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="10 10 10 30" HorizontalAlignment="Right">
+            <TextBox x:Name="opisTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
+            <TextBox x:Name="proizvodjacTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
+            <TextBox x:Name="fabrickiKodTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
+            <TextBox x:Name="kolicinaTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
+            <TextBox x:Name="minKolicinaTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
+            <TextBox x:Name="punaCenaTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
+            <TextBox x:Name="dimenzijeTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
+            <TextBox x:Name="tezinaTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
+            <TextBox x:Name="vrednostRabataTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
+            <Button Content="Dodaj" Width="80" Margin="5" Click="AddButton_Click" Background="#001f5b"/>
+            <Button Content="Izmeni" Width="80" Margin="5" Click="UpdateButton_Click" Background="#001f5b"/>
+            <Button Content="Obriši" Width="80" Margin="5" Click="DeleteButton_Click" Background="#001f5b"/>
         </StackPanel>
     </Grid>
 </UserControl>
