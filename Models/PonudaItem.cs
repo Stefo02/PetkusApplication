@@ -17,6 +17,12 @@ namespace PetkusApplication.Models
         public string Dimenzije { get; set; }
         public decimal Disipacija { get; set; }
         public decimal Tezina { get; set; }
+        public int Kolicina { get; set; }  
+        public decimal Vrednost_rabata { get; set; }
+        public decimal Ukupna_puna { get; set; }
+        public decimal Ukupna_rabat { get; set; }
+        public decimal Ukupna_Disipacija { get; set; }
+        public decimal Ukupna_Tezina { get; set; }
 
         public bool IsSelected
         {

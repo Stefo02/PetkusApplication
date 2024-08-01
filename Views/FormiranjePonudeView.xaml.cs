@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +13,7 @@ namespace PetkusApplication.Views
     public partial class FormiranjePonudeView : UserControl
     {
         private MySqlConnection connection;
-        private Dictionary<string, (List<string> RelatedCodes, bool OfferChoice)> relatedItemsMapping = new Dictionary<string, (List<string> RelatedCodes, bool OfferChoice)>()
+        private Dictionary<string, (List<string> RelatedCodes, bool OfferChoice)> relatedItemsMapping = new Dictionary<string, (List<string> RelatedCodes, bool OfferChoice)>
         {
             { "3RV2011-0EA10", (new List<string> { "3RT2015-1BB42" }, false) },
             { "3RT2015-1BB42", (new List<string> { "3RV2011-0EA10", "3RV2011-0GA10" }, true) },
@@ -37,6 +37,15 @@ namespace PetkusApplication.Views
             string connectionString = "server=localhost;database=myappdb;user=root;password=;";
             connection = new MySqlConnection(connectionString);
             connection.Open();
+        }
+
+        public int GetBrojKomada()
+        {
+            if (int.TryParse(textBoxNumber.Text, out int brojKomada))
+            {
+                return brojKomada;
+            }
+            return 0; // Ili baciti izuzetak ako je potrebno
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -100,6 +109,8 @@ namespace PetkusApplication.Views
                     Disipacija = Convert.ToDecimal(row["Disipacija"]),
                     Tezina = Convert.ToDecimal(row["Tezina"]),
                     IsSelected = false,
+                    Kolicina = Convert.ToInt32(row["Kolicina"]),
+                    Vrednost_rabata = Convert.ToDecimal(row["Vrednost_rabata"]),
                     RelatedFabricki_kod = relatedItemsMapping.ContainsKey(row["Fabricki_kod"].ToString())
                         ? relatedItemsMapping[row["Fabricki_kod"].ToString()].RelatedCodes
                         : new List<string>()
@@ -186,15 +197,32 @@ namespace PetkusApplication.Views
 
         private void TransferSelectedRows_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
-            if (selectedItems.Any())
+            if (int.TryParse(textBoxNumber.Text, out int brojKomada))
             {
-                Racunanjeponude secondWindow = new Racunanjeponude(selectedItems);
-                secondWindow.Show();
+                var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
+                if (selectedItems.Any())
+                {
+                    // Izračunaj vrednosti
+                    foreach (var item in selectedItems)
+                    {
+                        item.Ukupna_puna = brojKomada * item.Puna_cena;
+                        item.Ukupna_rabat = brojKomada * item.Puna_cena * (1 - item.Vrednost_rabata);
+                        item.Ukupna_Disipacija = brojKomada * item.Disipacija;
+                        item.Ukupna_Tezina = brojKomada * item.Tezina;
+                    }
+
+                    // Otvorite Racunanjeponude i prosledite FormiranjePonudeView kao parametar
+                    Racunanjeponude racunanjePonude = new Racunanjeponude(this, selectedItems);
+                    racunanjePonude.Show();
+                }
+                else
+                {
+                    MessageBox.Show("No rows selected.");
+                }
             }
             else
             {
-                MessageBox.Show("No rows selected.");
+                MessageBox.Show("Invalid number entered in 'Broj Komada'.");
             }
         }
     }

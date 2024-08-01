@@ -74,6 +74,8 @@
                                 <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}"/>
                                 <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}"/>
                                 <DataGridTextColumn Header="Tezina" Binding="{Binding Tezina}"/>
+                                <DataGridTextColumn Header="Kolicina" Binding="{Binding Kolicina}"/>
+                                <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </ScrollViewer>

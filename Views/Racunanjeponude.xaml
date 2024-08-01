@@ -1,6 +1,7 @@
 ﻿<Window x:Class="PetkusApplication.Views.Racunanjeponude"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:PetkusApplication.Views"
         Title="Racunanjeponude" Height="450" Width="800">
     <Grid>
         <DataGrid Name="SelectedItemsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -11,7 +12,16 @@
                 <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}"/>
                 <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}"/>
                 <DataGridTextColumn Header="Tezina" Binding="{Binding Tezina}"/>
+                <DataGridTextColumn Header="Kolicina" Binding="{Binding Kolicina}"/>
+                <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}"/>
+                <DataGridTextColumn Header="Ukupna puna" Binding="{Binding Ukupna_puna}"/>
+                <DataGridTextColumn Header="Ukupna rabat" Binding="{Binding Ukupna_rabat}"/>
+                <DataGridTextColumn Header="Ukupna Disipacija" Binding="{Binding Ukupna_Disipacija}"/>
+                <DataGridTextColumn Header="Ukupna Tezina" Binding="{Binding Ukupna_Tezina}"/>
             </DataGrid.Columns>
         </DataGrid>
+
+        <TextBox x:Name="textBoxNumber" Width="100" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+        <Button Content="Update and Export" Click="UpdateAndExport_Click" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>
