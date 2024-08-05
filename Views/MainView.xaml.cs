@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Input;
+using System.Windows.Controls;
 using Microsoft.EntityFrameworkCore;
 using PetkusApplication.Data;
 using PetkusApplication.Models;
@@ -34,15 +34,19 @@ namespace PetkusApplication.Views
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            LogOutCurrentUser(); // Make sure this method exists
-            Login loginWindow = new Login();
+            // Kreirajte instancu Login prozora
+            var loginWindow = new Login();
+
+            // Prikazivanje Login prozora
             loginWindow.Show();
+
+            // Zatvaranje trenutnog prozora
             this.Close();
         }
 
-        private void MainView_Closing(object sender, System.ComponentModel.CancelEventArgs e) // Correct method name
+        private void MainView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            LogOutCurrentUser(); // Make sure this method exists
+            LogOutCurrentUser();
         }
 
         private void LogOutCurrentUser()
@@ -51,6 +55,25 @@ namespace PetkusApplication.Views
             _currentUser.IsLoggedIn = false;
             _context.Users.Update(_currentUser);
             _context.SaveChanges();
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is TabControl tabControl &&
+                tabControl.SelectedItem is TabItem selectedTab &&
+                selectedTab.Header.ToString() == "Logout")
+            {
+                LogOutCurrentUser();
+
+                // Kreirajte instancu Login prozora
+                var loginWindow = new Login();
+
+                // Prikazivanje Login prozora
+                loginWindow.Show();
+
+                // Zatvaranje trenutnog prozora
+                this.Close();
+            }
         }
     }
 }

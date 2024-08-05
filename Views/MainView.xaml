@@ -3,22 +3,38 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="clr-namespace:PetkusApplication.Views"
         Title="MultiTabWindow"
-        WindowState="Maximized" 
+        Height="500" 
+        Width="900"
         ResizeMode="CanResizeWithGrip">
+    <Window.Resources>
+        <!-- Definišite stil za TabItem -->
+        <Style TargetType="TabItem">
+            <Setter Property="Background" Value="#001f5b"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Width="100" Height="30" Click="LogoutButton_Click"/>
-
-        <TabControl Grid.Row="1">
+        <TabControl Grid.Row="1" SelectionChanged="TabControl_SelectionChanged" Background="#ffb81c">
             <TabItem Header="FormiranjePonude">
-                <views:FormiranjePonudeView />
+                <views:FormiranjePonudeView Padding="40"/>
             </TabItem>
             <TabItem Header="Magacin">
                 <views:MagacinView />
+            </TabItem>
+            <TabItem Header="Logout">
+                <!-- Ovo može ostati prazno jer će se logout funkcija izvršiti automatski -->
             </TabItem>
         </TabControl>
     </Grid>

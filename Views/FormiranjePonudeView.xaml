@@ -5,13 +5,25 @@
              Height="Auto" Width="Auto"
              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
     <UserControl.Resources>
+        <!-- Animacija za blinkanje -->
         <Storyboard x:Key="BlinkingAnimation">
             <ColorAnimation Storyboard.TargetProperty="(DataGridRow.Background).(SolidColorBrush.Color)" 
                             From="Yellow" To="Transparent" Duration="0:0:0.5" 
                             AutoReverse="True" RepeatBehavior="Forever"/>
         </Storyboard>
+
+        <!-- Stil za zaglavlja kolona u DataGrid -->
+        <Style x:Key="DataGridColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#001f5b"/>
+            <Setter Property="BorderBrush" Value="#001f5b"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
     </UserControl.Resources>
-    <Grid>
+    <Grid >
         <TabControl x:Name="mainTabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <TabItem Header="Motor" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid>
@@ -21,10 +33,12 @@
                         <!-- For controls above DataGrid -->
                         <RowDefinition Height="*"/>
                         <!-- For DataGrid to take the remaining space -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- For button -->
                     </Grid.RowDefinitions>
 
                     <!-- Controls above DataGrid -->
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" HorizontalAlignment="Stretch">
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
                         <StackPanel Margin="5">
                             <TextBlock Text="Način pokretanja" HorizontalAlignment="Center" Margin="3" />
                             <ComboBox x:Name="comboBox1" Width="100" SelectionChanged="ComboBox_SelectionChanged">
@@ -43,7 +57,7 @@
                             </ComboBox>
                         </StackPanel>
                         <StackPanel Margin="5">
-                            <TextBlock Text="Broj Smerova" HorizontalAlignment="Center" Margin="3"/>
+                            <TextBlock Text="Broj smerova" HorizontalAlignment="Center" Margin="3"/>
                             <ComboBox x:Name="comboBox3" Width="100" SelectionChanged="ComboBox_SelectionChanged">
                                 <ComboBoxItem Content="Direktno" />
                                 <ComboBoxItem Content="Reverzibilni" />
@@ -67,21 +81,24 @@
                     <!-- DataGrid with ScrollViewer -->
                     <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="10">
                         <DataGrid Name="ResultsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="Extended" SelectionChanged="ResultsDataGrid_SelectionChanged" PreviewMouseLeftButtonUp="DataGridRow_PreviewMouseLeftButtonUp">
+                            <DataGrid.Resources>
+                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}"/>
+                            </DataGrid.Resources>
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Opis" Binding="{Binding Opis}"/>
-                                <DataGridTextColumn Header="Fabricki_kod" Binding="{Binding Fabricki_kod}"/>
-                                <DataGridTextColumn Header="Puna_cena" Binding="{Binding Puna_cena}"/>
-                                <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}"/>
-                                <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}"/>
-                                <DataGridTextColumn Header="Tezina" Binding="{Binding Tezina}"/>
-                                <DataGridTextColumn Header="Kolicina" Binding="{Binding Kolicina}"/>
-                                <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}"/>
+                                <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="auto"/>
+                                <DataGridTextColumn Header="Fabrički kod" Binding="{Binding Fabricki_kod}" Width="auto"/>
+                                <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}" Width="auto"/>
+                                <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="auto"/>
+                                <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}" Width="auto"/>
+                                <DataGridTextColumn Header="Težina" Binding="{Binding Tezina}" Width="auto"/>
+                                <DataGridTextColumn Header="Količina" Binding="{Binding Kolicina}" Width="auto"/>
+                                <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}" Width="auto"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </ScrollViewer>
 
                     <!-- Button to transfer selected rows -->
-                    <Button Content="Transfer Selected Rows" Click="TransferSelectedRows_Click" Margin="10" HorizontalAlignment="Right"/>
+                    <Button Content="Potvrdi" Click="TransferSelectedRows_Click" Margin="10" HorizontalAlignment="center" Grid.Row="2" Background="#001f5b" Foreground="White"/>
                 </Grid>
             </TabItem>
         </TabControl>
