@@ -232,7 +232,7 @@ namespace PetkusApplication.Views
                 if (matchingPonudaItem != null)
                 {
                     int brojKomada = groupedItem.Quantity;
-                    matchingPonudaItem.Kolicina = brojKomada; // Set the quantity
+                    matchingPonudaItem.Quantity = brojKomada; // Set the quantity
                     matchingPonudaItem.Ukupna_puna = brojKomada * matchingPonudaItem.Puna_cena;
                     matchingPonudaItem.Ukupna_rabat = brojKomada * matchingPonudaItem.Puna_cena * (1 - matchingPonudaItem.Vrednost_rabata);
                     matchingPonudaItem.Ukupna_Disipacija = brojKomada * matchingPonudaItem.Disipacija;
@@ -242,7 +242,6 @@ namespace PetkusApplication.Views
                 }
             }
 
-            // Otvorite Racunanjeponude i prosledite FormiranjePonudeView kao parametar
             Racunanjeponude racunanjePonude = new Racunanjeponude(this, selectedItems);
             racunanjePonude.Show();
         }
