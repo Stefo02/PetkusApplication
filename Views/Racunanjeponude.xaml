@@ -8,7 +8,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Opis" Binding="{Binding Opis}"/>
                 <DataGridTextColumn Header="Fabricki_kod" Binding="{Binding Fabricki_kod}"/>
-                <DataGridTextColumn Header="Puna_cena" Binding="{Binding Puna_cena}"/>
+                <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}"/>
                 <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}"/>
                 <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}"/>
                 <DataGridTextColumn Header="Tezina" Binding="{Binding Tezina}"/>

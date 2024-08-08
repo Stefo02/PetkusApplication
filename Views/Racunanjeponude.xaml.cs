@@ -13,11 +13,12 @@ namespace PetkusApplication.Views
     {
         private MySqlConnection connection;
         private FormiranjePonudeView _formiranjePonudeView;
+        private List<PonudaItem> selectedItems;
 
-        public Racunanjeponude(FormiranjePonudeView formiranjePonudeView, List<PonudaItem> selectedItems)
+        public Racunanjeponude(FormiranjePonudeView parent, List<PonudaItem> selectedItems)
         {
             InitializeComponent();
-            _formiranjePonudeView = formiranjePonudeView;
+            this.selectedItems = selectedItems;
             SelectedItemsDataGrid.ItemsSource = selectedItems;
             InitializeDatabaseConnection();
         }
@@ -31,14 +32,7 @@ namespace PetkusApplication.Views
 
         private void UpdateAndExport_Click(object sender, RoutedEventArgs e)
         {
-            int brojKomada = _formiranjePonudeView.GetBrojKomada();
-            var selectedItems = SelectedItemsDataGrid.ItemsSource.Cast<PonudaItem>().ToList();
-
-            // Ažuriraj bazu podataka
-            UpdateDatabase(selectedItems, brojKomada);
-
-            // Kreiraj Excel fajl
-            GenerateExcelFile(selectedItems);
+            
         }
 
         private string FindTableWithFabrickiKod(string fabrickiKod)

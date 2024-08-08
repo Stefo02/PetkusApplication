@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 using MySql.Data.MySqlClient;
 using PetkusApplication.Models;
@@ -23,13 +24,16 @@ namespace PetkusApplication.Views
         private List<DataGridRow> blinkingRows = new List<DataGridRow>();
 
         public ObservableCollection<PonudaItem> PonudaItems { get; set; }
+        public ObservableCollection<GroupedItem> GroupedItems { get; set; }
 
         public FormiranjePonudeView()
         {
             InitializeComponent();
             InitializeDatabaseConnection();
             PonudaItems = new ObservableCollection<PonudaItem>();
+            GroupedItems = new ObservableCollection<GroupedItem>();
             DataContext = this; // Set DataContext for data binding
+            GroupedDataGrid.ItemsSource = GroupedItems;
         }
 
         private void InitializeDatabaseConnection()
@@ -37,15 +41,6 @@ namespace PetkusApplication.Views
             string connectionString = "server=localhost;database=myappdb;user=root;password=;";
             connection = new MySqlConnection(connectionString);
             connection.Open();
-        }
-
-        public int GetBrojKomada()
-        {
-            if (int.TryParse(textBoxNumber.Text, out int brojKomada))
-            {
-                return brojKomada;
-            }
-            return 0; // Ili baciti izuzetak ako je potrebno
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -122,6 +117,11 @@ namespace PetkusApplication.Views
             ResultsDataGrid.ItemsSource = PonudaItems; // Bind ObservableCollection
         }
 
+        private void DataGridRow_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // Logic for handling mouse left button up event on DataGridRow
+        }
+
         private void ResultsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
@@ -151,79 +151,100 @@ namespace PetkusApplication.Views
                             var row = GetRowFromFabrickiKod(code);
                             if (row != null)
                             {
-                                blinkingRows.Add(row);
-                                var animation = (Storyboard)FindResource("BlinkingAnimation");
-                                animation.Begin(row, true);
+                                var result = MessageBox.Show($"Do you want to select {code} instead?", "Related Item", MessageBoxButton.YesNo);
+                                if (result == MessageBoxResult.Yes)
+                                {
+                                    row.IsSelected = true;
+                                }
+
+                                StartBlinkingAnimation(row);
                             }
                         }
                     }
-                    else if (relatedCodes.Count > 0)
+                    else
                     {
-                        // Ako treba automatski izabrati prvi kod
-                        var firstCode = relatedCodes.First();
-                        var row = GetRowFromFabrickiKod(firstCode);
-                        if (row != null)
+                        foreach (var code in relatedCodes)
                         {
-                            ResultsDataGrid.SelectedItems.Add(row.Item);
+                            var row = GetRowFromFabrickiKod(code);
+                            if (row != null)
+                            {
+                                row.IsSelected = true;
+                                StartBlinkingAnimation(row);
+                            }
                         }
                     }
                 }
             }
+
+            // Transfer selected rows to GroupedDataGrid
+            TransferSelectedRowsToGroupedDataGrid();
+        }
+
+        private void TransferSelectedRowsToGroupedDataGrid()
+        {
+            var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
+            foreach (var selectedItem in selectedItems)
+            {
+                var existingItem = GroupedItems.FirstOrDefault(i => i.GroupName == selectedItem.Fabricki_kod);
+                if (existingItem == null)
+                {
+                    GroupedItems.Add(new GroupedItem
+                    {
+                        Opis = selectedItem.Opis,
+                        GroupName = selectedItem.Fabricki_kod,
+                        Quantity = 0 // Initial quantity
+                    });
+                }
+            }
+        }
+
+        private void StartBlinkingAnimation(DataGridRow row)
+        {
+            var animation = (Storyboard)FindResource("BlinkingAnimation");
+            animation.Begin(row, true); // true za kontrolu kadra
+            blinkingRows.Add(row); // Dodajemo u listu trepćućih redova
         }
 
         private DataGridRow GetRowFromFabrickiKod(string fabrickiKod)
         {
             foreach (var item in ResultsDataGrid.Items)
             {
-                if (((PonudaItem)item).Fabricki_kod == fabrickiKod)
+                var row = ResultsDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                if (row != null)
                 {
-                    return (DataGridRow)ResultsDataGrid.ItemContainerGenerator.ContainerFromItem(item);
+                    var cellContent = ResultsDataGrid.Columns[0].GetCellContent(row);
+                    if (cellContent is TextBlock textBlock && textBlock.Text == fabrickiKod)
+                    {
+                        return row;
+                    }
                 }
             }
             return null;
         }
 
-        private void DataGridRow_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var row = sender as DataGridRow;
-            if (row != null && blinkingRows.Contains(row))
-            {
-                var animation = (Storyboard)FindResource("BlinkingAnimation");
-                animation.Stop(row);
-                blinkingRows.Remove(row);
-                ResultsDataGrid.SelectedItems.Add(row.Item);
-            }
-        }
+            List<PonudaItem> selectedItems = new List<PonudaItem>();
 
-        private void TransferSelectedRows_Click(object sender, RoutedEventArgs e)
-        {
-            if (int.TryParse(textBoxNumber.Text, out int brojKomada))
+            foreach (var groupedItem in GroupedItems)
             {
-                var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
-                if (selectedItems.Any())
+                var matchingPonudaItem = PonudaItems.FirstOrDefault(p => p.Fabricki_kod == groupedItem.GroupName);
+                if (matchingPonudaItem != null)
                 {
-                    // Izračunaj vrednosti
-                    foreach (var item in selectedItems)
-                    {
-                        item.Ukupna_puna = brojKomada * item.Puna_cena;
-                        item.Ukupna_rabat = brojKomada * item.Puna_cena * (1 - item.Vrednost_rabata);
-                        item.Ukupna_Disipacija = brojKomada * item.Disipacija;
-                        item.Ukupna_Tezina = brojKomada * item.Tezina;
-                    }
+                    int brojKomada = groupedItem.Quantity;
+                    matchingPonudaItem.Kolicina = brojKomada; // Set the quantity
+                    matchingPonudaItem.Ukupna_puna = brojKomada * matchingPonudaItem.Puna_cena;
+                    matchingPonudaItem.Ukupna_rabat = brojKomada * matchingPonudaItem.Puna_cena * (1 - matchingPonudaItem.Vrednost_rabata);
+                    matchingPonudaItem.Ukupna_Disipacija = brojKomada * matchingPonudaItem.Disipacija;
+                    matchingPonudaItem.Ukupna_Tezina = brojKomada * matchingPonudaItem.Tezina;
 
-                    // Otvorite Racunanjeponude i prosledite FormiranjePonudeView kao parametar
-                    Racunanjeponude racunanjePonude = new Racunanjeponude(this, selectedItems);
-                    racunanjePonude.Show();
-                }
-                else
-                {
-                    MessageBox.Show("No rows selected.");
+                    selectedItems.Add(matchingPonudaItem);
                 }
             }
-            else
-            {
-                MessageBox.Show("Invalid number entered in 'Broj Komada'.");
-            }
+
+            // Otvorite Racunanjeponude i prosledite FormiranjePonudeView kao parametar
+            Racunanjeponude racunanjePonude = new Racunanjeponude(this, selectedItems);
+            racunanjePonude.Show();
         }
     }
 }
