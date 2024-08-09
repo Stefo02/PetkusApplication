@@ -34,6 +34,8 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Added for additional buttons -->
                     </Grid.RowDefinitions>
 
                     <!-- Controls above DataGrid -->
@@ -99,11 +101,14 @@
                         </DataGrid>
                     </ScrollViewer>
 
+                    <!-- Button to confirm selection -->
+                    <Button Content="Potvrdi Izbor" Click="ConfirmSelection_Click" Margin="10" HorizontalAlignment="center" Grid.Row="3" Background="#001f5b" Foreground="White"/>
+
                     <!-- Button to transfer selected rows -->
                     <Button Content="Potvrdi" Click="Button_Click" Margin="10" HorizontalAlignment="center" Grid.Row="2" Background="#001f5b" Foreground="White"/>
 
                     <!-- DataGrid to show grouped related items -->
-                    <DataGrid Grid.Row="3" x:Name="GroupedDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding GroupedItems}">
+                    <DataGrid Grid.Row="4" x:Name="GroupedDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding GroupedItems}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*"/>
                             <DataGridTextColumn Header="Grupa" Binding="{Binding GroupName}" Width="*"/>

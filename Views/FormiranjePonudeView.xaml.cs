@@ -18,13 +18,20 @@ namespace PetkusApplication.Views
         {
             { "3RV2011-0EA10", (new List<string> { "3RT2015-1BB42" }, false) },
             { "3RT2015-1BB42", (new List<string> { "3RV2011-0EA10", "3RV2011-0GA10" }, true) },
-            { "3RV2011-0GA10", (new List<string> { "3RT2015-1BB42" }, false) }
+            { "3RV2011-0GA10", (new List<string> { "3RT2015-1BB42" }, false) },
+            { "3RM1201-1AA04", (new List<string> { "3RV2011-1FA10" }, false) },
+            { "3RV2011-1FA10", (new List<string> { "3RM1201-1AA04" }, false) }
+
         };
 
         private List<DataGridRow> blinkingRows = new List<DataGridRow>();
+        private Dictionary<int, ObservableCollection<PonudaItem>> groupedPonudaItems = new Dictionary<int, ObservableCollection<PonudaItem>>();
+        private int currentGroupId = 0;
 
         public ObservableCollection<PonudaItem> PonudaItems { get; set; }
         public ObservableCollection<GroupedItem> GroupedItems { get; set; }
+
+        private bool itemsGrouped = false;
 
         public FormiranjePonudeView()
         {
@@ -71,7 +78,7 @@ namespace PetkusApplication.Views
                         }
                         return "Reverzibilni_D_SI";
                     }
-                    return "sp_get_d_si";
+                    return "sp_get_direktno_si";
                 }
                 return "sp_get_direktno";
             }
@@ -117,16 +124,12 @@ namespace PetkusApplication.Views
             ResultsDataGrid.ItemsSource = PonudaItems; // Bind ObservableCollection
         }
 
-        private void DataGridRow_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            // Logic for handling mouse left button up event on DataGridRow
-        }
 
         private void ResultsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
 
-            // Zaustavi animaciju za prethodne trepćuće redove
+            // Stop animation for previous blinking rows
             foreach (var row in blinkingRows)
             {
                 var animation = (Storyboard)FindResource("BlinkingAnimation");
@@ -137,63 +140,129 @@ namespace PetkusApplication.Views
             if (selectedItems.Count > 0)
             {
                 var selectedItem = selectedItems.First();
+                MessageBox.Show($"Selected item: {selectedItem.Fabricki_kod}");
 
-                // Pronađi povezane kodove
                 if (relatedItemsMapping.ContainsKey(selectedItem.Fabricki_kod))
                 {
                     var (relatedCodes, offerChoice) = relatedItemsMapping[selectedItem.Fabricki_kod];
 
-                    if (offerChoice && relatedCodes.Count > 1)
+                    MessageBox.Show($"Related codes: {string.Join(", ", relatedCodes)}, Offer choice: {offerChoice}");
+
+                    if (offerChoice)
                     {
-                        // Ako treba ponuditi izbor između dva koda
+                        // Animate related rows
                         foreach (var code in relatedCodes)
                         {
                             var row = GetRowFromFabrickiKod(code);
                             if (row != null)
                             {
-                                var result = MessageBox.Show($"Do you want to select {code} instead?", "Related Item", MessageBoxButton.YesNo);
-                                if (result == MessageBoxResult.Yes)
-                                {
-                                    row.IsSelected = true;
-                                }
-
                                 StartBlinkingAnimation(row);
+                                MessageBox.Show($"Started blinking animation for row with code: {code}");
                             }
                         }
                     }
                     else
                     {
+                        // Automatically select related rows without animation
                         foreach (var code in relatedCodes)
                         {
                             var row = GetRowFromFabrickiKod(code);
                             if (row != null)
                             {
                                 row.IsSelected = true;
-                                StartBlinkingAnimation(row);
+                                MessageBox.Show($"Automatically selected row with code: {code}");
                             }
                         }
                     }
                 }
             }
-
-            // Transfer selected rows to GroupedDataGrid
-            TransferSelectedRowsToGroupedDataGrid();
         }
 
-        private void TransferSelectedRowsToGroupedDataGrid()
+
+        private void HandleGrouping(PonudaItem selectedItem, List<PonudaItem> selectedItems)
         {
-            var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
+            if (selectedItems.Count > 0)
+            {
+                MessageBox.Show("Handling grouping for selected items.");
+
+                // Clear previous selections
+                foreach (var item in PonudaItems)
+                {
+                    item.IsSelected = false;
+                }
+
+                // Mark the selected item as selected
+                selectedItem.IsSelected = true;
+                MessageBox.Show($"Marked item as selected: {selectedItem.Fabricki_kod}");
+
+                // Check if we need to create a new group
+                if (relatedItemsMapping.ContainsKey(selectedItem.Fabricki_kod))
+                {
+                    var (relatedCodes, offerChoice) = relatedItemsMapping[selectedItem.Fabricki_kod];
+                    var relatedItems = PonudaItems.Where(p => relatedCodes.Contains(p.Fabricki_kod)).ToList();
+
+                    if (offerChoice)
+                    {
+                        // Add the first related item to the group
+                        if (selectedItems.Count > 1)
+                        {
+                            var firstRelatedItem = relatedItems.FirstOrDefault(p => !selectedItems.Contains(p));
+                            if (firstRelatedItem != null)
+                            {
+                                selectedItems.Add(firstRelatedItem);
+                                MessageBox.Show($"Added related item to group: {firstRelatedItem.Fabricki_kod}");
+                            }
+                        }
+                    }
+
+                    // Create a new group with the selected items
+                    CreateNewGroup(selectedItems);
+                }
+            }
+        }
+
+        private void CreateNewGroup(List<PonudaItem> selectedItems)
+        {
+            currentGroupId++;
+            var newGroup = new ObservableCollection<PonudaItem>(selectedItems);
+
             foreach (var selectedItem in selectedItems)
             {
-                var existingItem = GroupedItems.FirstOrDefault(i => i.GroupName == selectedItem.Fabricki_kod);
-                if (existingItem == null)
+                var relatedCodes = relatedItemsMapping.ContainsKey(selectedItem.Fabricki_kod)
+                    ? relatedItemsMapping[selectedItem.Fabricki_kod].RelatedCodes
+                    : new List<string>();
+
+                foreach (var code in relatedCodes)
                 {
-                    GroupedItems.Add(new GroupedItem
+                    var relatedItem = PonudaItems.FirstOrDefault(p => p.Fabricki_kod == code);
+                    if (relatedItem != null && !newGroup.Contains(relatedItem))
                     {
-                        Opis = selectedItem.Opis,
-                        GroupName = selectedItem.Fabricki_kod,
-                        Quantity = 0 // Initial quantity
-                    });
+                        newGroup.Add(relatedItem);
+                    }
+                }
+            }
+
+            groupedPonudaItems.Add(currentGroupId, newGroup);
+            UpdateGroupedDataGrid();
+        }
+
+        private void UpdateGroupedDataGrid()
+        {
+            GroupedItems.Clear();
+            foreach (var group in groupedPonudaItems.Values)
+            {
+                foreach (var item in group)
+                {
+                    var existingItem = GroupedItems.FirstOrDefault(i => i.GroupName == item.Fabricki_kod);
+                    if (existingItem == null)
+                    {
+                        GroupedItems.Add(new GroupedItem
+                        {
+                            Opis = item.Opis,
+                            GroupName = item.Fabricki_kod,
+                            Quantity = 0 // Initial quantity
+                        });
+                    }
                 }
             }
         }
@@ -201,26 +270,162 @@ namespace PetkusApplication.Views
         private void StartBlinkingAnimation(DataGridRow row)
         {
             var animation = (Storyboard)FindResource("BlinkingAnimation");
-            animation.Begin(row, true); // true za kontrolu kadra
-            blinkingRows.Add(row); // Dodajemo u listu trepćućih redova
+            animation.Begin(row, true);
+            blinkingRows.Add(row);
+            MessageBox.Show($"Blinking animation started for row: {row}");
         }
 
-        private DataGridRow GetRowFromFabrickiKod(string fabrickiKod)
+        private DataGridRow GetRowFromFabrickiKod(string fabricki_kod)
         {
             foreach (var item in ResultsDataGrid.Items)
             {
-                var row = ResultsDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-                if (row != null)
+                if (item is PonudaItem ponudaItem && ponudaItem.Fabricki_kod == fabricki_kod)
                 {
-                    var cellContent = ResultsDataGrid.Columns[0].GetCellContent(row);
-                    if (cellContent is TextBlock textBlock && textBlock.Text == fabrickiKod)
-                    {
-                        return row;
-                    }
+                    return ResultsDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
                 }
             }
             return null;
         }
+
+        private void DataGridRow_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var clickedRow = sender as DataGridRow;
+            var clickedItem = clickedRow?.Item as PonudaItem;
+
+            if (clickedItem != null && blinkingRows.Contains(clickedRow))
+            {
+                // Stop blinking for all rows
+                foreach (var row in blinkingRows)
+                {
+                    var animation = (Storyboard)FindResource("BlinkingAnimation");
+                    animation.Stop(row);
+                }
+                blinkingRows.Clear();
+
+                // Set the selected item and handle grouping
+                var selectedItem = ResultsDataGrid.SelectedItem as PonudaItem;
+
+                if (selectedItem != null && relatedItemsMapping.ContainsKey(selectedItem.Fabricki_kod))
+                {
+                    var (relatedCodes, offerChoice) = relatedItemsMapping[selectedItem.Fabricki_kod];
+
+                    if (offerChoice && relatedCodes.Contains(clickedItem.Fabricki_kod))
+                    {
+                        selectedItem.IsSelected = true;
+                        clickedItem.IsSelected = true;
+
+                        // Create a new group with the selected items
+                        CreateNewGroup(new List<PonudaItem> { selectedItem, clickedItem });
+                    }
+                }
+            }
+        }
+
+        private void ConfirmSelection_Click(object sender, RoutedEventArgs e)
+        {
+            if (!itemsGrouped)
+            {
+                var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
+                MessageBox.Show($"Number of items selected: {selectedItems.Count}");
+
+                if (selectedItems.Count == 0)
+                {
+                    MessageBox.Show("Molimo izaberite bar jedan red.");
+                    return;
+                }
+
+                var selectedItem = selectedItems.First();
+                MessageBox.Show($"Selected item for grouping: {selectedItem.Fabricki_kod}");
+
+                // Stop blinking animations
+                foreach (var row in blinkingRows)
+                {
+                    var animation = (Storyboard)FindResource("BlinkingAnimation");
+                    animation.Stop(row);
+                }
+                blinkingRows.Clear();
+
+                if (relatedItemsMapping.ContainsKey(selectedItem.Fabricki_kod))
+                {
+                    var (relatedCodes, offerChoice) = relatedItemsMapping[selectedItem.Fabricki_kod];
+                    MessageBox.Show($"Related codes: {string.Join(", ", relatedCodes)}, Offer choice: {offerChoice}");
+
+                    if (offerChoice)
+                    {
+                        foreach (var item in PonudaItems)
+                        {
+                            item.IsSelected = false;
+                        }
+
+                        selectedItem.IsSelected = true;
+                        MessageBox.Show($"Marked selected item as selected: {selectedItem.Fabricki_kod}");
+
+                        var selectedRelatedItems = selectedItems.Where(i => relatedCodes.Contains(i.Fabricki_kod)).ToList();
+                        selectedItems.AddRange(selectedRelatedItems);
+
+                        MessageBox.Show($"Total items in the new group: {selectedItems.Count}");
+
+                        CreateNewGroup(selectedItems); // Create a new group and update GroupedItems
+                    }
+                    else
+                    {
+                        selectedItem.IsSelected = true;
+                    }
+
+                    // Add selected items to GroupedItems without removing from PonudaItems
+                    foreach (var item in selectedItems)
+                    {
+                        if (!GroupedItems.Any(g => g.GroupName == item.Fabricki_kod))
+                        {
+                            GroupedItems.Add(new GroupedItem
+                            {
+                                Opis = item.Opis,
+                                GroupName = item.Fabricki_kod,
+                                Quantity = 1 // Or calculate based on how many times it's in selectedItems
+                            });
+                        }
+                        else
+                        {
+                            var existingItem = GroupedItems.First(g => g.GroupName == item.Fabricki_kod);
+                            existingItem.Quantity++;
+                        }
+                    }
+
+                    // Refresh ResultsDataGrid to show current state
+                    ResultsDataGrid.ItemsSource = null; // Reset ItemsSource to force refresh
+                    ResultsDataGrid.ItemsSource = PonudaItems;
+                    ResultsDataGrid.Items.Refresh();
+
+                    MessageBox.Show($"Total items in ResultsDataGrid: {PonudaItems.Count}");
+                    MessageBox.Show($"Total items in GroupedDataGrid: {GroupedItems.Count}");
+
+                    itemsGrouped = true;
+                }
+            }
+            else
+            {
+                // Process for ungrouping items
+                foreach (var groupedItem in GroupedItems.ToList())
+                {
+                    var matchingPonudaItem = PonudaItems.FirstOrDefault(p => p.Fabricki_kod == groupedItem.GroupName);
+                    if (matchingPonudaItem != null)
+                    {
+                        GroupedItems.Remove(groupedItem);
+                        MessageBox.Show($"Moved item back to ResultsDataGrid: {matchingPonudaItem.Fabricki_kod}");
+                    }
+                }
+
+                ResultsDataGrid.ItemsSource = null; // Reset ItemsSource to force refresh
+                ResultsDataGrid.ItemsSource = PonudaItems;
+                ResultsDataGrid.Items.Refresh();
+
+                MessageBox.Show($"Total items in ResultsDataGrid after moving: {PonudaItems.Count}");
+                MessageBox.Show($"Total items in GroupedDataGrid after ungrouping: {GroupedItems.Count}");
+                itemsGrouped = false;
+            }
+        }
+
+
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -231,19 +436,14 @@ namespace PetkusApplication.Views
                 var matchingPonudaItem = PonudaItems.FirstOrDefault(p => p.Fabricki_kod == groupedItem.GroupName);
                 if (matchingPonudaItem != null)
                 {
-                    int brojKomada = groupedItem.Quantity;
-                    matchingPonudaItem.Quantity = brojKomada; // Set the quantity
-                    matchingPonudaItem.Ukupna_puna = brojKomada * matchingPonudaItem.Puna_cena;
-                    matchingPonudaItem.Ukupna_rabat = brojKomada * matchingPonudaItem.Puna_cena * (1 - matchingPonudaItem.Vrednost_rabata);
-                    matchingPonudaItem.Ukupna_Disipacija = brojKomada * matchingPonudaItem.Disipacija;
-                    matchingPonudaItem.Ukupna_Tezina = brojKomada * matchingPonudaItem.Tezina;
-
                     selectedItems.Add(matchingPonudaItem);
                 }
             }
 
-            Racunanjeponude racunanjePonude = new Racunanjeponude(this, selectedItems);
-            racunanjePonude.Show();
+            // Now you have the selectedItems list to be used as needed
         }
     }
+
+
 }
+
