@@ -42,7 +42,7 @@
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
                         <StackPanel Margin="5">
                             <TextBlock Text="Način pokretanja" HorizontalAlignment="Center" Margin="3" />
-                            <ComboBox x:Name="comboBox1" Width="100" SelectionChanged="ComboBox_SelectionChanged">
+                            <ComboBox x:Name="comboBox1" Width="100">
                                 <ComboBoxItem Content="Direktno" />
                                 <ComboBoxItem Content="Zvezda-Trougao" />
                                 <ComboBoxItem Content="Soft"/>
@@ -50,8 +50,8 @@
                             </ComboBox>
                         </StackPanel>
                         <StackPanel Margin="5">
-                            <TextBlock Text="Proizvođač" HorizontalAlignment="Center" Margin="3"/>
-                            <ComboBox x:Name="comboBox2" Width="100" SelectionChanged="ComboBox_SelectionChanged">
+                            <TextBlock Text="Proizvođač" HorizontalAlignment="Center" Margin="3" x:Name="ProizvodacTextBlock"/>
+                            <ComboBox x:Name="comboBox2" Width="100">
                                 <ComboBoxItem Content="Siemens" />
                                 <ComboBoxItem Content="Schneider" />
                                 <ComboBoxItem Content="Danfoss" />
@@ -59,14 +59,14 @@
                         </StackPanel>
                         <StackPanel Margin="5">
                             <TextBlock Text="Broj smerova" HorizontalAlignment="Center" Margin="3"/>
-                            <ComboBox x:Name="comboBox3" Width="100" SelectionChanged="ComboBox_SelectionChanged">
+                            <ComboBox x:Name="comboBox3" Width="100">
                                 <ComboBoxItem Content="Direktno" />
                                 <ComboBoxItem Content="Reverzibilni" />
                             </ComboBox>
                         </StackPanel>
                         <StackPanel Margin="5">
                             <TextBlock Text="Snaga" HorizontalAlignment="Center" Margin="3"/>
-                            <ComboBox x:Name="comboBox4" Width="100" SelectionChanged="ComboBox_SelectionChanged">
+                            <ComboBox x:Name="comboBox4" Width="100">
                                 <ComboBoxItem Content="0,09kW" />
                                 <ComboBoxItem Content="0,12kW" />
                                 <ComboBoxItem Content="0,37kW" />

@@ -41,6 +41,11 @@ namespace PetkusApplication.Views
             GroupedItems = new ObservableCollection<GroupedItem>();
             DataContext = this; // Set DataContext for data binding
             GroupedDataGrid.ItemsSource = GroupedItems;
+
+            comboBox1.SelectionChanged += ComboBox1_SelectionChanged;
+            comboBox2.SelectionChanged += ComboBox2_SelectionChanged;
+            comboBox3.SelectionChanged += ComboBox3_SelectionChanged;
+            comboBox4.SelectionChanged += ComboBox4_SelectionChanged;
         }
 
         private void InitializeDatabaseConnection()
@@ -50,7 +55,69 @@ namespace PetkusApplication.Views
             connection.Open();
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ComboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string selectedNacinPokretanja = (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+            if (string.IsNullOrEmpty(selectedNacinPokretanja))
+            {
+                return;
+            }
+
+            // Resetiramo ostale ComboBox-ove
+            ResetComboBoxes(comboBox2, comboBox3, comboBox4);
+
+            if (selectedNacinPokretanja == "Direktno")
+            {
+                comboBox2.Visibility = Visibility.Visible;
+                ProizvodacTextBlock.Visibility = Visibility.Visible;
+
+                comboBox2.Items.Clear();
+                comboBox2.Items.Add(new ComboBoxItem { Content = "Siemens" });
+                comboBox2.Items.Add(new ComboBoxItem { Content = "Schneider" });
+
+                comboBox3.Visibility = Visibility.Visible;
+                comboBox4.Visibility = Visibility.Visible;
+            }
+            else if (selectedNacinPokretanja == "Soft")
+            {
+                comboBox2.Visibility = Visibility.Collapsed;
+                ProizvodacTextBlock.Visibility = Visibility.Collapsed;
+
+                comboBox3.Visibility = Visibility.Visible;
+                comboBox4.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                comboBox2.Visibility = Visibility.Visible;
+                ProizvodacTextBlock.Visibility = Visibility.Visible;
+
+                comboBox2.Items.Clear();
+                comboBox2.Items.Add(new ComboBoxItem { Content = "Siemens" });
+                comboBox2.Items.Add(new ComboBoxItem { Content = "Schneider" });
+                comboBox2.Items.Add(new ComboBoxItem { Content = "Danfoss" });
+
+                comboBox3.Visibility = Visibility.Visible;
+                comboBox4.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ComboBox2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateProcedure();
+        }
+
+        private void ComboBox3_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateProcedure();
+        }
+
+        private void ComboBox4_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateProcedure();
+        }
+
+        private void UpdateProcedure()
         {
             string procedureName = GetProcedureNameForSelectedOptions();
             if (procedureName != null)
@@ -59,12 +126,20 @@ namespace PetkusApplication.Views
             }
         }
 
+        private void ResetComboBoxes(params ComboBox[] comboBoxes)
+        {
+            foreach (var cb in comboBoxes)
+            {
+                cb.SelectedIndex = -1;
+            }
+        }
+
         private string GetProcedureNameForSelectedOptions()
         {
-            string selectedNacinPokretanja = (comboBox1.SelectedItem as ComboBoxItem)?.Content.ToString();
-            string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content.ToString();
-            string selectedBrojSmerova = (comboBox3.SelectedItem as ComboBoxItem)?.Content.ToString();
-            string selectedSnaga = (comboBox4.SelectedItem as ComboBoxItem)?.Content.ToString();
+            string selectedNacinPokretanja = (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            string selectedBrojSmerova = (comboBox3.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            string selectedSnaga = (comboBox4.SelectedItem as ComboBoxItem)?.Content?.ToString();
 
             if (selectedNacinPokretanja == "Direktno")
             {
@@ -78,9 +153,25 @@ namespace PetkusApplication.Views
                         }
                         return "Reverzibilni_D_SI";
                     }
-                    return "sp_get_direktno_si";
+                    return "Direktini_d_si";
+                }
+                else if (selectedProizvodac == "Schneider")
+                {
+                    return "Direktini_d_se";
                 }
                 return "sp_get_direktno";
+            }
+            else if (selectedNacinPokretanja == "Zvezda-Trougao")
+            {
+                return "sp_get_yd";
+            }
+            else if (selectedNacinPokretanja == "Soft")
+            {
+                return "sp_get_soft";
+            }
+            else if (selectedNacinPokretanja == "Frekventno")
+            {
+                return "sp_get_fc";
             }
 
             return null;
@@ -106,13 +197,15 @@ namespace PetkusApplication.Views
                 {
                     Fabricki_kod = row["Fabricki_kod"].ToString(),
                     Opis = row["Opis"].ToString(),
-                    Puna_cena = Convert.ToDecimal(row["Puna_cena"]),
+
+                    Puna_cena = row["Puna_cena"] != DBNull.Value ? Convert.ToDecimal(row["Puna_cena"]) : 0m,
                     Dimenzije = row["Dimenzije"].ToString(),
-                    Disipacija = Convert.ToDecimal(row["Disipacija"]),
-                    Tezina = Convert.ToDecimal(row["Tezina"]),
+                    Disipacija = row["Disipacija"] != DBNull.Value ? Convert.ToDecimal(row["Disipacija"]) : 0m,
+                    Tezina = row["Tezina"] != DBNull.Value ? Convert.ToDecimal(row["Tezina"]) : 0m,
                     IsSelected = false,
-                    Kolicina = Convert.ToInt32(row["Kolicina"]),
-                    Vrednost_rabata = Convert.ToDecimal(row["Vrednost_rabata"]),
+                    Kolicina = row["Kolicina"] != DBNull.Value ? Convert.ToInt32(row["Kolicina"]) : 0,
+                    Vrednost_rabata = row["Vrednost_rabata"] != DBNull.Value ? Convert.ToDecimal(row["Vrednost_rabata"]) : 0m,
+
                     RelatedFabricki_kod = relatedItemsMapping.ContainsKey(row["Fabricki_kod"].ToString())
                         ? relatedItemsMapping[row["Fabricki_kod"].ToString()].RelatedCodes
                         : new List<string>()
@@ -350,43 +443,32 @@ namespace PetkusApplication.Views
                     var (relatedCodes, offerChoice) = relatedItemsMapping[selectedItem.Fabricki_kod];
                     MessageBox.Show($"Related codes: {string.Join(", ", relatedCodes)}, Offer choice: {offerChoice}");
 
-                    if (offerChoice)
+                    // Collect all related items including newly selected items
+                    var relatedItems = new HashSet<PonudaItem>(selectedItems);
+                    foreach (var code in relatedCodes)
                     {
-                        foreach (var item in PonudaItems)
+                        var relatedItem = PonudaItems.FirstOrDefault(p => p.Fabricki_kod == code);
+                        if (relatedItem != null && !relatedItems.Contains(relatedItem))
                         {
-                            item.IsSelected = false;
+                            relatedItems.Add(relatedItem);
                         }
-
-                        selectedItem.IsSelected = true;
-                        MessageBox.Show($"Marked selected item as selected: {selectedItem.Fabricki_kod}");
-
-                        var selectedRelatedItems = selectedItems.Where(i => relatedCodes.Contains(i.Fabricki_kod)).ToList();
-                        selectedItems.AddRange(selectedRelatedItems);
-
-                        MessageBox.Show($"Total items in the new group: {selectedItems.Count}");
-
-                        CreateNewGroup(selectedItems); // Create a new group and update GroupedItems
-                    }
-                    else
-                    {
-                        selectedItem.IsSelected = true;
                     }
 
-                    // Add selected items to GroupedItems without removing from PonudaItems
-                    foreach (var item in selectedItems)
+                    // Add to GroupedItems if not already present
+                    foreach (var item in relatedItems)
                     {
-                        if (!GroupedItems.Any(g => g.GroupName == item.Fabricki_kod))
+                        var existingItem = GroupedItems.FirstOrDefault(g => g.GroupName == item.Fabricki_kod);
+                        if (existingItem == null)
                         {
                             GroupedItems.Add(new GroupedItem
                             {
                                 Opis = item.Opis,
                                 GroupName = item.Fabricki_kod,
-                                Quantity = 1 // Or calculate based on how many times it's in selectedItems
+                                Quantity = 1 // Set initial quantity
                             });
                         }
                         else
                         {
-                            var existingItem = GroupedItems.First(g => g.GroupName == item.Fabricki_kod);
                             existingItem.Quantity++;
                         }
                     }
@@ -401,11 +483,17 @@ namespace PetkusApplication.Views
 
                     itemsGrouped = true;
                 }
+                else
+                {
+                    selectedItem.IsSelected = true;
+                }
             }
             else
             {
                 // Process for ungrouping items
-                foreach (var groupedItem in GroupedItems.ToList())
+                var itemsToRemove = GroupedItems.ToList();
+
+                foreach (var groupedItem in itemsToRemove)
                 {
                     var matchingPonudaItem = PonudaItems.FirstOrDefault(p => p.Fabricki_kod == groupedItem.GroupName);
                     if (matchingPonudaItem != null)
@@ -424,8 +512,6 @@ namespace PetkusApplication.Views
                 itemsGrouped = false;
             }
         }
-
-
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {

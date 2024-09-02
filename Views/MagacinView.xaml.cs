@@ -39,8 +39,6 @@ namespace PetkusApplication.Views
             { "fc_si_dodatna_oprema", "Dodatna oprema FC SI" },
             { "fc_si_frekventni_regulatori", "Frekventni regulatori FC SI" },
             { "fc_si_zastita", "Zaštita FC SI" },
-            { "sklopka_d_se", "Sklopka D SE" },
-            { "sklopka_d_si", "Sklopka D SI" },
             { "soft_bimetali", "Bimetali Soft" },
             { "soft_dodatna_oprema", "Dodatna oprema Soft" },
             { "soft_sklopke", "Sklopke Soft" },
