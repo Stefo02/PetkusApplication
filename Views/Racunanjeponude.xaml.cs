@@ -39,10 +39,16 @@ namespace PetkusApplication.Views
 
                 if (tableName != null)
                 {
-                    // Ažuriraj kolonu "Kolicina" sa vrednošću iz "KolicinaZaNarucivanje"
+                    // Preuzmi trenutnu količinu iz baze podataka
+                    int currentQuantity = GetCurrentQuantity(tableName, item.Fabricki_kod);
+
+                    // Izračunaj novu količinu kao zbir trenutne količine i vrednosti iz "KolicinaZaNarucivanje"
+                    int newQuantity = currentQuantity + item.KolicinaZaNarucivanje;
+
+                    // Ažuriraj kolonu "Kolicina" sa novom vrednošću
                     using (var command = new MySqlCommand($"UPDATE {tableName} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
                     {
-                        command.Parameters.AddWithValue("@Kolicina", item.KolicinaZaNarucivanje);
+                        command.Parameters.AddWithValue("@Kolicina", newQuantity);
                         command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
                         command.ExecuteNonQuery();
                     }
@@ -56,7 +62,6 @@ namespace PetkusApplication.Views
             // Izvoz podataka u Excel
             GenerateExcelFile(selectedItems);
         }
-
 
         private string FindTableWithFabrickiKod(string fabrickiKod)
         {
