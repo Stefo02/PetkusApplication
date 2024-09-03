@@ -67,39 +67,127 @@ namespace PetkusApplication.Views
             // Resetiramo ostale ComboBox-ove
             ResetComboBoxes(comboBox2, comboBox3, comboBox4);
 
-            if (selectedNacinPokretanja == "Direktno")
+            switch (selectedNacinPokretanja)
             {
-                comboBox2.Visibility = Visibility.Visible;
-                ProizvodacTextBlock.Visibility = Visibility.Visible;
-
-                comboBox2.Items.Clear();
-                comboBox2.Items.Add(new ComboBoxItem { Content = "Siemens" });
-                comboBox2.Items.Add(new ComboBoxItem { Content = "Schneider" });
-
-                comboBox3.Visibility = Visibility.Visible;
-                comboBox4.Visibility = Visibility.Visible;
+                case "Direktno":
+                    SetupComboBoxForDirektno();
+                    break;
+                case "Zvezda-Trougao":
+                    SetupComboBoxForZvezdaTrougao();
+                    break;
+                case "Soft":
+                    SetupComboBoxForSoft();
+                    break;
+                case "Frekventno":
+                    SetupComboBoxForFrekventno();
+                    break;
             }
-            else if (selectedNacinPokretanja == "Soft")
-            {
-                comboBox2.Visibility = Visibility.Collapsed;
-                ProizvodacTextBlock.Visibility = Visibility.Collapsed;
 
-                comboBox3.Visibility = Visibility.Visible;
-                comboBox4.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                comboBox2.Visibility = Visibility.Visible;
-                ProizvodacTextBlock.Visibility = Visibility.Visible;
+            // Prikazujemo sve ComboBox-ove
+            ShowAllComboBoxes();
 
-                comboBox2.Items.Clear();
-                comboBox2.Items.Add(new ComboBoxItem { Content = "Siemens" });
-                comboBox2.Items.Add(new ComboBoxItem { Content = "Schneider" });
-                comboBox2.Items.Add(new ComboBoxItem { Content = "Danfoss" });
+            // Pozivamo proceduru odmah nakon izbora iz prvog ComboBox-a
+            UpdateProcedure();
+        }
 
-                comboBox3.Visibility = Visibility.Visible;
-                comboBox4.Visibility = Visibility.Visible;
-            }
+        private void ShowAllComboBoxes()
+        {
+            comboBox2.Visibility = Visibility.Visible;
+            ProizvodacTextBlock.Visibility = Visibility.Visible;
+            comboBox3.Visibility = Visibility.Visible;
+            comboBox4.Visibility = Visibility.Visible;
+        }
+
+        private void SetupComboBoxForDirektno()
+        {
+            comboBox2.Items.Clear();
+            comboBox2.Items.Add(new ComboBoxItem { Content = "Siemens" });
+            comboBox2.Items.Add(new ComboBoxItem { Content = "Schneider" });
+
+            SetupComboBox3ForDirektno();
+            SetupComboBox4ForDirektno();
+        }
+
+        private void SetupComboBoxForZvezdaTrougao()
+        {
+            comboBox2.Items.Clear();
+            comboBox2.Items.Add(new ComboBoxItem { Content = "Siemens" });
+            comboBox2.Items.Add(new ComboBoxItem { Content = "Schneider" });
+
+            SetupComboBox3ForZvezdaTrougao();
+            SetupComboBox4ForZvezdaTrougao();
+        }
+
+        private void SetupComboBoxForSoft()
+        {
+            comboBox2.Items.Clear();
+            // Dodajte opcije za Soft ako su potrebne
+
+            SetupComboBox3ForSoft();
+            SetupComboBox4ForSoft();
+        }
+
+        private void SetupComboBoxForFrekventno()
+        {
+            comboBox2.Items.Clear();
+            comboBox2.Items.Add(new ComboBoxItem { Content = "Siemens" });
+            comboBox2.Items.Add(new ComboBoxItem { Content = "Schneider" });
+            comboBox2.Items.Add(new ComboBoxItem { Content = "Danfoss" });
+
+            SetupComboBox3ForFrekventno();
+            SetupComboBox4ForFrekventno();
+        }
+
+        private void SetupComboBox3ForDirektno()
+        {
+            comboBox3.Items.Clear();
+            comboBox3.Items.Add(new ComboBoxItem { Content = "Direktno" });
+            comboBox3.Items.Add(new ComboBoxItem { Content = "Reverzibilni" });
+        }
+
+        private void SetupComboBox4ForDirektno()
+        {
+            comboBox4.Items.Clear();
+            comboBox4.Items.Add(new ComboBoxItem { Content = "0,09kW" });
+            comboBox4.Items.Add(new ComboBoxItem { Content = "0,12kW" });
+            comboBox4.Items.Add(new ComboBoxItem { Content = "0,37kW" });
+            comboBox4.Items.Add(new ComboBoxItem { Content = "110kW" });
+        }
+
+        private void SetupComboBox3ForZvezdaTrougao()
+        {
+            comboBox3.Items.Clear();
+            // Dodajte opcije za Zvezda-Trougao ako su potrebne
+        }
+
+        private void SetupComboBox4ForZvezdaTrougao()
+        {
+            comboBox4.Items.Clear();
+            // Dodajte opcije za Zvezda-Trougao ako su potrebne
+        }
+
+        private void SetupComboBox3ForSoft()
+        {
+            comboBox3.Items.Clear();
+            // Dodajte opcije za Soft ako su potrebne
+        }
+
+        private void SetupComboBox4ForSoft()
+        {
+            comboBox4.Items.Clear();
+            // Dodajte opcije za Soft ako su potrebne
+        }
+
+        private void SetupComboBox3ForFrekventno()
+        {
+            comboBox3.Items.Clear();
+            // Dodajte opcije za Frekventno ako su potrebne
+        }
+
+        private void SetupComboBox4ForFrekventno()
+        {
+            comboBox4.Items.Clear();
+            // Dodajte opcije za Frekventno ako su potrebne
         }
 
         private void ComboBox2_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -141,40 +229,55 @@ namespace PetkusApplication.Views
             string selectedBrojSmerova = (comboBox3.SelectedItem as ComboBoxItem)?.Content?.ToString();
             string selectedSnaga = (comboBox4.SelectedItem as ComboBoxItem)?.Content?.ToString();
 
-            if (selectedNacinPokretanja == "Direktno")
+            switch (selectedNacinPokretanja)
             {
-                if (selectedProizvodac == "Siemens")
-                {
-                    if (selectedBrojSmerova == "Reverzibilni")
+                case "Direktno":
+                    if (selectedProizvodac == "Siemens")
                     {
-                        if (selectedSnaga == "0,09kW")
+                        if (selectedBrojSmerova == "Reverzibilni")
                         {
-                            return "Reverzibilni_D_SI_0_09kW";
+                            if (selectedSnaga == "0,09kW")
+                            {
+                                return "Reverzibilni_D_SI_0_09kW";
+                            }
+                            return "Reverzibilni_D_SI";
                         }
-                        return "Reverzibilni_D_SI";
+                        return "Direktini_d_si";
                     }
-                    return "Direktini_d_si";
-                }
-                else if (selectedProizvodac == "Schneider")
-                {
-                    return "Direktini_d_se";
-                }
-                return "sp_get_direktno";
+                    else if (selectedProizvodac == "Schneider")
+                    {
+                        return "Direktini_d_se";
+                    }
+                    return "sp_get_direktno";
+                case "Zvezda-Trougao":
+                    if (selectedProizvodac == "Siemens")
+                    {
+                        return "YD_si_start";
+                    }
+                    else if (selectedProizvodac == "Schneider")
+                    {
+                        return "YD_se_start";
+                    }
+                    return "sp_get_yd";
+                case "Soft":
+                    return "sp_get_soft";
+                case "Frekventno":
+                    if (selectedProizvodac == "Siemens")
+                    {
+                        return "FC_si";
+                    }
+                    else if (selectedProizvodac == "Schneider")
+                    {
+                        return "FC_se";
+                    }
+                    else if (selectedProizvodac == "Danfoss")
+                    {
+                        return "FC_d";
+                    }
+                    return "sp_get_fc";
+                default:
+                    return null;
             }
-            else if (selectedNacinPokretanja == "Zvezda-Trougao")
-            {
-                return "sp_get_yd";
-            }
-            else if (selectedNacinPokretanja == "Soft")
-            {
-                return "sp_get_soft";
-            }
-            else if (selectedNacinPokretanja == "Frekventno")
-            {
-                return "sp_get_fc";
-            }
-
-            return null;
         }
 
         private void LoadDataFromProcedure(string procedureName)
