@@ -14,6 +14,8 @@ namespace PetkusApplication.Views
     public partial class FormiranjePonudeView : UserControl
     {
         private MySqlConnection connection;
+        private Dictionary<string, Action> comboBoxSetups;
+        private Dictionary<string, Dictionary<string, Action>> subComboBoxSetups;
         private Dictionary<string, (List<string> RelatedCodes, bool OfferChoice)> relatedItemsMapping = new Dictionary<string, (List<string> RelatedCodes, bool OfferChoice)>
         {
             { "3RV2011-0EA10", (new List<string> { "3RT2015-1BB42" }, false) },
@@ -37,15 +39,11 @@ namespace PetkusApplication.Views
         {
             InitializeComponent();
             InitializeDatabaseConnection();
+            InitializeComboBoxes();
             PonudaItems = new ObservableCollection<PonudaItem>();
             GroupedItems = new ObservableCollection<GroupedItem>();
             DataContext = this; // Set DataContext for data binding
             GroupedDataGrid.ItemsSource = GroupedItems;
-
-            comboBox1.SelectionChanged += ComboBox1_SelectionChanged;
-            comboBox2.SelectionChanged += ComboBox2_SelectionChanged;
-            comboBox3.SelectionChanged += ComboBox3_SelectionChanged;
-            comboBox4.SelectionChanged += ComboBox4_SelectionChanged;
         }
 
         private void InitializeDatabaseConnection()
@@ -55,154 +53,111 @@ namespace PetkusApplication.Views
             connection.Open();
         }
 
-        private void ComboBox1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void InitializeComboBoxes()
         {
-            string selectedNacinPokretanja = (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            comboBoxSetups = new Dictionary<string, Action>
+        {
+            {"Direktno", SetupForDirektno},
+            {"Zvezda-Trougao", SetupForZvezdaTrougao},
+            {"Soft", SetupForSoft},
+            {"Frekventno", SetupForFrekventno}
+        };
 
-            if (string.IsNullOrEmpty(selectedNacinPokretanja))
+            subComboBoxSetups = new Dictionary<string, Dictionary<string, Action>>
+        {
+            {"Direktno", new Dictionary<string, Action>
+                {
+                    {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Direktno", "Reverzibilni"})},
+                    {"comboBox4", () => SetupComboBox(comboBox4, new[] {"0,09kW", "0,12kW", "0,37kW", "110kW"})}
+                }
+            },
+            {"Zvezda-Trougao", new Dictionary<string, Action>
+                {
+                    {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Option1", "Option2"})},
+                    {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Option3", "Option4"})}
+                }
+            },
+            // Dodajte slične postavke za "Soft" i "Frekventno"
+        };
+
+            comboBox1.SelectionChanged += ComboBox_SelectionChanged;
+            comboBox2.SelectionChanged += ComboBox_SelectionChanged;
+            comboBox3.SelectionChanged += ComboBox_SelectionChanged;
+            comboBox4.SelectionChanged += ComboBox_SelectionChanged;
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender == comboBox1)
             {
-                return;
+                string selectedNacinPokretanja = (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                if (!string.IsNullOrEmpty(selectedNacinPokretanja) && comboBoxSetups.ContainsKey(selectedNacinPokretanja))
+                {
+                    ResetComboBoxes(comboBox2, comboBox3, comboBox4);
+                    comboBoxSetups[selectedNacinPokretanja].Invoke();
+                    ShowAllComboBoxes();
+                }
             }
-
-            // Resetiramo ostale ComboBox-ove
-            ResetComboBoxes(comboBox2, comboBox3, comboBox4);
-
-            switch (selectedNacinPokretanja)
-            {
-                case "Direktno":
-                    SetupComboBoxForDirektno();
-                    break;
-                case "Zvezda-Trougao":
-                    SetupComboBoxForZvezdaTrougao();
-                    break;
-                case "Soft":
-                    SetupComboBoxForSoft();
-                    break;
-                case "Frekventno":
-                    SetupComboBoxForFrekventno();
-                    break;
-            }
-
-            // Prikazujemo sve ComboBox-ove
-            ShowAllComboBoxes();
-
-            // Pozivamo proceduru odmah nakon izbora iz prvog ComboBox-a
             UpdateProcedure();
         }
 
         private void ShowAllComboBoxes()
         {
-            comboBox2.Visibility = Visibility.Visible;
-            ProizvodacTextBlock.Visibility = Visibility.Visible;
-            comboBox3.Visibility = Visibility.Visible;
-            comboBox4.Visibility = Visibility.Visible;
+            comboBox2.Visibility = ProizvodacTextBlock.Visibility =
+            comboBox3.Visibility = comboBox4.Visibility = Visibility.Visible;
         }
 
-        private void SetupComboBoxForDirektno()
+        private void SetupForDirektno()
         {
-            comboBox2.Items.Clear();
-            comboBox2.Items.Add(new ComboBoxItem { Content = "Siemens" });
-            comboBox2.Items.Add(new ComboBoxItem { Content = "Schneider" });
-
-            SetupComboBox3ForDirektno();
-            SetupComboBox4ForDirektno();
+            SetupComboBox(comboBox2, new[] { "Siemens", "Schneider" });
+            SetupSubComboBoxes("Direktno");
         }
 
-        private void SetupComboBoxForZvezdaTrougao()
+        private void SetupForZvezdaTrougao()
         {
-            comboBox2.Items.Clear();
-            comboBox2.Items.Add(new ComboBoxItem { Content = "Siemens" });
-            comboBox2.Items.Add(new ComboBoxItem { Content = "Schneider" });
-
-            SetupComboBox3ForZvezdaTrougao();
-            SetupComboBox4ForZvezdaTrougao();
+            SetupComboBox(comboBox2, new[] { "Siemens", "Schneider" });
+            SetupSubComboBoxes("Zvezda-Trougao");
         }
 
-        private void SetupComboBoxForSoft()
+        private void SetupForSoft()
         {
-            comboBox2.Items.Clear();
-            // Dodajte opcije za Soft ako su potrebne
-
-            SetupComboBox3ForSoft();
-            SetupComboBox4ForSoft();
+            // Implementirajte specifičnu logiku za Soft
+            SetupSubComboBoxes("Soft");
         }
 
-        private void SetupComboBoxForFrekventno()
+        private void SetupForFrekventno()
         {
-            comboBox2.Items.Clear();
-            comboBox2.Items.Add(new ComboBoxItem { Content = "Siemens" });
-            comboBox2.Items.Add(new ComboBoxItem { Content = "Schneider" });
-            comboBox2.Items.Add(new ComboBoxItem { Content = "Danfoss" });
-
-            SetupComboBox3ForFrekventno();
-            SetupComboBox4ForFrekventno();
+            SetupComboBox(comboBox2, new[] { "Siemens", "Schneider", "Danfoss" });
+            SetupSubComboBoxes("Frekventno");
         }
 
-        private void SetupComboBox3ForDirektno()
+        private void SetupSubComboBoxes(string key)
         {
-            comboBox3.Items.Clear();
-            comboBox3.Items.Add(new ComboBoxItem { Content = "Direktno" });
-            comboBox3.Items.Add(new ComboBoxItem { Content = "Reverzibilni" });
+            if (subComboBoxSetups.ContainsKey(key))
+            {
+                foreach (var setup in subComboBoxSetups[key])
+                {
+                    setup.Value.Invoke();
+                }
+            }
         }
 
-        private void SetupComboBox4ForDirektno()
+        private void SetupComboBox(ComboBox comboBox, string[] items)
         {
-            comboBox4.Items.Clear();
-            comboBox4.Items.Add(new ComboBoxItem { Content = "0,09kW" });
-            comboBox4.Items.Add(new ComboBoxItem { Content = "0,12kW" });
-            comboBox4.Items.Add(new ComboBoxItem { Content = "0,37kW" });
-            comboBox4.Items.Add(new ComboBoxItem { Content = "110kW" });
+            comboBox.Items.Clear();
+            foreach (var item in items)
+            {
+                comboBox.Items.Add(new ComboBoxItem { Content = item });
+            }
         }
 
-        private void SetupComboBox3ForZvezdaTrougao()
+        private void ResetComboBoxes(params ComboBox[] comboBoxes)
         {
-            comboBox3.Items.Clear();
-            // Dodajte opcije za Zvezda-Trougao ako su potrebne
-        }
-
-        private void SetupComboBox4ForZvezdaTrougao()
-        {
-            comboBox4.Items.Clear();
-            // Dodajte opcije za Zvezda-Trougao ako su potrebne
-        }
-
-        private void SetupComboBox3ForSoft()
-        {
-            comboBox3.Items.Clear();
-            // Dodajte opcije za Soft ako su potrebne
-        }
-
-        private void SetupComboBox4ForSoft()
-        {
-            comboBox4.Items.Clear();
-            // Dodajte opcije za Soft ako su potrebne
-        }
-
-        private void SetupComboBox3ForFrekventno()
-        {
-            comboBox3.Items.Clear();
-            // Dodajte opcije za Frekventno ako su potrebne
-        }
-
-        private void SetupComboBox4ForFrekventno()
-        {
-            comboBox4.Items.Clear();
-            // Dodajte opcije za Frekventno ako su potrebne
-        }
-
-        private void ComboBox2_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            UpdateProcedure();
-        }
-
-        private void ComboBox3_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            UpdateProcedure();
-        }
-
-        private void ComboBox4_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            UpdateProcedure();
+            foreach (var cb in comboBoxes)
+            {
+                cb.SelectedIndex = -1;
+                cb.Items.Clear();
+            }
         }
 
         private void UpdateProcedure()
@@ -214,14 +169,6 @@ namespace PetkusApplication.Views
             }
         }
 
-        private void ResetComboBoxes(params ComboBox[] comboBoxes)
-        {
-            foreach (var cb in comboBoxes)
-            {
-                cb.SelectedIndex = -1;
-            }
-        }
-
         private string GetProcedureNameForSelectedOptions()
         {
             string selectedNacinPokretanja = (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString();
@@ -229,55 +176,20 @@ namespace PetkusApplication.Views
             string selectedBrojSmerova = (comboBox3.SelectedItem as ComboBoxItem)?.Content?.ToString();
             string selectedSnaga = (comboBox4.SelectedItem as ComboBoxItem)?.Content?.ToString();
 
-            switch (selectedNacinPokretanja)
+            return (selectedNacinPokretanja, selectedProizvodac) switch
             {
-                case "Direktno":
-                    if (selectedProizvodac == "Siemens")
-                    {
-                        if (selectedBrojSmerova == "Reverzibilni")
-                        {
-                            if (selectedSnaga == "0,09kW")
-                            {
-                                return "Reverzibilni_D_SI_0_09kW";
-                            }
-                            return "Reverzibilni_D_SI";
-                        }
-                        return "Direktini_d_si";
-                    }
-                    else if (selectedProizvodac == "Schneider")
-                    {
-                        return "Direktini_d_se";
-                    }
-                    return "sp_get_direktno";
-                case "Zvezda-Trougao":
-                    if (selectedProizvodac == "Siemens")
-                    {
-                        return "YD_si_start";
-                    }
-                    else if (selectedProizvodac == "Schneider")
-                    {
-                        return "YD_se_start";
-                    }
-                    return "sp_get_yd";
-                case "Soft":
-                    return "sp_get_soft";
-                case "Frekventno":
-                    if (selectedProizvodac == "Siemens")
-                    {
-                        return "FC_si";
-                    }
-                    else if (selectedProizvodac == "Schneider")
-                    {
-                        return "FC_se";
-                    }
-                    else if (selectedProizvodac == "Danfoss")
-                    {
-                        return "FC_d";
-                    }
-                    return "sp_get_fc";
-                default:
-                    return null;
-            }
+                ("Direktno", "Siemens") => selectedBrojSmerova == "Reverzibilni"
+                    ? (selectedSnaga == "0,09kW" ? "Reverzibilni_D_SI_0_09kW" : "Reverzibilni_D_SI")
+                    : "Direktini_d_si",
+                ("Direktno", "Schneider") => "Direktini_d_se",
+                ("Zvezda-Trougao", "Siemens") => "YD_si_start",
+                ("Zvezda-Trougao", "Schneider") => "YD_se_start",
+                ("Soft", _) => "sp_get_soft",
+                ("Frekventno", "Siemens") => "FC_si",
+                ("Frekventno", "Schneider") => "FC_se",
+                ("Frekventno", "Danfoss") => "FC_d",
+                _ => null
+            };
         }
 
         private void LoadDataFromProcedure(string procedureName)
