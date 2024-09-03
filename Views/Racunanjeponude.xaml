@@ -18,7 +18,7 @@
                 <DataGridTextColumn Header="Ukupna rabat" Binding="{Binding Ukupna_rabat}"/>
                 <DataGridTextColumn Header="Ukupna Disipacija" Binding="{Binding Ukupna_Disipacija}"/>
                 <DataGridTextColumn Header="Ukupna Tezina" Binding="{Binding Ukupna_Tezina}"/>
-                <DataGridTextColumn Header="Količina koju želite naručiti" Binding="{Binding Quantity}"/>
+                <DataGridTextColumn Header="Količina za naručivanje" Binding="{Binding KolicinaZaNarucivanje}"/>
             </DataGrid.Columns>
         </DataGrid>
 

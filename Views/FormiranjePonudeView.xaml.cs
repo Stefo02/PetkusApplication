@@ -564,11 +564,33 @@ namespace PetkusApplication.Views
                 var matchingPonudaItem = PonudaItems.FirstOrDefault(p => p.Fabricki_kod == groupedItem.GroupName);
                 if (matchingPonudaItem != null)
                 {
-                    selectedItems.Add(matchingPonudaItem);
+                    // Kopiraj originalni PonudaItem
+                    PonudaItem itemForOrder = new PonudaItem
+                    {
+                        Fabricki_kod = matchingPonudaItem.Fabricki_kod,
+                        Opis = matchingPonudaItem.Opis,
+                        Puna_cena = matchingPonudaItem.Puna_cena,
+                        Dimenzije = matchingPonudaItem.Dimenzije,
+                        Disipacija = matchingPonudaItem.Disipacija,
+                        Tezina = matchingPonudaItem.Tezina,
+                        Kolicina = matchingPonudaItem.Kolicina,  // Originalna količina
+                        Vrednost_rabata = matchingPonudaItem.Vrednost_rabata,
+                        KolicinaZaNarucivanje = groupedItem.Quantity  // Nova količina za naručivanje
+                    };
+
+                    // Izračunaj ukupne vrijednosti koristeći KolicinaZaNarucivanje
+                    itemForOrder.Ukupna_puna = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Puna_cena;
+                    itemForOrder.Ukupna_rabat = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Puna_cena * (1 - itemForOrder.Vrednost_rabata);
+                    itemForOrder.Ukupna_Disipacija = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Disipacija;
+                    itemForOrder.Ukupna_Tezina = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Tezina;
+
+                    selectedItems.Add(itemForOrder);
                 }
             }
 
-            // Now you have the selectedItems list to be used as needed
+            // Otvorite Racunanjeponude i prosledite FormiranjePonudeView kao parametar
+            Racunanjeponude racunanjePonude = new Racunanjeponude(this, selectedItems);
+            racunanjePonude.Show();
         }
     }
 

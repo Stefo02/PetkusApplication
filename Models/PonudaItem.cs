@@ -24,6 +24,7 @@ namespace PetkusApplication.Models
         public decimal Ukupna_Disipacija { get; set; }
         public decimal Ukupna_Tezina { get; set; }
         public int Quantity { get; set; }
+        public int KolicinaZaNarucivanje { get; set; }
 
         public bool IsSelected
         {
