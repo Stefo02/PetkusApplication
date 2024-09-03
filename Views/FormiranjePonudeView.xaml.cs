@@ -22,7 +22,9 @@ namespace PetkusApplication.Views
             { "3RT2015-1BB42", (new List<string> { "3RV2011-0EA10", "3RV2011-0GA10" }, true) },
             { "3RV2011-0GA10", (new List<string> { "3RT2015-1BB42" }, false) },
             { "3RM1201-1AA04", (new List<string> { "3RV2011-1FA10" }, false) },
-            { "3RV2011-1FA10", (new List<string> { "3RM1201-1AA04" }, false) }
+            { "3RV2011-1FA10", (new List<string> { "3RM1201-1AA04" }, false) },
+            { "3RV2321-1CC10", (new List<string> { "3RV2011-1CA10" }, false) },
+            { "3RV2011-1CA10", (new List<string> { "3RV2321-1CC10" }, false) }
 
         };
 
@@ -77,7 +79,18 @@ namespace PetkusApplication.Views
                     {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Option3", "Option4"})}
                 }
             },
-            // Dodajte slične postavke za "Soft" i "Frekventno"
+            {"Soft", new Dictionary<string, Action>
+                {
+                    {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Soft Option 1", "Soft Option 2"})},
+                    {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Soft Power 1", "Soft Power 2"})}
+                }
+            },
+            {"Frekventno", new Dictionary<string, Action>
+                {
+                    {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Frekventno Option 1", "Frekventno Option 2"})},
+                    {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Frekventno Power 1", "Frekventno Power 2"})}
+                }
+            }
         };
 
             comboBox1.SelectionChanged += ComboBox_SelectionChanged;
@@ -95,10 +108,24 @@ namespace PetkusApplication.Views
                 {
                     ResetComboBoxes(comboBox2, comboBox3, comboBox4);
                     comboBoxSetups[selectedNacinPokretanja].Invoke();
-                    ShowAllComboBoxes();
+                    UpdateComboBoxVisibility(selectedNacinPokretanja);
                 }
             }
             UpdateProcedure();
+        }
+
+        private void UpdateComboBoxVisibility(string selectedNacinPokretanja)
+        {
+            if (selectedNacinPokretanja == "Soft")
+            {
+                comboBox2.Visibility = ProizvodacTextBlock.Visibility = Visibility.Collapsed;
+                comboBox3.Visibility = comboBox4.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                comboBox2.Visibility = ProizvodacTextBlock.Visibility =
+                comboBox3.Visibility = comboBox4.Visibility = Visibility.Visible;
+            }
         }
 
         private void ShowAllComboBoxes()
