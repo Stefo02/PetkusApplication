@@ -32,8 +32,31 @@ namespace PetkusApplication.Views
 
         private void UpdateAndExport_Click(object sender, RoutedEventArgs e)
         {
-            
+            foreach (var item in selectedItems)
+            {
+                // Pronađi tabelu koja sadrži Fabricki_kod
+                string tableName = FindTableWithFabrickiKod(item.Fabricki_kod);
+
+                if (tableName != null)
+                {
+                    // Ažuriraj kolonu "Kolicina" sa vrednošću iz "KolicinaZaNarucivanje"
+                    using (var command = new MySqlCommand($"UPDATE {tableName} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
+                    {
+                        command.Parameters.AddWithValue("@Kolicina", item.KolicinaZaNarucivanje);
+                        command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"Fabricki_kod {item.Fabricki_kod} not found in any table.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+
+            // Izvoz podataka u Excel
+            GenerateExcelFile(selectedItems);
         }
+
 
         private string FindTableWithFabrickiKod(string fabrickiKod)
         {
