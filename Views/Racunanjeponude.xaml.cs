@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using OfficeOpenXml;
+using Microsoft.Win32; // Dodajte ovaj using
 using PetkusApplication.Models;
 
 namespace PetkusApplication.Views
@@ -32,35 +33,67 @@ namespace PetkusApplication.Views
 
         private void UpdateAndExport_Click(object sender, RoutedEventArgs e)
         {
+            bool allQuantitiesValid = true;
+
+            // First pass: Check if all quantities are valid
             foreach (var item in selectedItems)
             {
-                // Pronađi tabelu koja sadrži Fabricki_kod
+                // Find the table that contains the Fabricki_kod
                 string tableName = FindTableWithFabrickiKod(item.Fabricki_kod);
 
                 if (tableName != null)
                 {
-                    // Preuzmi trenutnu količinu iz baze podataka
+                    // Get the current quantity from the database
                     int currentQuantity = GetCurrentQuantity(tableName, item.Fabricki_kod);
 
-                    // Izračunaj novu količinu kao zbir trenutne količine i vrednosti iz "KolicinaZaNarucivanje"
-                    int newQuantity = currentQuantity + item.KolicinaZaNarucivanje;
+                    // Calculate the new quantity by subtracting the value from KolicinaZaNarucivanje
+                    int newQuantity = currentQuantity - item.KolicinaZaNarucivanje;
 
-                    // Ažuriraj kolonu "Kolicina" sa novom vrednošću
-                    using (var command = new MySqlCommand($"UPDATE {tableName} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
+                    if (newQuantity < 0)
                     {
-                        command.Parameters.AddWithValue("@Kolicina", newQuantity);
-                        command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
-                        command.ExecuteNonQuery();
+                        // Show message if there's insufficient stock and set flag to false
+                        MessageBox.Show($"Nema zalihe za {item.Opis}.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        allQuantitiesValid = false;
+                        break; // No need to check further if one item is invalid
                     }
                 }
                 else
                 {
                     MessageBox.Show($"Fabricki_kod {item.Fabricki_kod} not found in any table.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    allQuantitiesValid = false;
+                    break;
                 }
             }
 
-            // Izvoz podataka u Excel
-            GenerateExcelFile(selectedItems);
+            if (allQuantitiesValid)
+            {
+                // All quantities are valid, proceed with updating the database
+                foreach (var item in selectedItems)
+                {
+                    // Find the table that contains the Fabricki_kod
+                    string tableName = FindTableWithFabrickiKod(item.Fabricki_kod);
+
+                    if (tableName != null)
+                    {
+                        // Get the current quantity from the database
+                        int currentQuantity = GetCurrentQuantity(tableName, item.Fabricki_kod);
+
+                        // Calculate the new quantity by subtracting the value from KolicinaZaNarucivanje
+                        int newQuantity = currentQuantity - item.KolicinaZaNarucivanje;
+
+                        // Update the Kolicina column with the new value
+                        using (var command = new MySqlCommand($"UPDATE {tableName} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
+                        {
+                            command.Parameters.AddWithValue("@Kolicina", newQuantity);
+                            command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+
+                // Export data to Excel
+                GenerateExcelFile(selectedItems);
+            }
         }
 
         private string FindTableWithFabrickiKod(string fabrickiKod)
@@ -155,7 +188,6 @@ namespace PetkusApplication.Views
             }
         }
 
-
         private bool TableContainsColumn(string tableName, string columnName)
         {
             using (var command = new MySqlCommand($@"
@@ -169,6 +201,11 @@ namespace PetkusApplication.Views
                 command.Parameters.AddWithValue("@ColumnName", columnName);
                 return Convert.ToInt32(command.ExecuteScalar()) > 0;
             }
+        }
+
+        private void GenerateExcel_Click(object sender, RoutedEventArgs e)
+        {
+            GenerateExcelFile(selectedItems);
         }
 
         private void GenerateExcelFile(List<PonudaItem> items)
@@ -191,6 +228,7 @@ namespace PetkusApplication.Views
                 worksheet.Cells[1, 10].Value = "Ukupna_rabat";
                 worksheet.Cells[1, 11].Value = "Ukupna_Disipacija";
                 worksheet.Cells[1, 12].Value = "Ukupna_Tezina";
+                worksheet.Cells[1, 13].Value = "KolicinaZaNarucivanje";
 
                 int row = 2;
                 foreach (var item in items)
@@ -207,14 +245,29 @@ namespace PetkusApplication.Views
                     worksheet.Cells[row, 10].Value = item.Ukupna_rabat;
                     worksheet.Cells[row, 11].Value = item.Ukupna_Disipacija;
                     worksheet.Cells[row, 12].Value = item.Ukupna_Tezina;
+                    worksheet.Cells[row, 13].Value = item.KolicinaZaNarucivanje;
 
                     row++;
                 }
 
-                var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Ponuda.xlsx");
-                File.WriteAllBytes(filePath, package.GetAsByteArray());
+                // Create a save file dialog
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "Excel Files (*.xlsx)|*.xlsx",
+                    Title = "Save Excel File",
+                    FileName = "Ponuda.xlsx" // Default file name
+                };
 
-                MessageBox.Show($"Excel file created at: {filePath}");
+                // Show the dialog and wait for user input
+                bool? result = saveFileDialog.ShowDialog();
+
+                if (result == true)
+                {
+                    var filePath = saveFileDialog.FileName;
+                    File.WriteAllBytes(filePath, package.GetAsByteArray());
+
+                    MessageBox.Show($"Excel file created at: {filePath}");
+                }
             }
         }
     }

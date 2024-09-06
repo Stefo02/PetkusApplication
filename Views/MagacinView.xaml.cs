@@ -8,8 +8,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using PetkusApplication.Data;
 using PetkusApplication.Models;
+using ClosedXML.Excel;
 
 namespace PetkusApplication.Views
 {
@@ -340,7 +342,7 @@ namespace PetkusApplication.Views
             dataGrid.Items.Refresh();
             CheckForLowStock();
         }
-
+       
         private string GetTableNameFromComboBox()
         {
             var selectedOption = tableComboBox.SelectedItem as string;
@@ -348,6 +350,70 @@ namespace PetkusApplication.Views
                 return null;
 
             return tableMap.FirstOrDefault(x => x.Value == selectedOption).Key;
+        }
+
+        private void SaveToExcelButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveSelectedRowsToExcel();
+        }
+
+        private void SaveSelectedRowsToExcel()
+        {
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Excel Files (*.xlsx)|*.xlsx",
+                Title = "Save Selected Rows as Excel File"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string filePath = saveFileDialog.FileName;
+
+                // Get selected rows
+                var selectedItems = dataGrid.SelectedItems.Cast<Item>().ToList();
+
+                if (selectedItems.Count == 0)
+                {
+                    MessageBox.Show("No rows selected for export.");
+                    return;
+                }
+
+                using (var workbook = new XLWorkbook())
+                {
+                    var worksheet = workbook.Worksheets.Add("SelectedRows");
+
+                    // Add headers
+                    worksheet.Cell(1, 1).Value = "Opis";
+                    worksheet.Cell(1, 2).Value = "Proizvodjac";
+                    worksheet.Cell(1, 3).Value = "Fabricki kod";
+                    worksheet.Cell(1, 4).Value = "Kolicina";
+                    worksheet.Cell(1, 5).Value = "Puna cena";
+                    worksheet.Cell(1, 6).Value = "Dimenzije";
+                    worksheet.Cell(1, 7).Value = "Tezina";
+                    worksheet.Cell(1, 8).Value = "Vrednost rabata";
+                    worksheet.Cell(1, 9).Value = "Min Kolicina";
+
+                    // Add data rows
+                    for (int i = 0; i < selectedItems.Count; i++)
+                    {
+                        var item = selectedItems[i];
+                        worksheet.Cell(i + 2, 1).Value = item.Opis;
+                        worksheet.Cell(i + 2, 2).Value = item.Proizvodjac;
+                        worksheet.Cell(i + 2, 3).Value = item.Fabricki_kod;
+                        worksheet.Cell(i + 2, 4).Value = item.Kolicina;
+                        worksheet.Cell(i + 2, 5).Value = item.Puna_cena;
+                        worksheet.Cell(i + 2, 6).Value = item.Dimenzije;
+                        worksheet.Cell(i + 2, 7).Value = item.Tezina;
+                        worksheet.Cell(i + 2, 8).Value = item.Vrednost_rabata;
+                        worksheet.Cell(i + 2, 9).Value = item.MinKolicina;
+                    }
+
+                    // Save the workbook
+                    workbook.SaveAs(filePath);
+                }
+
+                MessageBox.Show("Selected rows have been saved to Excel.");
+            }
         }
     }
 }

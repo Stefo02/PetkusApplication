@@ -22,7 +22,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <TextBox x:Name="textBoxNumber" Width="100" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
-        <Button Content="Update and Export" Click="UpdateAndExport_Click" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+        <Button Content="Formiraj ponudu" Click="GenerateExcel_Click" Margin="20,0,617,20" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="157" Background="#001f5b"/>
+        <Button Content="Potvrdi ponudu" Click="UpdateAndExport_Click" Margin="0,0,33,20" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="#001f5b"/>
     </Grid>
 </Window>

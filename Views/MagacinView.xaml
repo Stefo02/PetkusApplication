@@ -88,8 +88,9 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
-
+       
         <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="10 10 10 30" HorizontalAlignment="Right">
+            <Button Content="Sacuvaj u Excel" Click="SaveToExcelButton_Click"  Margin="0,0,20,0"/>
             <TextBox x:Name="opisTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
             <TextBox x:Name="proizvodjacTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
             <TextBox x:Name="fabrickiKodTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>

@@ -113,9 +113,9 @@ namespace PetkusApplication.Views
             {
                 if (selectedOption == "Direktno")
                 {
-                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,37kW", "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW", "5,5kW", "5,5kW_class", "7,5kW", "7,5kW_class",
-                "9,2kW", "9,2kW_class", "11kW", "11kW_class", "15kW", "15kW_class", "18,5kW","18,5kW_class", "22kW","22kW_class",
-                "30kW","30kW_class", "37kW", "45kW", "55kW_(S3)", "55kW_(P)", "75kW", "90kW", "110kW" });
+                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,37kW", "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW", "5,5kW", "5,5kW_class20", "7,5kW", "7,5kW_class20",
+                "9,2kW", "9,2kW_class20", "11kW", "11kW_class20", "15kW", "15kW_class20", "18,5kW","18,5kW_class20", "22kW","22kW_class20",
+                "30kW","30kW_class20s", "37kW", "45kW", "55kW_(S3)", "55kW_(P)", "75kW", "90kW", "110kW" });
                 }
                 else if (selectedOption == "Reverzibilni")
                 {
@@ -255,21 +255,21 @@ namespace PetkusApplication.Views
                         "3kW" => "Direktini_d_si_3kW",
                         "4kW" => "Direktini_d_si_4kW",
                         "5,5kW" => "Direktini_d_si_5_5kW",
-                        "5,5kW_class" => "Direktini_d_si_5_5kW_class",
+                        "5,5kW_class20" => "Direktini_d_si_5_5kW_class",
                         "7,5kW" => "Direktini_d_si_7_5kW",
-                        "7,5kW_class" => "Direktini_d_si_7_5kW_class",
+                        "7,5kW_class20" => "Direktini_d_si_7_5kW_class",
                         "9,2kW" => "Direktini_d_si_9_2kW",
-                        "9,2kW_class" => "Direktini_d_si_9_2kW_class",
+                        "9,2kW_class20" => "Direktini_d_si_9_2kW_class",
                         "11kW" => "Direktini_d_si_11kW",
-                        "11kW_class" => "Direktini_d_si_11kW_class",
+                        "11kW_class20" => "Direktini_d_si_11kW_class",
                         "15kW" => "Direktini_d_si_15kW",
-                        "15kW_class" => "Direktini_d_si_15kW_class",
+                        "15kW_class20" => "Direktini_d_si_15kW_class",
                         "18,5kW" => "Direktini_d_si_18_5kW",
-                        "18,5kW_class" => "Direktini_d_si_18_5kW_class",
+                        "18,5kW_class20" => "Direktini_d_si_18_5kW_class",
                         "22kW" => "Direktini_d_si_22kW",
-                        "22kW_class" => "Direktini_d_si_22kW_class",
+                        "22kW_class20" => "Direktini_d_si_22kW_class",
                         "30kW" => "Direktini_d_si_30kW",
-                        "30kW_class" => "Direktini_d_si_30kW_class",
+                        "30kW_class20" => "Direktini_d_si_30kW_class",
                         "37kW" => "Direktini_d_si_37kW",
                         "45kW" => "Direktini_d_si_45kW",
                         "55kW_(S3)" => "Direktini_d_si_55kWS3",
@@ -506,7 +506,7 @@ namespace PetkusApplication.Views
                     {
                         Opis = item.Opis,
                         GroupName = item.Fabricki_kod,
-                        Quantity = item.Kolicina // Adjust logic if needed
+                        Quantity = 0 // Adjust logic if needed
                     });
                 }
             }

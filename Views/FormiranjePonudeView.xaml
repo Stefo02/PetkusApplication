@@ -73,7 +73,7 @@
 
                     <!-- DataGrid with ScrollViewer -->
                     <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="10">
-                        <DataGrid Name="ResultsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionMode="Extended" SelectionChanged="ResultsDataGrid_SelectionChanged">
+                        <DataGrid Name="ResultsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  IsReadOnly="True" SelectionMode="Extended" SelectionChanged="ResultsDataGrid_SelectionChanged">
                             <DataGrid.Resources>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}"/>
                             </DataGrid.Resources>
@@ -100,7 +100,7 @@
                     <DataGrid Grid.Row="4" x:Name="GroupedDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding GroupedItems}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*"/>
-                            <DataGridTextColumn Header="Grupa" Binding="{Binding GroupName}" Width="*"/>
+                            <DataGridTextColumn Header="Fabricki kod" Binding="{Binding GroupName}" Width="*"/>
                             <DataGridTextColumn Header="Broj Komada" Binding="{Binding Quantity, Mode=TwoWay}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
