@@ -39,8 +39,6 @@ namespace PetkusApplication.Models
             }
         }
 
-        public List<string> RelatedFabricki_kod { get; set; }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)

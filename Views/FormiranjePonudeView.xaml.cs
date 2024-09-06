@@ -38,6 +38,17 @@ namespace PetkusApplication.Views
             GroupedDataGrid.ItemsSource = GroupedItems;
         }
 
+        public void RefreshData()
+        {
+            // Ponovo učitaj podatke iz baze, slično kao u LoadDataFromProcedure
+            string procedureName = GetProcedureNameForSelectedOptions();
+            if (procedureName != null)
+            {
+                LoadDataFromProcedure(procedureName);
+            }
+        }
+
+
         private void InitializeDatabaseConnection()
         {
             string connectionString = "server=localhost;database=myappdb;user=root;password=;";
@@ -210,7 +221,7 @@ namespace PetkusApplication.Views
             }
         }
 
-        private void UpdateProcedure()
+        public void UpdateProcedure()
         {
             string procedureName = GetProcedureNameForSelectedOptions();
             if (procedureName != null)

@@ -7,6 +7,7 @@ using System.Windows;
 using OfficeOpenXml;
 using Microsoft.Win32; // Dodajte ovaj using
 using PetkusApplication.Models;
+using System.Windows.Controls;
 
 namespace PetkusApplication.Views
 {
@@ -21,6 +22,7 @@ namespace PetkusApplication.Views
             InitializeComponent();
             this.selectedItems = selectedItems;
             SelectedItemsDataGrid.ItemsSource = selectedItems;
+            this._formiranjePonudeView = parent;
             InitializeDatabaseConnection();
         }
 
@@ -33,66 +35,67 @@ namespace PetkusApplication.Views
 
         private void UpdateAndExport_Click(object sender, RoutedEventArgs e)
         {
-            bool allQuantitiesValid = true;
+            // Osveži trenutno stanje izabranih opcija u FormiranjePonudeView pre izvoza
+            var selectedNacinPokretanja = _formiranjePonudeView.comboBox1.SelectedItem as ComboBoxItem;
+            var selectedProizvodac = _formiranjePonudeView.comboBox2.SelectedItem as ComboBoxItem;
+            var selectedBrojSmerova = _formiranjePonudeView.comboBox3.SelectedItem as ComboBoxItem;
+            var selectedSnaga = _formiranjePonudeView.comboBox4.SelectedItem as ComboBoxItem;
 
-            // First pass: Check if all quantities are valid
-            foreach (var item in selectedItems)
+            if (selectedNacinPokretanja != null && selectedProizvodac != null && selectedBrojSmerova != null && selectedSnaga != null)
             {
-                // Find the table that contains the Fabricki_kod
-                string tableName = FindTableWithFabrickiKod(item.Fabricki_kod);
+                // Osveži podatke u trenutnom prikazu na osnovu novih selekcija
+                _formiranjePonudeView.UpdateProcedure();
 
-                if (tableName != null)
-                {
-                    // Get the current quantity from the database
-                    int currentQuantity = GetCurrentQuantity(tableName, item.Fabricki_kod);
+                // Logika za proveru količine i ažuriranje baze podataka
+                bool allQuantitiesValid = true;
 
-                    // Calculate the new quantity by subtracting the value from KolicinaZaNarucivanje
-                    int newQuantity = currentQuantity - item.KolicinaZaNarucivanje;
-
-                    if (newQuantity < 0)
-                    {
-                        // Show message if there's insufficient stock and set flag to false
-                        MessageBox.Show($"Nema zalihe za {item.Opis}.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        allQuantitiesValid = false;
-                        break; // No need to check further if one item is invalid
-                    }
-                }
-                else
-                {
-                    MessageBox.Show($"Fabricki_kod {item.Fabricki_kod} not found in any table.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    allQuantitiesValid = false;
-                    break;
-                }
-            }
-
-            if (allQuantitiesValid)
-            {
-                // All quantities are valid, proceed with updating the database
                 foreach (var item in selectedItems)
                 {
-                    // Find the table that contains the Fabricki_kod
+                    // Nađi tabelu sa Fabricki_kod
                     string tableName = FindTableWithFabrickiKod(item.Fabricki_kod);
 
                     if (tableName != null)
                     {
-                        // Get the current quantity from the database
+                        // Dobij trenutnu količinu iz baze
                         int currentQuantity = GetCurrentQuantity(tableName, item.Fabricki_kod);
 
-                        // Calculate the new quantity by subtracting the value from KolicinaZaNarucivanje
+                        // Izračunaj novu količinu
                         int newQuantity = currentQuantity - item.KolicinaZaNarucivanje;
 
-                        // Update the Kolicina column with the new value
-                        using (var command = new MySqlCommand($"UPDATE {tableName} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
+                        if (newQuantity < 0)
                         {
-                            command.Parameters.AddWithValue("@Kolicina", newQuantity);
-                            command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
-                            command.ExecuteNonQuery();
+                            // Nema dovoljno zaliha
+                            MessageBox.Show($"Nema zalihe za {item.Opis}.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            allQuantitiesValid = false;
+                            break;
                         }
+                        else
+                        {
+                            // Ažuriraj bazu podataka
+                            using (var command = new MySqlCommand($"UPDATE {tableName} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
+                            {
+                                command.Parameters.AddWithValue("@Kolicina", newQuantity);
+                                command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
+                                command.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Fabricki_kod {item.Fabricki_kod} nije pronađen.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        allQuantitiesValid = false;
+                        break;
                     }
                 }
 
-                // Export data to Excel
-                GenerateExcelFile(selectedItems);
+                if (allQuantitiesValid)
+                {
+                    // Export data to Excel
+                    GenerateExcelFile(selectedItems);
+
+                    // Pozovi funkciju za osvežavanje podataka u FormiranjePonudeView
+                    _formiranjePonudeView.RefreshData(); // Ova metoda treba da ponovo učita podatke iz baze
+                }
             }
         }
 
