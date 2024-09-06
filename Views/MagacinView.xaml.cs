@@ -273,17 +273,28 @@ namespace PetkusApplication.Views
                 selectedItem.Vrednost_rabata = decimal.Parse(vrednostRabataTextBox.Text);
                 selectedItem.MinKolicina = int.Parse(minKolicinaTextBox.Text);
 
-                string tableName = GetTableNameFromComboBox();
-                dbContext.UpdateItem(tableName, selectedItem);
+                // Use OriginalTable instead of ComboBox for "Svi Podaci"
+                string tableName = !string.IsNullOrEmpty(selectedItem.OriginalTable)
+                    ? selectedItem.OriginalTable
+                    : GetTableNameFromComboBox();
 
-                ClearTextBoxes();
-                LoadData();
+                if (!string.IsNullOrEmpty(tableName))
+                {
+                    dbContext.UpdateItem(tableName, selectedItem);
+                    ClearTextBoxes();
+                    LoadData();
+                }
+                else
+                {
+                    MessageBox.Show("Cannot determine table name for the selected item.");
+                }
             }
             else
             {
                 MessageBox.Show("Odaberite stavku za ažuriranje.");
             }
         }
+
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {

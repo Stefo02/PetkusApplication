@@ -88,8 +88,8 @@ namespace PetkusApplication.Data
             {
                 connection.Open();
                 string query = $@"
-                    SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina
-                    FROM `{tableName}`";
+            SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina
+            FROM `{tableName}`";
 
                 using (var command = new MySqlCommand(query, connection))
                 {
@@ -108,7 +108,8 @@ namespace PetkusApplication.Data
                                 Dimenzije = reader.IsDBNull(reader.GetOrdinal("Dimenzije")) ? string.Empty : reader.GetString("Dimenzije"),
                                 Tezina = reader.IsDBNull(reader.GetOrdinal("Tezina")) ? 0 : reader.GetDecimal("Tezina"),
                                 Vrednost_rabata = reader.IsDBNull(reader.GetOrdinal("Vrednost_rabata")) ? 0 : reader.GetDecimal("Vrednost_rabata"),
-                                MinKolicina = reader.IsDBNull(reader.GetOrdinal("Min_Kolicina")) ? 0 : reader.GetInt32("Min_Kolicina")
+                                MinKolicina = reader.IsDBNull(reader.GetOrdinal("Min_Kolicina")) ? 0 : reader.GetInt32("Min_Kolicina"),
+                                OriginalTable = tableName // Populate OriginalTable
                             });
                         }
                     }
@@ -208,18 +209,19 @@ namespace PetkusApplication.Data
             {
                 connection.Open();
 
+                // Wrap tableName in backticks
                 string query = $@"
-                    UPDATE {tableName} SET 
-                    Opis = @Opis, 
-                    Proizvodjac = @Proizvodjac, 
-                    Fabricki_kod = @Fabricki_kod, 
-                    Kolicina = @Kolicina, 
-                    Puna_cena = @Puna_cena, 
-                    Dimenzije = @Dimenzije, 
-                    Tezina = @Tezina, 
-                    Vrednost_rabata = @Vrednost_rabata,
-                    Min_Kolicina = @Min_Kolicina
-                    WHERE Id = @Id";
+            UPDATE `{tableName}` SET 
+            Opis = @Opis, 
+            Proizvodjac = @Proizvodjac, 
+            Fabricki_kod = @Fabricki_kod, 
+            Kolicina = @Kolicina, 
+            Puna_cena = @Puna_cena, 
+            Dimenzije = @Dimenzije, 
+            Tezina = @Tezina, 
+            Vrednost_rabata = @Vrednost_rabata,
+            Min_Kolicina = @Min_Kolicina
+            WHERE Id = @Id";
 
                 using (var cmd = new MySqlCommand(query, connection))
                 {
@@ -238,6 +240,7 @@ namespace PetkusApplication.Data
                 }
             }
         }
+
 
         // Method to delete an item from a table
         public void DeleteItem(string tableName, int id)
