@@ -241,6 +241,14 @@ namespace PetkusApplication.Views
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
+            // Provera da li je selektovana tabela "Svi podaci"
+            if (tableComboBox.SelectedItem.ToString() == "Svi podaci")
+            {
+                MessageBox.Show("Nije moguće dodati nove podatke dok ne odaberete specifičnu tabelu.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Kreiranje novog Item objekta
             var newItem = new Item
             {
                 Opis = opisTextBox.Text,
@@ -254,6 +262,7 @@ namespace PetkusApplication.Views
                 MinKolicina = int.Parse(minKolicinaTextBox.Text)
             };
 
+            // Preuzimanje imena selektovane tabele
             string tableName = GetTableNameFromComboBox();
             dbContext.AddItem(tableName, newItem);
 
