@@ -16,24 +16,14 @@ namespace PetkusApplication.Views
         private MySqlConnection connection;
         private Dictionary<string, Action> comboBoxSetups;
         private Dictionary<string, Dictionary<string, Action>> subComboBoxSetups;
-        private Dictionary<string, (List<string> RelatedCodes, bool OfferChoice)> relatedItemsMapping = new Dictionary<string, (List<string> RelatedCodes, bool OfferChoice)>
-        {
-            { "3RV2011-0EA10", (new List<string> { "3RT2015-1BB42" }, false) },
-            { "3RT2015-1BB42", (new List<string> { "3RV2011-0EA10", "3RV2011-0GA10" }, true) },
-            { "3RV2011-0GA10", (new List<string> { "3RT2015-1BB42" }, false) },
-            { "3RM1201-1AA04", (new List<string> { "3RV2011-1FA10" }, false) },
-            { "3RV2011-1FA10", (new List<string> { "3RM1201-1AA04" }, false) },
-            { "3RV2321-1CC10", (new List<string> { "3RV2011-1CA10" }, false) },
-            { "3RV2011-1CA10", (new List<string> { "3RV2321-1CC10" }, false) }
 
-        };
 
-        private List<DataGridRow> blinkingRows = new List<DataGridRow>();
         private Dictionary<int, ObservableCollection<PonudaItem>> groupedPonudaItems = new Dictionary<int, ObservableCollection<PonudaItem>>();
         private int currentGroupId = 0;
 
         public ObservableCollection<PonudaItem> PonudaItems { get; set; }
         public ObservableCollection<GroupedItem> GroupedItems { get; set; }
+        private List<PonudaItem> allGroupedItems = new List<PonudaItem>();
 
         private bool itemsGrouped = false;
 
@@ -66,36 +56,36 @@ namespace PetkusApplication.Views
         };
 
             subComboBoxSetups = new Dictionary<string, Dictionary<string, Action>>
-        {
-            {"Direktno", new Dictionary<string, Action>
-                {
-                    {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Direktno", "Reverzibilni"})},
-                    {"comboBox4", () => SetupComboBox(comboBox4, new[] {"0,09kW", "0,12kW", "0,37kW", "110kW"})}
+            {
+                {"Direktno", new Dictionary<string, Action>
+                    {
+                        {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Direktno", "Reverzibilni"})},
+                        {"comboBox4", () => SetupComboBox(comboBox4, new[] {"0,09kW", "0,12kW", "0,37kW", "110kW"})}
+                    }
+                },
+                {"Zvezda-Trougao", new Dictionary<string, Action>
+                    {
+                        {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Option1", "Option2"})},
+                        {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Option3", "Option4"})}
+                    }
+                },
+                {"Soft", new Dictionary<string, Action>
+                    {
+                        {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Soft Option 1", "Soft Option 2"})},
+                        {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Soft Power 1", "Soft Power 2"})}
+                    }
+                },
+                {"Frekventno", new Dictionary<string, Action>
+                    {
+                        {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Frekventno Option 1", "Frekventno Option 2"})},
+                        {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Frekventno Power 1", "Frekventno Power 2"})}
+                    }
                 }
-            },
-            {"Zvezda-Trougao", new Dictionary<string, Action>
-                {
-                    {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Option1", "Option2"})},
-                    {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Option3", "Option4"})}
-                }
-            },
-            {"Soft", new Dictionary<string, Action>
-                {
-                    {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Soft Option 1", "Soft Option 2"})},
-                    {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Soft Power 1", "Soft Power 2"})}
-                }
-            },
-            {"Frekventno", new Dictionary<string, Action>
-                {
-                    {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Frekventno Option 1", "Frekventno Option 2"})},
-                    {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Frekventno Power 1", "Frekventno Power 2"})}
-                }
-            }
-        };
+            };
 
             comboBox1.SelectionChanged += ComboBox_SelectionChanged;
             comboBox2.SelectionChanged += ComboBox_SelectionChanged;
-            comboBox3.SelectionChanged += ComboBox_SelectionChanged;
+            comboBox3.SelectionChanged += ComboBox3_SelectionChanged;
             comboBox4.SelectionChanged += ComboBox_SelectionChanged;
         }
 
@@ -112,6 +102,39 @@ namespace PetkusApplication.Views
                 }
             }
             UpdateProcedure();
+        }
+
+        private void ComboBox3_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string selectedOption = (comboBox3.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+            if (selectedProizvodac == "Siemens")
+            {
+                if (selectedOption == "Direktno")
+                {
+                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,37kW", "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW", "5,5kW", "5,5kW_class", "7,5kW", "7,5kW_class",
+                "9,2kW", "9,2kW_class", "11kW", "11kW_class", "15kW", "15kW_class", "18,5kW","18,5kW_class", "22kW","22kW_class",
+                "30kW","30kW_class", "37kW", "45kW", "55kW_(S3)", "55kW_(P)", "75kW", "90kW", "110kW" });
+                }
+                else if (selectedOption == "Reverzibilni")
+                {
+                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,18kW", "0,25kW", "0,37kW", "0,55kW", "0,75kW" });
+                }
+            }
+            else if (selectedProizvodac == "Schneider")
+            {
+                if (selectedOption == "Direktno")
+                {
+                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,18kW", "0,25kW", "0,37kW", "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW",
+                        "5,5kW", "5,5kW_2", "7,5kW", "7,5kW_2", "9,2kW", "9,2kW_2", "11kW","11kW_2", "15kW", "15kW_2","15kW_3", "18,5kW", "18,5kW_2", "22kW", "22kW_2",
+                        "30kW","30kW_2", "37kW","37kW_2", "45kW","45kW_2", "55kW", "55kW_2", "75kW","75kW_2", "90kW","90kW_2", "110kW", "110kW_2"});
+                }
+                else if (selectedOption == "Reverzibilni")
+                {
+                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,18kW", "0,25kW", "0,37kW", "0,55kW", "0,75kW" });
+                }
+            }
         }
 
         private void UpdateComboBoxVisibility(string selectedNacinPokretanja)
@@ -206,9 +229,115 @@ namespace PetkusApplication.Views
             return (selectedNacinPokretanja, selectedProizvodac) switch
             {
                 ("Direktno", "Siemens") => selectedBrojSmerova == "Reverzibilni"
-                    ? (selectedSnaga == "0,09kW" ? "Reverzibilni_D_SI_0_09kW" : "Reverzibilni_D_SI")
-                    : "Direktini_d_si",
-                ("Direktno", "Schneider") => "Direktini_d_se",
+                    ? selectedSnaga switch
+                    {
+                        "0,09kW" => "Reverzibilni_D_SI_0_09kW",
+                        "0,12kW" => "Reverzibilni_D_SI_0_12kW",
+                        "0,18kW" => "Reverzibilni_D_SI_0_18kW",
+                        "0,25kW" => "Reverzibilni_D_SI_0_25kW",
+                        "0,37kW" => "Reverzibilni_D_SI_0_37kW",
+                        "0,55kW" => "Reverzibilni_D_SI_0_55kW",
+                        "0,75kW" => "Reverzibilni_D_SI_0_75kW",
+                        _ => "Reverzibilni_D_SI"
+                    }
+                    : selectedSnaga switch
+                    {
+                        "0,09kW" => "Direktini_d_si_0_09kW",
+                        "0,12kW" => "Direktini_d_si_0_12kW",
+                        "0,18kW" => "Direktini_d_si_0_18kW",
+                        "0,25kW" => "Direktini_d_si_0_25kW",
+                        "0,37kW" => "Direktini_d_si_0_37kW",
+                        "0,55kW" => "Direktini_d_si_0_55kW",
+                        "0,75kW" => "Direktini_d_si_0_75kW",
+                        "1,1kW" => "Direktini_d_si_1_1kW",
+                        "1,5kW" => "Direktini_d_si_1_5kW",
+                        "2,2kW" => "Direktini_d_si_2_2kW",
+                        "3kW" => "Direktini_d_si_3kW",
+                        "4kW" => "Direktini_d_si_4kW",
+                        "5,5kW" => "Direktini_d_si_5_5kW",
+                        "5,5kW_class" => "Direktini_d_si_5_5kW_class",
+                        "7,5kW" => "Direktini_d_si_7_5kW",
+                        "7,5kW_class" => "Direktini_d_si_7_5kW_class",
+                        "9,2kW" => "Direktini_d_si_9_2kW",
+                        "9,2kW_class" => "Direktini_d_si_9_2kW_class",
+                        "11kW" => "Direktini_d_si_11kW",
+                        "11kW_class" => "Direktini_d_si_11kW_class",
+                        "15kW" => "Direktini_d_si_15kW",
+                        "15kW_class" => "Direktini_d_si_15kW_class",
+                        "18,5kW" => "Direktini_d_si_18_5kW",
+                        "18,5kW_class" => "Direktini_d_si_18_5kW_class",
+                        "22kW" => "Direktini_d_si_22kW",
+                        "22kW_class" => "Direktini_d_si_22kW_class",
+                        "30kW" => "Direktini_d_si_30kW",
+                        "30kW_class" => "Direktini_d_si_30kW_class",
+                        "37kW" => "Direktini_d_si_37kW",
+                        "45kW" => "Direktini_d_si_45kW",
+                        "55kW_(S3)" => "Direktini_d_si_55kWS3",
+                        "55kW_(P)" => "Direktini_d_si_55kWP",
+                        "75kW" => "Direktini_d_si_75kW",
+                        "90kW" => "Direktini_d_si_90kW",
+                        "110kW" => "Direktini_d_si_110kW",
+                        _ => "Direktini_d_si"
+                    },
+                ("Direktno", "Schneider") => selectedBrojSmerova switch
+                {
+                    "Reverzibilni" => selectedSnaga switch
+                    {
+                        "0,09kW" => "Reverzibilni_D_SE_0_09kW",
+                        "0,12kW" => "Reverzibilni_D_SE_0_12kW",
+                        "0,18kW" => "Reverzibilni_D_SE_0_18kW",
+                        "0,25kW" => "Reverzibilni_D_SE_0_25kW",
+                        "0,37kW" => "Reverzibilni_D_SE_0_37kW",
+                        "0,55kW" => "Reverzibilni_D_SE_0_55kW",
+                        "0,75kW" => "Reverzibilni_D_SE_0_75kW",
+                        _ => "Reverzibilni_D_SE"
+                    },
+                    _ => selectedSnaga switch
+                    {
+                        "0,09kW" => "Direktini_d_se_0_09kW",
+                        "0,12kW" => "Direktini_d_se_0_12kW",
+                        "0,18kW" => "Direktini_d_se_0_18kW",
+                        "0,25kW" => "Direktini_d_se_0_25kW",
+                        "0,37kW" => "Direktini_d_se_0_37kW",
+                        "0,55kW" => "Direktini_d_se_0_55kW",
+                        "0,75kW" => "Direktini_d_se_0_75kW",
+                        "1,1kW" => "Direktini_d_se_1_1kW",
+                        "1,5kW" => "Direktini_d_se_1_5kW",
+                        "2,2kW" => "Direktini_d_se_2_2kW",
+                        "3kW" => "Direktini_d_se_3kW",
+                        "4kW" => "Direktini_d_se_4kW",
+                        "5,5kW" => "Direktini_d_se_5_5kW",
+                        "5,5kW_2" => "Direktini_d_se_5_5kW2",
+                        "7,5kW" => "Direktini_d_se_7_5kW",
+                        "7,5kW_2" => "Direktini_d_se_7_5kW2",
+                        "9,2kW" => "Direktini_d_se_9_2kW",
+                        "9,2kW_2" => "Direktini_d_se_9_2kW2",
+                        "11kW" => "Direktini_d_se_11kW",
+                        "11kW_2" => "Direktini_d_se_11kW2",
+                        "15kW" => "Direktini_d_se_15kW",
+                        "15kW_2" => "Direktini_d_se_15kW2",
+                        "15kW_3" => "Direktini_d_se_15kW3",
+                        "18,5kW" => "Direktini_d_se_18_5kW",
+                        "18,5kW_2" => "Direktini_d_se_18_5kW2",
+                        "22kW" => "Direktini_d_se_22kW",
+                        "22kW_2" => "Direktini_d_se_22kW2",
+                        "30kW" => "Direktini_d_se_30kW",
+                        "30kW_2" => "Direktini_d_se_30kW2",
+                        "37kW" => "Direktini_d_se_37kW",
+                        "37kW_2" => "Direktini_d_se_37kW2",
+                        "45kW" => "Direktini_d_se_45kW",
+                        "45kW_2" => "Direktini_d_se_45kW2",
+                        "55kW" => "Direktini_d_se_55kW",
+                        "55kW_2" => "Direktini_d_se_55kW2",
+                        "75kW" => "Direktini_d_se_75kW",
+                        "75kW_2" => "Direktini_d_se_75kW2",
+                        "90kW" => "Direktini_d_se_90kW",
+                        "90kW_2" => "Direktini_d_se_90kW2",
+                        "110kW" => "Direktini_d_se_110kW",
+                        "110kW_2" => "Direktini_d_se_110kW2",
+                        _ => "Direktini_d_se"
+                    }
+                },
                 ("Zvezda-Trougao", "Siemens") => "YD_si_start",
                 ("Zvezda-Trougao", "Schneider") => "YD_se_start",
                 ("Soft", _) => "sp_get_soft",
@@ -247,10 +376,6 @@ namespace PetkusApplication.Views
                     IsSelected = false,
                     Kolicina = row["Kolicina"] != DBNull.Value ? Convert.ToInt32(row["Kolicina"]) : 0,
                     Vrednost_rabata = row["Vrednost_rabata"] != DBNull.Value ? Convert.ToDecimal(row["Vrednost_rabata"]) : 0m,
-
-                    RelatedFabricki_kod = relatedItemsMapping.ContainsKey(row["Fabricki_kod"].ToString())
-                        ? relatedItemsMapping[row["Fabricki_kod"].ToString()].RelatedCodes
-                        : new List<string>()
                 };
 
                 PonudaItems.Add(item);
@@ -264,96 +389,52 @@ namespace PetkusApplication.Views
         {
             var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
 
-            // Stop animation for previous blinking rows
-            foreach (var row in blinkingRows)
-            {
-                var animation = (Storyboard)FindResource("BlinkingAnimation");
-                animation.Stop(row);
-            }
-            blinkingRows.Clear();
-
             if (selectedItems.Count > 0)
             {
                 var selectedItem = selectedItems.First();
-                MessageBox.Show($"Selected item: {selectedItem.Fabricki_kod}");
-
-                if (relatedItemsMapping.ContainsKey(selectedItem.Fabricki_kod))
-                {
-                    var (relatedCodes, offerChoice) = relatedItemsMapping[selectedItem.Fabricki_kod];
-
-                    MessageBox.Show($"Related codes: {string.Join(", ", relatedCodes)}, Offer choice: {offerChoice}");
-
-                    if (offerChoice)
-                    {
-                        // Animate related rows
-                        foreach (var code in relatedCodes)
-                        {
-                            var row = GetRowFromFabrickiKod(code);
-                            if (row != null)
-                            {
-                                StartBlinkingAnimation(row);
-                                MessageBox.Show($"Started blinking animation for row with code: {code}");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Automatically select related rows without animation
-                        foreach (var code in relatedCodes)
-                        {
-                            var row = GetRowFromFabrickiKod(code);
-                            if (row != null)
-                            {
-                                row.IsSelected = true;
-                                MessageBox.Show($"Automatically selected row with code: {code}");
-                            }
-                        }
-                    }
-                }
             }
         }
-
 
         private void HandleGrouping(PonudaItem selectedItem, List<PonudaItem> selectedItems)
         {
             if (selectedItems.Count > 0)
             {
-                MessageBox.Show("Handling grouping for selected items.");
 
-                // Clear previous selections
-                foreach (var item in PonudaItems)
-                {
-                    item.IsSelected = false;
-                }
-
-                // Mark the selected item as selected
                 selectedItem.IsSelected = true;
-                MessageBox.Show($"Marked item as selected: {selectedItem.Fabricki_kod}");
+            }
+        }
 
-                // Check if we need to create a new group
-                if (relatedItemsMapping.ContainsKey(selectedItem.Fabricki_kod))
+        private void CreateOrUpdateGroup(List<PonudaItem> selectedItems)
+        {
+            bool groupFound = false;
+
+            foreach (var group in groupedPonudaItems.Values)
+            {
+                // Proverava da li neka od stavki u selectedItems već postoji u grupi
+                if (selectedItems.Any(item => group.Any(g => g.Fabricki_kod == item.Fabricki_kod)))
                 {
-                    var (relatedCodes, offerChoice) = relatedItemsMapping[selectedItem.Fabricki_kod];
-                    var relatedItems = PonudaItems.Where(p => relatedCodes.Contains(p.Fabricki_kod)).ToList();
-
-                    if (offerChoice)
+                    // Ako postoji, dodajte sve stavke
+                    foreach (var item in selectedItems)
                     {
-                        // Add the first related item to the group
-                        if (selectedItems.Count > 1)
+                        if (!group.Contains(item))
                         {
-                            var firstRelatedItem = relatedItems.FirstOrDefault(p => !selectedItems.Contains(p));
-                            if (firstRelatedItem != null)
-                            {
-                                selectedItems.Add(firstRelatedItem);
-                                MessageBox.Show($"Added related item to group: {firstRelatedItem.Fabricki_kod}");
-                            }
+                            group.Add(item);
                         }
                     }
-
-                    // Create a new group with the selected items
-                    CreateNewGroup(selectedItems);
+                    groupFound = true;
+                    break;
                 }
             }
+
+            if (!groupFound)
+            {
+                // Kreirajte novu grupu ako nije pronađena postojeća
+                currentGroupId++;
+                var newGroup = new ObservableCollection<PonudaItem>(selectedItems);
+                groupedPonudaItems.Add(currentGroupId, newGroup);
+            }
+
+            UpdateGroupedDataGrid();
         }
 
         private void CreateNewGroup(List<PonudaItem> selectedItems)
@@ -363,18 +444,7 @@ namespace PetkusApplication.Views
 
             foreach (var selectedItem in selectedItems)
             {
-                var relatedCodes = relatedItemsMapping.ContainsKey(selectedItem.Fabricki_kod)
-                    ? relatedItemsMapping[selectedItem.Fabricki_kod].RelatedCodes
-                    : new List<string>();
-
-                foreach (var code in relatedCodes)
-                {
-                    var relatedItem = PonudaItems.FirstOrDefault(p => p.Fabricki_kod == code);
-                    if (relatedItem != null && !newGroup.Contains(relatedItem))
-                    {
-                        newGroup.Add(relatedItem);
-                    }
-                }
+               
             }
 
             groupedPonudaItems.Add(currentGroupId, newGroup);
@@ -383,7 +453,6 @@ namespace PetkusApplication.Views
 
         private void UpdateGroupedDataGrid()
         {
-            GroupedItems.Clear();
             foreach (var group in groupedPonudaItems.Values)
             {
                 foreach (var item in group)
@@ -395,19 +464,16 @@ namespace PetkusApplication.Views
                         {
                             Opis = item.Opis,
                             GroupName = item.Fabricki_kod,
-                            Quantity = 0 // Initial quantity
+                            Quantity = 1 // Postavite početnu količinu na 1
                         });
+                    }
+                    else
+                    {
+                        // Ako stavka već postoji, povećajte količinu
+                        existingItem.Quantity++;
                     }
                 }
             }
-        }
-
-        private void StartBlinkingAnimation(DataGridRow row)
-        {
-            var animation = (Storyboard)FindResource("BlinkingAnimation");
-            animation.Begin(row, true);
-            blinkingRows.Add(row);
-            MessageBox.Show($"Blinking animation started for row: {row}");
         }
 
         private DataGridRow GetRowFromFabrickiKod(string fabricki_kod)
@@ -422,137 +488,31 @@ namespace PetkusApplication.Views
             return null;
         }
 
-        private void DataGridRow_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            var clickedRow = sender as DataGridRow;
-            var clickedItem = clickedRow?.Item as PonudaItem;
-
-            if (clickedItem != null && blinkingRows.Contains(clickedRow))
-            {
-                // Stop blinking for all rows
-                foreach (var row in blinkingRows)
-                {
-                    var animation = (Storyboard)FindResource("BlinkingAnimation");
-                    animation.Stop(row);
-                }
-                blinkingRows.Clear();
-
-                // Set the selected item and handle grouping
-                var selectedItem = ResultsDataGrid.SelectedItem as PonudaItem;
-
-                if (selectedItem != null && relatedItemsMapping.ContainsKey(selectedItem.Fabricki_kod))
-                {
-                    var (relatedCodes, offerChoice) = relatedItemsMapping[selectedItem.Fabricki_kod];
-
-                    if (offerChoice && relatedCodes.Contains(clickedItem.Fabricki_kod))
-                    {
-                        selectedItem.IsSelected = true;
-                        clickedItem.IsSelected = true;
-
-                        // Create a new group with the selected items
-                        CreateNewGroup(new List<PonudaItem> { selectedItem, clickedItem });
-                    }
-                }
-            }
-        }
-
         private void ConfirmSelection_Click(object sender, RoutedEventArgs e)
         {
-            if (!itemsGrouped)
+            var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
+            if (selectedItems.Count == 0)
             {
-                var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
-                MessageBox.Show($"Number of items selected: {selectedItems.Count}");
+                return;
+            }
 
-                if (selectedItems.Count == 0)
+            // Transfer selected items to GroupedDataGrid and accumulate in allGroupedItems
+            foreach (var item in selectedItems)
+            {
+                if (!allGroupedItems.Any(g => g.Fabricki_kod == item.Fabricki_kod))
                 {
-                    MessageBox.Show("Molimo izaberite bar jedan red.");
-                    return;
-                }
-
-                var selectedItem = selectedItems.First();
-                MessageBox.Show($"Selected item for grouping: {selectedItem.Fabricki_kod}");
-
-                // Stop blinking animations
-                foreach (var row in blinkingRows)
-                {
-                    var animation = (Storyboard)FindResource("BlinkingAnimation");
-                    animation.Stop(row);
-                }
-                blinkingRows.Clear();
-
-                if (relatedItemsMapping.ContainsKey(selectedItem.Fabricki_kod))
-                {
-                    var (relatedCodes, offerChoice) = relatedItemsMapping[selectedItem.Fabricki_kod];
-                    MessageBox.Show($"Related codes: {string.Join(", ", relatedCodes)}, Offer choice: {offerChoice}");
-
-                    // Collect all related items including newly selected items
-                    var relatedItems = new HashSet<PonudaItem>(selectedItems);
-                    foreach (var code in relatedCodes)
+                    allGroupedItems.Add(item);
+                    GroupedItems.Add(new GroupedItem
                     {
-                        var relatedItem = PonudaItems.FirstOrDefault(p => p.Fabricki_kod == code);
-                        if (relatedItem != null && !relatedItems.Contains(relatedItem))
-                        {
-                            relatedItems.Add(relatedItem);
-                        }
-                    }
-
-                    // Add to GroupedItems if not already present
-                    foreach (var item in relatedItems)
-                    {
-                        var existingItem = GroupedItems.FirstOrDefault(g => g.GroupName == item.Fabricki_kod);
-                        if (existingItem == null)
-                        {
-                            GroupedItems.Add(new GroupedItem
-                            {
-                                Opis = item.Opis,
-                                GroupName = item.Fabricki_kod,
-                                Quantity = 1 // Set initial quantity
-                            });
-                        }
-                        else
-                        {
-                            existingItem.Quantity++;
-                        }
-                    }
-
-                    // Refresh ResultsDataGrid to show current state
-                    ResultsDataGrid.ItemsSource = null; // Reset ItemsSource to force refresh
-                    ResultsDataGrid.ItemsSource = PonudaItems;
-                    ResultsDataGrid.Items.Refresh();
-
-                    MessageBox.Show($"Total items in ResultsDataGrid: {PonudaItems.Count}");
-                    MessageBox.Show($"Total items in GroupedDataGrid: {GroupedItems.Count}");
-
-                    itemsGrouped = true;
-                }
-                else
-                {
-                    selectedItem.IsSelected = true;
+                        Opis = item.Opis,
+                        GroupName = item.Fabricki_kod,
+                        Quantity = item.Kolicina // Adjust logic if needed
+                    });
                 }
             }
-            else
-            {
-                // Process for ungrouping items
-                var itemsToRemove = GroupedItems.ToList();
 
-                foreach (var groupedItem in itemsToRemove)
-                {
-                    var matchingPonudaItem = PonudaItems.FirstOrDefault(p => p.Fabricki_kod == groupedItem.GroupName);
-                    if (matchingPonudaItem != null)
-                    {
-                        GroupedItems.Remove(groupedItem);
-                        MessageBox.Show($"Moved item back to ResultsDataGrid: {matchingPonudaItem.Fabricki_kod}");
-                    }
-                }
-
-                ResultsDataGrid.ItemsSource = null; // Reset ItemsSource to force refresh
-                ResultsDataGrid.ItemsSource = PonudaItems;
-                ResultsDataGrid.Items.Refresh();
-
-                MessageBox.Show($"Total items in ResultsDataGrid after moving: {PonudaItems.Count}");
-                MessageBox.Show($"Total items in GroupedDataGrid after ungrouping: {GroupedItems.Count}");
-                itemsGrouped = false;
-            }
+            // Optionally clear the selection from ResultsDataGrid after moving
+            ResultsDataGrid.SelectedItems.Clear();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -561,7 +521,7 @@ namespace PetkusApplication.Views
 
             foreach (var groupedItem in GroupedItems)
             {
-                var matchingPonudaItem = PonudaItems.FirstOrDefault(p => p.Fabricki_kod == groupedItem.GroupName);
+                var matchingPonudaItem = allGroupedItems.FirstOrDefault(p => p.Fabricki_kod == groupedItem.GroupName);
                 if (matchingPonudaItem != null)
                 {
                     // Kopiraj originalni PonudaItem
@@ -588,7 +548,7 @@ namespace PetkusApplication.Views
                 }
             }
 
-            // Otvorite Racunanjeponude i prosledite FormiranjePonudeView kao parametar
+            // Otvorite Racunanjeponude i prosledite selectedItems kao parametar
             Racunanjeponude racunanjePonude = new Racunanjeponude(this, selectedItems);
             racunanjePonude.Show();
         }
@@ -596,4 +556,3 @@ namespace PetkusApplication.Views
 
 
 }
-

@@ -6,12 +6,6 @@
              Height="Auto" Width="Auto"
              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
     <UserControl.Resources>
-        <!-- Animacija za blinkanje -->
-        <Storyboard x:Key="BlinkingAnimation">
-            <ColorAnimation 
-        Storyboard.TargetProperty="(DataGridRow.Background).(SolidColorBrush.Color)"
-        From="White" To="Yellow" Duration="0:0:0.5" AutoReverse="True" RepeatBehavior="Forever"/>
-        </Storyboard>
 
         <!-- Stil za zaglavlja kolona u DataGrid -->
         <Style x:Key="DataGridColumnHeaderStyle" TargetType="DataGridColumnHeader">
@@ -83,11 +77,6 @@
                             <DataGrid.Resources>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}"/>
                             </DataGrid.Resources>
-                            <DataGrid.RowStyle>
-                                <Style TargetType="DataGridRow">
-                                    <EventSetter Event="PreviewMouseLeftButtonUp" Handler="DataGridRow_PreviewMouseLeftButtonUp"/>
-                                </Style>
-                            </DataGrid.RowStyle>
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="auto"/>
                                 <DataGridTextColumn Header="Fabrički kod" Binding="{Binding Fabricki_kod}" Width="auto"/>
