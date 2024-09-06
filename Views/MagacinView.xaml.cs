@@ -36,10 +36,10 @@ namespace PetkusApplication.Views
             { "fc_d_frekventni_regulatori", "Frekventni regulatori FC D" },
             { "fc_d_zastita", "Zaštita FC D" },
             { "fc_se_dodatna_oprema", "Dodatna oprema FC SE" },
-            { "fc_se_frekventni_regulatori", "Frekventni regulatori FC SE" },
+            { "fc_se_frekventni_regulator", "Frekventni regulatori FC SE" },
             { "fc_se_zastita", "Zaštita FC SE" },
             { "fc_si_dodatna_oprema", "Dodatna oprema FC SI" },
-            { "fc_si_frekventni_regulatori", "Frekventni regulatori FC SI" },
+            { "fc_si_frekventni_regulator", "Frekventni regulatori FC SI" },
             { "fc_si_zastita", "Zaštita FC SI" },
             { "soft_bimetali", "Bimetali Soft" },
             { "soft_dodatna_oprema", "Dodatna oprema Soft" },
@@ -145,7 +145,7 @@ namespace PetkusApplication.Views
                     }
                 }
 
-                MessageBox.Show("Neki redovi imaju količinu ispod minimalne količine. Molimo proverite!", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
+                
             }
         }
 
