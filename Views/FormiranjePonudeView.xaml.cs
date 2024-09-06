@@ -102,17 +102,28 @@ namespace PetkusApplication.Views
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Logika za comboBox1 (nacin pokretanja)
             if (sender == comboBox1)
             {
                 string selectedNacinPokretanja = (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString();
                 if (!string.IsNullOrEmpty(selectedNacinPokretanja) && comboBoxSetups.ContainsKey(selectedNacinPokretanja))
                 {
-                    ResetComboBoxes(comboBox2, comboBox3, comboBox4);
-                    comboBoxSetups[selectedNacinPokretanja].Invoke();
-                    UpdateComboBoxVisibility(selectedNacinPokretanja);
+                    ResetComboBoxes(comboBox2, comboBox3, comboBox4);  // Resetovanje drugih ComboBox-ova
+                    comboBoxSetups[selectedNacinPokretanja].Invoke();  // Postavljanje vrednosti u zavisnosti od izbora
+                    UpdateComboBoxVisibility(selectedNacinPokretanja); // Ažuriranje vidljivosti ComboBox-ova
                 }
             }
-            UpdateProcedure();
+
+            // Logika za comboBox4 (poslednji ComboBox sa automatskom selekcijom redova)
+            if (sender == comboBox4)
+            {
+                UpdateProcedure();      // Ažuriraj podatke iz baze na osnovu izbora
+                AutoSelectAllRows();    // Automatski selektuj sve redove u DataGrid-u
+            }
+            else
+            {
+                UpdateProcedure();      // Ako je bilo koji drugi ComboBox aktiviran, samo ažuriraj podatke
+            }
         }
 
         private void ComboBox3_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -379,7 +390,6 @@ namespace PetkusApplication.Views
                 {
                     Fabricki_kod = row["Fabricki_kod"].ToString(),
                     Opis = row["Opis"].ToString(),
-
                     Puna_cena = row["Puna_cena"] != DBNull.Value ? Convert.ToDecimal(row["Puna_cena"]) : 0m,
                     Dimenzije = row["Dimenzije"].ToString(),
                     Disipacija = row["Disipacija"] != DBNull.Value ? Convert.ToDecimal(row["Disipacija"]) : 0m,
@@ -392,7 +402,13 @@ namespace PetkusApplication.Views
                 PonudaItems.Add(item);
             }
 
-            ResultsDataGrid.ItemsSource = PonudaItems; // Bind ObservableCollection
+            ResultsDataGrid.ItemsSource = PonudaItems; // Bind ObservableCollection to DataGrid
+        }
+
+        // Automatically selects all rows in the DataGrid
+        private void AutoSelectAllRows()
+        {
+            ResultsDataGrid.SelectAll();
         }
 
 
