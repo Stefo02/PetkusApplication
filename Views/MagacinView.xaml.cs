@@ -347,6 +347,9 @@ namespace PetkusApplication.Views
 
             ClearTextBoxes();
             LoadData();
+
+            // Pozivamo funkciju za proveru zaliha nakon dodavanja nove stavke
+            CheckForLowStock();
         }
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
@@ -363,7 +366,6 @@ namespace PetkusApplication.Views
                 selectedItem.Vrednost_rabata = decimal.Parse(vrednostRabataTextBox.Text);
                 selectedItem.MinKolicina = int.Parse(minKolicinaTextBox.Text);
 
-                // Use OriginalTable instead of ComboBox for "Svi Podaci"
                 string tableName = !string.IsNullOrEmpty(selectedItem.OriginalTable)
                     ? selectedItem.OriginalTable
                     : GetTableNameFromComboBox();
@@ -373,6 +375,9 @@ namespace PetkusApplication.Views
                     dbContext.UpdateItem(tableName, selectedItem);
                     ClearTextBoxes();
                     LoadData();
+
+                    // Pozivamo funkciju za proveru zaliha nakon ažuriranja
+                    CheckForLowStock();
                 }
                 else
                 {
@@ -395,6 +400,9 @@ namespace PetkusApplication.Views
 
                 ClearTextBoxes();
                 LoadData();
+
+                // Pozivamo funkciju za proveru zaliha nakon brisanja stavke
+                CheckForLowStock();
             }
             else
             {
