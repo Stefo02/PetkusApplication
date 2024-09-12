@@ -66,7 +66,12 @@
                                         <Binding Path="MinKolicina" />
                                     </MultiBinding>
                                 </DataTrigger.Binding>
-                                <Setter Property="Background" Value="Red" />
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="#ff1a1a" Opacity="0.8" />
+                                        <!-- 50% opacity -->
+                                    </Setter.Value>
+                                </Setter>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -80,6 +85,19 @@
                     <DataGridTextColumn Header="Proizvodjac" Binding="{Binding Proizvodjac}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Fabricki Kod" Binding="{Binding Fabricki_kod}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Kolicina" Binding="{Binding Kolicina}" Width="*" Foreground="#001f5b"/>
+
+                    <DataGridTemplateColumn Header="Jedinica Mere" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox SelectedValue="{Binding JedinicaMere, Mode=TwoWay}" Width="100">
+                                    <ComboBoxItem Content="kom" />
+                                    <ComboBoxItem Content="kg" />
+                                    <ComboBoxItem Content="pakovanje" />
+                                    <ComboBoxItem Content="m" />
+                                </ComboBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Min Kolicina" Binding="{Binding MinKolicina}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Puna Cena" Binding="{Binding Puna_cena}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="*" Foreground="#001f5b"/>
@@ -88,9 +106,11 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
-       
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="10 10 10 30" HorizontalAlignment="Right">
-            <Button Content="Sacuvaj u Excel" Click="SaveToExcelButton_Click"  Margin="0,0,20,0"/>
+        
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,10,22" HorizontalAlignment="Right" Grid.Column="1">
+            <Button Click="SaveToExcelButton_Click" Grid.ColumnSpan="2" Margin="0,0,20,0" Background="Transparent" BorderThickness="0" Height="42">
+                <Image Source="Images/Download.png" Width="30" Height="36"/>
+            </Button>
             <TextBox x:Name="opisTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
             <TextBox x:Name="proizvodjacTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
             <TextBox x:Name="fabrickiKodTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>

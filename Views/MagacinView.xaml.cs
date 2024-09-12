@@ -20,6 +20,10 @@ namespace PetkusApplication.Views
         private AppDbContext dbContext;
         private List<Item> data;
         private Item selectedItem;
+        private DispatcherTimer stockCheckTimer;
+        private bool isNotificationShown = false;
+
+
         private Dictionary<string, string> tableMap = new Dictionary<string, string>
         {
             // Table mapping remains the same
@@ -57,7 +61,7 @@ namespace PetkusApplication.Views
             { "yd_si_yd_kombinacija", "Kombinacija YD SI" },
             { "yd_si_zastita", "Zaštita YD SI" },
         };
-        private DispatcherTimer timer;
+        
 
         public MagacinView()
         {
@@ -70,6 +74,18 @@ namespace PetkusApplication.Views
             dataGrid.ItemsSource = data;
             LoadTableComboBox();
             ApplyRowStyle();
+
+            stockCheckTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromHours(4) // Postavi interval na 2 sata
+            };
+            stockCheckTimer.Tick += StockCheckTimer_Tick;
+            stockCheckTimer.Start(); // Pokreni timer
+        }
+
+        private void StockCheckTimer_Tick(object sender, EventArgs e)
+        {
+            CheckForLowStock(); // Pozivanje metode za proveru niske količine
         }
 
         private void LoadTableComboBox()
@@ -126,26 +142,26 @@ namespace PetkusApplication.Views
             dataGrid.ItemsSource = data;
             dataGrid.Items.Refresh();
 
-            CheckForLowStock();
         }
+
+        private DateTime lastWarningTime = DateTime.MinValue;
 
         private void CheckForLowStock()
         {
             var lowStockItems = data.Where(item => item.Kolicina < item.MinKolicina).ToList();
 
-            if (lowStockItems.Any())
-            {
-                foreach (var item in lowStockItems)
-                {
-                    var index = dataGrid.Items.IndexOf(item);
-                    var row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(index);
-                    if (row != null)
-                    {
-                        row.Background = Brushes.LightCoral;
-                    }
-                }
+            // Proveri da li su se artikli sa niskim zalihama promenili
+            bool hasLowStockItems = lowStockItems.Any();
 
-                
+            if (hasLowStockItems && !isNotificationShown) // Proveri da li je obaveštenje već prikazano
+            {
+                // Prikaz obaveštenja samo jednom dok se stanje ne promeni
+                MessageBox.Show("Postoji stavki sa količinom ispod minimalne količine.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
+                isNotificationShown = true; // Postavi zastavicu da je obaveštenje prikazano
+            }
+            else if (!hasLowStockItems)
+            {
+                isNotificationShown = false; // Resetuj zastavicu kada nema niskih zaliha
             }
         }
 
@@ -166,8 +182,7 @@ namespace PetkusApplication.Views
 
             dataGrid.ItemsSource = filteredData;
             dataGrid.Items.Refresh();
-
-            CheckForLowStock();
+           
         }
 
         private void searchTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -182,7 +197,7 @@ namespace PetkusApplication.Views
 
         private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (isUpdatingSelection) return; // Prevent recursive calls
+            if (isUpdatingSelection) return; // Spreči rekurzivne pozive
 
             if (dataGrid.SelectedItem != null)
             {
@@ -200,15 +215,6 @@ namespace PetkusApplication.Views
                     tezinaTextBox.Text = selectedItem.Tezina.ToString();
                     vrednostRabataTextBox.Text = selectedItem.Vrednost_rabata.ToString();
                     minKolicinaTextBox.Text = selectedItem.MinKolicina.ToString();
-
-                    // Apply visual indicator if Kolicina is less than MinKolicina
-                    if (selectedItem.Kolicina < selectedItem.MinKolicina)
-                    {
-                        dataGrid.SelectedItem = null; // Deselect the current item
-                        dataGrid.Focus(); // Refocus on the DataGrid
-                        dataGrid.SelectedItem = selectedItem; // Re-select the item
-                        MessageBox.Show("Količina u ovom redu je ispod minimalne količine.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
                 }
             }
             else
@@ -217,7 +223,10 @@ namespace PetkusApplication.Views
             }
 
             isUpdatingSelection = false;
+            // Ensure notification check is only done once per selection change
+            // This might not be necessary depending on when you want to check stock
         }
+
 
 
         private void kolicinaTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -349,7 +358,6 @@ namespace PetkusApplication.Views
             }
             dataGrid.ItemsSource = data;
             dataGrid.Items.Refresh();
-            CheckForLowStock();
         }
        
         private string GetTableNameFromComboBox()
@@ -401,6 +409,7 @@ namespace PetkusApplication.Views
                     worksheet.Cell(1, 7).Value = "Tezina";
                     worksheet.Cell(1, 8).Value = "Vrednost rabata";
                     worksheet.Cell(1, 9).Value = "Min Kolicina";
+                    worksheet.Cell(1, 10).Value = "Kolicina za narucivanje";
 
                     // Add data rows
                     for (int i = 0; i < selectedItems.Count; i++)
