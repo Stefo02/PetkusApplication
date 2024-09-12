@@ -24,6 +24,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Logo Slika -->
         <Image Source="Images\petkus-removebg-previeww.png" 
                Grid.Row="2" Grid.Column="0" 
                Margin="20 0 0 10" 
@@ -33,7 +34,10 @@
                Height="70" 
                Opacity="1"/>
 
+        <!-- Sekcija za pretragu i zvonce sa obaveštenjima -->
         <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="0 30 10 10" HorizontalAlignment="Right">
+
+            <!-- Pretraga -->
             <Grid Margin="70 5 5 5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -42,12 +46,47 @@
                 <TextBox x:Name="searchTextBox" Width="200" VerticalAlignment="Center" Grid.Column="1" KeyDown="searchTextBox_KeyDown" BorderThickness="0 0 0 2"/>
                 <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0 0 15 0" Foreground="White" Text="Pretraži po Opisu ili Fabrickom kodu" IsHitTestVisible="False" FontSize="14" FontWeight="Bold"/>
             </Grid>
+            <Button Width="63" Height="40" Margin="5" Click="SearchButton_Click" Background="Transparent" BorderThickness="0">
+                <Image Source="Images/Search.png" Width="30" Height="30"/>
+            </Button>
 
-            <Button Content="Pretraži" Width="95" Margin="5" Click="SearchButton_Click" Background="#001f5b"/>
+
+            <!-- Zvonce sa brojem obaveštenja -->
+            <Button Name="notificationBell" Click="NotificationBell_Click" Width="63" Height="40" Background="Transparent" BorderThickness="0">
+                <Canvas>
+                    <Image Source="Images/bell.png" Width="30" Height="30" Canvas.Left="-30" Canvas.Top="-15"/>
+                    <TextBlock Name="notificationCount" Text="0" FontSize="14" Foreground="White" Canvas.Top="-22" Canvas.Left="5"/>
+                </Canvas>
+            </Button>
+
+
+            <!-- Popup za obaveštenja o zalihama -->
+            <Popup Name="notificationPopup" PlacementTarget="{Binding ElementName=notificationBell}" 
+                   Placement="Top" StaysOpen="False" AllowsTransparency="True">
+                <Border BorderBrush="Gray" BorderThickness="1" Background="White" CornerRadius="5" Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="Obaveštenja o niskim zalihama:" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <ListBox Name="lowStockList">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Opis}" Width="150"/>
+                                        <Border Width="1" Background="Gray" Margin="5,0" />
+                                        <!-- Ova linija razdvaja -->
+                                        <TextBlock Text="{Binding Kolicina}" Width="50"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+            </Popup>
         </StackPanel>
 
+        <!-- Dropdown za selekciju tabele -->
         <ComboBox x:Name="tableComboBox" Width="270" Margin="30,40,0,0" SelectionChanged="tableComboBox_SelectionChanged" BorderThickness="0 0 0 2" VerticalAlignment="Top"/>
 
+        <!-- DataGrid za prikaz podataka -->
         <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="20 10 20 10">
             <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" IsReadOnly="True" Height="Auto">
                 <DataGrid.Resources>
@@ -69,7 +108,6 @@
                                 <Setter Property="Background">
                                     <Setter.Value>
                                         <SolidColorBrush Color="#ff1a1a" Opacity="0.8" />
-                                        <!-- 50% opacity -->
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger>
@@ -85,7 +123,6 @@
                     <DataGridTextColumn Header="Proizvodjac" Binding="{Binding Proizvodjac}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Fabricki Kod" Binding="{Binding Fabricki_kod}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Kolicina" Binding="{Binding Kolicina}" Width="*" Foreground="#001f5b"/>
-
                     <DataGridTemplateColumn Header="Jedinica Mere" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -106,7 +143,8 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
-        
+
+        <!-- Donji panel za unos i rad sa stavkama -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,10,22" HorizontalAlignment="Right" Grid.Column="1">
             <Button Click="SaveToExcelButton_Click" Grid.ColumnSpan="2" Margin="0,0,20,0" Background="Transparent" BorderThickness="0" Height="42">
                 <Image Source="Images/Download.png" Width="30" Height="36"/>
@@ -120,9 +158,18 @@
             <TextBox x:Name="dimenzijeTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
             <TextBox x:Name="tezinaTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
             <TextBox x:Name="vrednostRabataTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
-            <Button Content="Dodaj" Width="80" Margin="5" Click="AddButton_Click" Background="#001f5b"/>
-            <Button Content="Izmeni" Width="80" Margin="5" Click="UpdateButton_Click" Background="#001f5b"/>
-            <Button Content="Obriši" Width="80" Margin="5" Click="DeleteButton_Click" Background="#001f5b"/>
+            <Button Width="63" Height="40" Margin="5" Click="AddButton_Click" Background="Transparent" BorderThickness="0">
+                <Image Source="Images/Add.png" Width="30" Height="30"/>
+            </Button>
+
+            <Button Width="64" Margin="1" Click="UpdateButton_Click" Background="Transparent" BorderThickness="0" Height="40">
+                <Image Source="Images/Exchange.png" Width="30" Height="30"/>
+            </Button>
+
+            <Button Width="63" Margin="1" Click="DeleteButton_Click" Background="Transparent" BorderThickness="0" Height="40">
+                <Image Source="Images/delete.png" Width="30" Height="30"/>
+            </Button>
+
         </StackPanel>
     </Grid>
 </UserControl>

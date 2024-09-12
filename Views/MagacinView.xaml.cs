@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using PetkusApplication.Data;
 using PetkusApplication.Models;
 using ClosedXML.Excel;
+using PetkusApplication.Settings;
 
 namespace PetkusApplication.Views
 {
@@ -22,6 +23,8 @@ namespace PetkusApplication.Views
         private Item selectedItem;
         private DispatcherTimer stockCheckTimer;
         private bool isNotificationShown = false;
+        private SettingsService settingsService;
+        private AppSettings settings;
 
 
         private Dictionary<string, string> tableMap = new Dictionary<string, string>
@@ -70,17 +73,27 @@ namespace PetkusApplication.Views
                 .UseMySql("server=localhost;database=myappdb;user=root;password=;", new MySqlServerVersion(new Version(10, 4, 32)))
                 .Options); // Initialize AppDbContext with options
 
-            data = new List<Item>();
+            data = new List<Item>();  // Inicijalizacija liste pre upotrebe
+
+            settingsService = new SettingsService();
+            var settings = settingsService.LoadSettings();
+
+            // Sada `data` više nije null, možeš bezbedno iterirati kroz nju
+            foreach (var item in data)
+            {
+                item.JedinicaMere = settings.JedinicaMere;  // Učitaj postavku za jedinicu mere
+            }
             dataGrid.ItemsSource = data;
             LoadTableComboBox();
             ApplyRowStyle();
 
             stockCheckTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromHours(4) // Postavi interval na 2 sata
+                Interval = TimeSpan.FromHours(4) // Postavi interval na 4 sata
             };
             stockCheckTimer.Tick += StockCheckTimer_Tick;
             stockCheckTimer.Start(); // Pokreni timer
+            CheckForLowStock();
         }
 
         private void StockCheckTimer_Tick(object sender, EventArgs e)
@@ -98,8 +111,18 @@ namespace PetkusApplication.Views
             tableOptions.AddRange(tableNames.Select(t => tableMap.ContainsKey(t) ? tableMap[t] : t)); // Add the actual table names
 
             tableComboBox.ItemsSource = tableOptions;
-            tableComboBox.SelectedIndex = 0; // Set default selection to 'Svi podaci'
+
+            // Use saved setting or default to 'Svi podaci'
+            if (settings != null)
+            {
+                tableComboBox.SelectedItem = settings.SelectedUnit ?? allDataOption;
+            }
+            else
+            {
+                tableComboBox.SelectedItem = allDataOption;
+            }
         }
+
 
         private void ApplyRowStyle()
         {
@@ -129,20 +152,34 @@ namespace PetkusApplication.Views
 
             if (selectedOption == null) return;
 
+            // Proveri da li je settings null
+            if (settings == null)
+            {
+                settings = new AppSettings();  // Inicijalizacija praznog objekta postavki
+            }
+
+            // Sačuvaj izabranu opciju u postavke
+            settings.SelectedUnit = selectedOption;
+            settingsService.SaveSettings(settings);
+
             if (selectedOption == "Svi podaci")
             {
-                data = dbContext.GetItemsFromAllTables(); // Fetch data from all tables
+                data = dbContext.GetItemsFromAllTables(); // Preuzmi podatke iz svih tabela
             }
             else
             {
                 string tableName = GetTableNameFromComboBox();
-                data = dbContext.GetItemsFromTable(tableName); // Fetch data from the selected table
+                data = dbContext.GetItemsFromTable(tableName); // Preuzmi podatke iz izabrane tabele
             }
 
             dataGrid.ItemsSource = data;
             dataGrid.Items.Refresh();
 
+            // Pozovi CheckForLowStock da bi se broj obaveštenja odmah ažurirao
+            CheckForLowStock();
         }
+
+
 
         private DateTime lastWarningTime = DateTime.MinValue;
 
@@ -150,19 +187,36 @@ namespace PetkusApplication.Views
         {
             var lowStockItems = data.Where(item => item.Kolicina < item.MinKolicina).ToList();
 
-            // Proveri da li su se artikli sa niskim zalihama promenili
-            bool hasLowStockItems = lowStockItems.Any();
+            // Ažuriraj broj obaveštenja
+            notificationCount.Text = lowStockItems.Count.ToString();
 
-            if (hasLowStockItems && !isNotificationShown) // Proveri da li je obaveštenje već prikazano
+            // Ako ima artikala sa niskim zalihama, popup može ostati zatvoren dok se ne klikne
+            if (lowStockItems.Any())
             {
-                // Prikaz obaveštenja samo jednom dok se stanje ne promeni
-                MessageBox.Show("Postoji stavki sa količinom ispod minimalne količine.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
-                isNotificationShown = true; // Postavi zastavicu da je obaveštenje prikazano
+                lowStockList.ItemsSource = lowStockItems; // Postavi listu artikala u popup
+                isNotificationShown = true; // Postavi zastavicu da je obaveštenje aktivno
             }
-            else if (!hasLowStockItems)
+            else
             {
-                isNotificationShown = false; // Resetuj zastavicu kada nema niskih zaliha
+                isNotificationShown = false; // Resetuj zastavicu kada nema zaliha
             }
+        }
+
+
+
+        private void NotificationBell_Click(object sender, RoutedEventArgs e)
+        {
+            // Prikupi stavke sa niskim zalihama
+            var lowStockItems = data.Where(item => item.Kolicina < item.MinKolicina).ToList();
+
+            // Ažuriraj listu u popup prozoru
+            lowStockList.ItemsSource = lowStockItems;
+
+            // Ažuriraj broj obaveštenja pored zvonca
+            notificationCount.Text = lowStockItems.Count.ToString();
+
+            // Prikaži popup iznad zvonca
+            notificationPopup.IsOpen = true;
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -206,6 +260,7 @@ namespace PetkusApplication.Views
 
                 if (selectedItem != null)
                 {
+                    // Postavljanje vrednosti u TextBox-ove
                     opisTextBox.Text = selectedItem.Opis ?? string.Empty;
                     proizvodjacTextBox.Text = selectedItem.Proizvodjac ?? string.Empty;
                     fabrickiKodTextBox.Text = selectedItem.Fabricki_kod ?? string.Empty;
@@ -215,6 +270,9 @@ namespace PetkusApplication.Views
                     tezinaTextBox.Text = selectedItem.Tezina.ToString();
                     vrednostRabataTextBox.Text = selectedItem.Vrednost_rabata.ToString();
                     minKolicinaTextBox.Text = selectedItem.MinKolicina.ToString();
+
+                    // Kada se promeni vrednost Jedinica Mere, sačuvaj promene u postavkama
+                    UpdateJedinicaMere(selectedItem.JedinicaMere);
                 }
             }
             else
@@ -223,11 +281,23 @@ namespace PetkusApplication.Views
             }
 
             isUpdatingSelection = false;
-            // Ensure notification check is only done once per selection change
-            // This might not be necessary depending on when you want to check stock
         }
 
+        // Funkcija za ažuriranje i čuvanje jedinice mere
+        private void UpdateJedinicaMere(string jedinicaMere)
+        {
+            // Ažuriraj vrednost jedinice mere u postavkama
+            settings.JedinicaMere = jedinicaMere;
 
+            // Sačuvaj trenutne postavke u JSON fajl
+            SaveSettings();
+        }
+
+        // Funkcija za čuvanje postavki
+        private void SaveSettings()
+        {
+            settingsService.SaveSettings(settings);  // Sačuvaj postavke u JSON fajl
+        }
 
         private void kolicinaTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -434,6 +504,12 @@ namespace PetkusApplication.Views
                 MessageBox.Show("Excel fajl je uspesno sacuvan.");
             }
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            SaveSettings();  // Sačuvaj sve promene u postavkama
+        }
+
 
     }
 }
