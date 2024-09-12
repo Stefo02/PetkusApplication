@@ -219,6 +219,26 @@ namespace PetkusApplication.Views
             notificationPopup.IsOpen = true;
         }
 
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = searchTextBox.Text.ToLower();
+
+            if (data == null || !data.Any())
+            {
+                MessageBox.Show("Nema podataka za pretragu.");
+                return;
+            }
+
+            var filteredData = data.Where(item =>
+                (item.Opis != null && item.Opis.ToLower().Contains(searchText)) ||
+                (item.Fabricki_kod != null && item.Fabricki_kod.ToLower().Contains(searchText))
+            ).ToList();
+
+            dataGrid.ItemsSource = filteredData;
+            dataGrid.Items.Refresh();
+        }
+
+
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             string searchText = searchTextBox.Text.ToLower();

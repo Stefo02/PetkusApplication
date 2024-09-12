@@ -43,7 +43,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="searchTextBox" Width="200" VerticalAlignment="Center" Grid.Column="1" KeyDown="searchTextBox_KeyDown" BorderThickness="0 0 0 2"/>
+                <TextBox x:Name="searchTextBox" Width="200" VerticalAlignment="Center" Grid.Column="1" KeyDown="searchTextBox_KeyDown" TextChanged="SearchTextBox_TextChanged" BorderThickness="0 0 0 2"/>
                 <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0 0 15 0" Foreground="White" Text="Pretraži po Opisu ili Fabrickom kodu" IsHitTestVisible="False" FontSize="14" FontWeight="Bold"/>
             </Grid>
             <Button Width="63" Height="40" Margin="5" Click="SearchButton_Click" Background="Transparent" BorderThickness="0">
@@ -149,15 +149,15 @@
             <Button Click="SaveToExcelButton_Click" Grid.ColumnSpan="2" Margin="0,0,20,0" Background="Transparent" BorderThickness="0" Height="42">
                 <Image Source="Images/Download.png" Width="30" Height="36"/>
             </Button>
-            <TextBox x:Name="opisTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
-            <TextBox x:Name="proizvodjacTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
-            <TextBox x:Name="fabrickiKodTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
-            <TextBox x:Name="kolicinaTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
-            <TextBox x:Name="minKolicinaTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
-            <TextBox x:Name="punaCenaTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
-            <TextBox x:Name="dimenzijeTextBox" Width="100" Margin="5" BorderThickness="0 0 0 2"/>
-            <TextBox x:Name="tezinaTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
-            <TextBox x:Name="vrednostRabataTextBox" Width="50" Margin="5" BorderThickness="0 0 0 2"/>
+            <TextBox x:Name="opisTextBox" Width="100" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
+            <TextBox x:Name="proizvodjacTextBox" Width="100" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
+            <TextBox x:Name="fabrickiKodTextBox" Width="100" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
+            <TextBox x:Name="kolicinaTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
+            <TextBox x:Name="minKolicinaTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
+            <TextBox x:Name="punaCenaTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
+            <TextBox x:Name="dimenzijeTextBox" Width="100" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
+            <TextBox x:Name="tezinaTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
+            <TextBox x:Name="vrednostRabataTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
             <Button Width="63" Height="40" Margin="5" Click="AddButton_Click" Background="Transparent" BorderThickness="0">
                 <Image Source="Images/Add.png" Width="30" Height="30"/>
             </Button>
