@@ -306,7 +306,7 @@ namespace PetkusApplication.Views
                 }
                 else
                 {
-                    MessageBox.Show("Cannot determine table name for the selected item.");
+                    MessageBox.Show("Nije moguće odrediti ime tabele za izabranu stavku.");
                 }
             }
             else
@@ -376,6 +376,16 @@ namespace PetkusApplication.Views
 
         private void SaveSelectedRowsToExcel()
         {
+            // Get selected rows
+            var selectedItems = dataGrid.SelectedItems.Cast<Item>().ToList();
+
+            if (selectedItems.Count == 0)
+            {
+                MessageBox.Show("Nema izabranih redova.");
+                return;
+            }
+
+            // Open the SaveFileDialog only if there are selected rows
             var saveFileDialog = new SaveFileDialog
             {
                 Filter = "Excel Files (*.xlsx)|*.xlsx",
@@ -385,15 +395,6 @@ namespace PetkusApplication.Views
             if (saveFileDialog.ShowDialog() == true)
             {
                 string filePath = saveFileDialog.FileName;
-
-                // Get selected rows
-                var selectedItems = dataGrid.SelectedItems.Cast<Item>().ToList();
-
-                if (selectedItems.Count == 0)
-                {
-                    MessageBox.Show("No rows selected for export.");
-                    return;
-                }
 
                 using (var workbook = new XLWorkbook())
                 {
@@ -430,8 +431,9 @@ namespace PetkusApplication.Views
                     workbook.SaveAs(filePath);
                 }
 
-                MessageBox.Show("Selected rows have been saved to Excel.");
+                MessageBox.Show("Excel fajl je uspesno sacuvan.");
             }
         }
+
     }
 }
