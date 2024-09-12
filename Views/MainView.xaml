@@ -5,7 +5,8 @@
         Title="MultiTabWindow"
         Height="500" 
         Width="900"
-        ResizeMode="CanResizeWithGrip">
+        ResizeMode="CanResizeWithGrip"
+        WindowState="Maximized">
     <Window.Resources>
         <!-- Definišite stil za TabItem -->
         <Style TargetType="TabItem">
