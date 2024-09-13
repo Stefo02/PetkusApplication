@@ -19,6 +19,5 @@ namespace PetkusApplication.Models
         public decimal Vrednost_rabata { get; set; }
         public int MinKolicina { get; set; }
         public string OriginalTable { get; set; }
-        public string JedinicaMere { get; set; }
     }
 }

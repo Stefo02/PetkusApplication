@@ -12,7 +12,6 @@ using Microsoft.Win32;
 using PetkusApplication.Data;
 using PetkusApplication.Models;
 using ClosedXML.Excel;
-using PetkusApplication.Settings;
 
 namespace PetkusApplication.Views
 {
@@ -23,8 +22,6 @@ namespace PetkusApplication.Views
         private Item selectedItem;
         private DispatcherTimer stockCheckTimer;
         private bool isNotificationShown = false;
-        private SettingsService settingsService;
-        private AppSettings settings;
 
 
         private Dictionary<string, string> tableMap = new Dictionary<string, string>
@@ -75,14 +72,6 @@ namespace PetkusApplication.Views
 
             data = new List<Item>();  // Inicijalizacija liste pre upotrebe
 
-            settingsService = new SettingsService();
-            var settings = settingsService.LoadSettings();
-
-            // Sada `data` više nije null, možeš bezbedno iterirati kroz nju
-            foreach (var item in data)
-            {
-                item.JedinicaMere = settings.JedinicaMere;  // Učitaj postavku za jedinicu mere
-            }
             dataGrid.ItemsSource = data;
             LoadTableComboBox();
             ApplyRowStyle();
@@ -112,15 +101,6 @@ namespace PetkusApplication.Views
 
             tableComboBox.ItemsSource = tableOptions;
 
-            // Use saved setting or default to 'Svi podaci'
-            if (settings != null)
-            {
-                tableComboBox.SelectedItem = settings.SelectedUnit ?? allDataOption;
-            }
-            else
-            {
-                tableComboBox.SelectedItem = allDataOption;
-            }
         }
 
 
@@ -151,16 +131,6 @@ namespace PetkusApplication.Views
             var selectedOption = tableComboBox.SelectedItem as string;
 
             if (selectedOption == null) return;
-
-            // Proveri da li je settings null
-            if (settings == null)
-            {
-                settings = new AppSettings();  // Inicijalizacija praznog objekta postavki
-            }
-
-            // Sačuvaj izabranu opciju u postavke
-            settings.SelectedUnit = selectedOption;
-            settingsService.SaveSettings(settings);
 
             if (selectedOption == "Svi podaci")
             {
@@ -291,8 +261,6 @@ namespace PetkusApplication.Views
                     vrednostRabataTextBox.Text = selectedItem.Vrednost_rabata.ToString();
                     minKolicinaTextBox.Text = selectedItem.MinKolicina.ToString();
 
-                    // Kada se promeni vrednost Jedinica Mere, sačuvaj promene u postavkama
-                    UpdateJedinicaMere(selectedItem.JedinicaMere);
                 }
             }
             else
@@ -301,22 +269,6 @@ namespace PetkusApplication.Views
             }
 
             isUpdatingSelection = false;
-        }
-
-        // Funkcija za ažuriranje i čuvanje jedinice mere
-        private void UpdateJedinicaMere(string jedinicaMere)
-        {
-            // Ažuriraj vrednost jedinice mere u postavkama
-            settings.JedinicaMere = jedinicaMere;
-
-            // Sačuvaj trenutne postavke u JSON fajl
-            SaveSettings();
-        }
-
-        // Funkcija za čuvanje postavki
-        private void SaveSettings()
-        {
-            settingsService.SaveSettings(settings);  // Sačuvaj postavke u JSON fajl
         }
 
         private void kolicinaTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -330,7 +282,6 @@ namespace PetkusApplication.Views
                 }
             }
         }
-
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -532,12 +483,6 @@ namespace PetkusApplication.Views
                 MessageBox.Show("Excel fajl je uspesno sacuvan.");
             }
         }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            SaveSettings();  // Sačuvaj sve promene u postavkama
-        }
-
 
     }
 }
