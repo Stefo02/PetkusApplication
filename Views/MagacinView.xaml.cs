@@ -12,6 +12,8 @@ using Microsoft.Win32;
 using PetkusApplication.Data;
 using PetkusApplication.Models;
 using ClosedXML.Excel;
+using System.IO;
+using System.Text.Json;
 
 namespace PetkusApplication.Views
 {
@@ -22,6 +24,8 @@ namespace PetkusApplication.Views
         private Item selectedItem;
         private DispatcherTimer stockCheckTimer;
         private bool isNotificationShown = false;
+        private const string AppDataFolder = "PetkusApplication";
+        private const string DataFileName = "ComboBoxSelections.json";
 
 
         private Dictionary<string, string> tableMap = new Dictionary<string, string>
@@ -75,6 +79,9 @@ namespace PetkusApplication.Views
             dataGrid.ItemsSource = data;
             LoadTableComboBox();
             ApplyRowStyle();
+            LoadComboBoxSelections();
+
+            Application.Current.Exit += OnApplicationExit;
 
             stockCheckTimer = new DispatcherTimer
             {
@@ -83,6 +90,11 @@ namespace PetkusApplication.Views
             stockCheckTimer.Tick += StockCheckTimer_Tick;
             stockCheckTimer.Start(); // Pokreni timer
             CheckForLowStock();
+        }
+
+        private void OnApplicationExit(object sender, ExitEventArgs e)
+        {
+            SaveComboBoxSelections(); // Sačuvaj selekcije pre zatvaranja aplikacije
         }
 
         private void StockCheckTimer_Tick(object sender, EventArgs e)
@@ -481,6 +493,45 @@ namespace PetkusApplication.Views
                 }
 
                 MessageBox.Show("Excel fajl je uspesno sacuvan.");
+            }
+        }
+
+        private string GetAppDataPath()
+        {
+            string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppDataFolder);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            return Path.Combine(folderPath, DataFileName);
+        }
+
+        private void SaveComboBoxSelections()
+        {
+            // Grupisanje po 'Id' i uzimanje prvog elementa iz svake grupe kako bi se izbegli duplikati
+            var selections = dataGrid.ItemsSource.Cast<Item>()
+                .GroupBy(item => item.Id)
+                .ToDictionary(group => group.Key, group => group.First().JedinicaMere);
+
+            string json = JsonSerializer.Serialize(selections);
+            File.WriteAllText(GetAppDataPath(), json);
+        }
+
+
+        private void LoadComboBoxSelections()
+        {
+            if (File.Exists(GetAppDataPath()))
+            {
+                string json = File.ReadAllText(GetAppDataPath());
+                var selections = JsonSerializer.Deserialize<Dictionary<int, string>>(json);
+
+                foreach (var item in dataGrid.ItemsSource.Cast<Item>())
+                {
+                    if (selections.ContainsKey(item.Id))
+                    {
+                        item.JedinicaMere = selections[item.Id];
+                    }
+                }
             }
         }
 
