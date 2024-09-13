@@ -10,6 +10,11 @@
 
     <UserControl.Resources>
         <converters:LessThanOrEqualConverter x:Key="LessThanOrEqualConverter" />
+
+        <Storyboard x:Key="BlinkStoryboard">
+            <ColorAnimation Storyboard.TargetProperty="(DataGridCell.Background).(SolidColorBrush.Color)"
+                            From="Red" To="White" Duration="0:0:1.2" RepeatBehavior="Forever" AutoReverse="True"/>
+        </Storyboard>
     </UserControl.Resources>
 
     <Grid>
@@ -110,11 +115,12 @@
                                         <Binding Path="MinKolicina" />
                                     </MultiBinding>
                                 </DataTrigger.Binding>
-                                <Setter Property="Background">
-                                    <Setter.Value>
-                                        <SolidColorBrush Color="Red" />
-                                    </Setter.Value>
-                                </Setter>
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource BlinkStoryboard}" />
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <StopStoryboard BeginStoryboardName="BlinkStoryboard" />
+                                </DataTrigger.ExitActions>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
