@@ -55,7 +55,7 @@
             <Button Name="notificationBell" Click="NotificationBell_Click" Width="63" Height="40" Background="Transparent" BorderThickness="0">
                 <Canvas>
                     <Image Source="Images/bell.png" Width="30" Height="30" Canvas.Left="-30" Canvas.Top="-15"/>
-                    <TextBlock Name="notificationCount" Text="0" FontSize="14" Foreground="White" Canvas.Top="-22" Canvas.Left="5"/>
+                    <TextBlock Name="notificationCount" Text="0" FontSize="14" Foreground="red" FontWeight="Bold" Canvas.Top="-22" Canvas.Left="5"/>
                 </Canvas>
             </Button>
 
@@ -92,13 +92,16 @@
         <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="20 10 20 10">
             <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" IsReadOnly="True" Height="Auto">
                 <DataGrid.Resources>
+                    <!-- Stil za zaglavlje kolona -->
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="#001f5b"/>
                         <Setter Property="Foreground" Value="White"/>
                         <Setter Property="FontWeight" Value="Bold"/>
                         <Setter Property="Padding" Value="10,5"/>
                     </Style>
-                    <Style TargetType="DataGridCell">
+
+                    <!-- Stil za ćelije kolone Opis -->
+                    <Style TargetType="DataGridCell" x:Key="OpisCellStyle">
                         <Style.Triggers>
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
@@ -109,7 +112,7 @@
                                 </DataTrigger.Binding>
                                 <Setter Property="Background">
                                     <Setter.Value>
-                                        <SolidColorBrush Color="#ff1a1a" Opacity="0.8" />
+                                        <SolidColorBrush Color="Red" />
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger>
@@ -118,10 +121,11 @@
                 </DataGrid.Resources>
 
                 <DataGrid.Background>
-                    <SolidColorBrush Color="White"/>
+                    <ImageBrush ImageSource="Images\logo-page.jpg" Stretch="Fill"/>
                 </DataGrid.Background>
+
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="auto" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" FontWeight="Bold" Width="auto" Foreground="#001f5b" CellStyle="{StaticResource OpisCellStyle}"/>
                     <DataGridTextColumn Header="Proizvodjac" Binding="{Binding Proizvodjac}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Fabricki Kod" Binding="{Binding Fabricki_kod}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Kolicina" Binding="{Binding Kolicina}" Width="*" Foreground="#001f5b"/>
