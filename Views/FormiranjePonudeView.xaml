@@ -72,8 +72,8 @@
                     </StackPanel>
 
                     <!-- DataGrid with ScrollViewer -->
-                    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="10">
-                        <DataGrid Name="ResultsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  IsReadOnly="True" SelectionMode="Extended" SelectionChanged="ResultsDataGrid_SelectionChanged">
+
+                    <DataGrid Name="ResultsDataGrid" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  IsReadOnly="True" SelectionMode="Extended" SelectionChanged="ResultsDataGrid_SelectionChanged">
                             <DataGrid.Resources>
                                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}"/>
                             </DataGrid.Resources>
@@ -88,7 +88,7 @@
                                 <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}" Width="auto"/>
                             </DataGrid.Columns>
                         </DataGrid>
-                    </ScrollViewer>
+                    
 
                     <!-- Button to confirm selection -->
                     <Button Content="Potvrdi Izbor" Click="ConfirmSelection_Click" Margin="10" HorizontalAlignment="center" Grid.Row="3" Background="#001f5b" Foreground="White"/>
