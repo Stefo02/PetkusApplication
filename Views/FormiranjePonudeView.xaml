@@ -97,7 +97,7 @@
                     <Button Content="Potvrdi" Click="Button_Click" Margin="10" HorizontalAlignment="center" Grid.Row="2" Background="#001f5b" Foreground="White"/>
 
                     <!-- DataGrid to show grouped related items -->
-                    <DataGrid Grid.Row="4" x:Name="GroupedDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding GroupedItems}">
+                    <DataGrid Grid.Row="4" x:Name="GroupedDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding GroupedItems}" Height="200">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*"/>
                             <DataGridTextColumn Header="Fabrički kod" Binding="{Binding GroupName}" Width="*"/>
