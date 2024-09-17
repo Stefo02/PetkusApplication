@@ -28,13 +28,13 @@
         </Grid.RowDefinitions>
 
         <TabControl Grid.Row="1" SelectionChanged="TabControl_SelectionChanged" Background="#ffb81c">
-            <TabItem Header="FormiranjePonude">
+            <TabItem Header="Formiranje ponude">
                 <views:FormiranjePonudeView Padding="40"/>
             </TabItem>
             <TabItem Header="Magacin">
                 <views:MagacinView />
             </TabItem>
-            <TabItem Header="Logout">
+            <TabItem Header="Odjavite se">
                 <!-- Ovo može ostati prazno jer će se logout funkcija izvršiti automatski -->
             </TabItem>
         </TabControl>

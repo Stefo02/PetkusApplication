@@ -4,25 +4,42 @@
         xmlns:local="clr-namespace:PetkusApplication.Views"
         Title="Racunanjeponude" Height="450" Width="800">
     <Grid>
-        <DataGrid Name="SelectedItemsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Opis" Binding="{Binding Opis}"/>
-                <DataGridTextColumn Header="Fabricki_kod" Binding="{Binding Fabricki_kod}"/>
-                <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}"/>
-                <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}"/>
-                <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}"/>
-                <DataGridTextColumn Header="Tezina" Binding="{Binding Tezina}"/>
-                <DataGridTextColumn Header="Kolicina" Binding="{Binding Kolicina}"/>
-                <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}"/>
-                <DataGridTextColumn Header="Ukupna puna" Binding="{Binding Ukupna_puna}"/>
-                <DataGridTextColumn Header="Ukupna rabat" Binding="{Binding Ukupna_rabat}"/>
-                <DataGridTextColumn Header="Ukupna Disipacija" Binding="{Binding Ukupna_Disipacija}"/>
-                <DataGridTextColumn Header="Ukupna Tezina" Binding="{Binding Ukupna_Tezina}"/>
-                <DataGridTextColumn Header="Količina za naručivanje" Binding="{Binding KolicinaZaNarucivanje}"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <!-- Border sa bojom ffb81c koji obuhvata sve -->
+        <Border BorderBrush="#ffb81c" BorderThickness="20" Padding="5">
+            <Grid>
+                <!-- Definišemo dva reda, jedan za DataGrid i jedan za dugmiće -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <!-- Prvi red za DataGrid -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Drugi red za dugmiće -->
+                </Grid.RowDefinitions>
 
-        <Button Content="Formiraj ponudu" Click="GenerateExcel_Click" Margin="20,0,617,20" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="157" Background="#001f5b"/>
-        <Button Content="Potvrdi ponudu" Click="UpdateAndExport_Click" Margin="0,0,33,20" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="#001f5b"/>
+                <!-- DataGrid u prvom redu -->
+                <DataGrid Grid.Row="0" Name="SelectedItemsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Opis" Binding="{Binding Opis}"/>
+                        <DataGridTextColumn Header="Fabrički kod" Binding="{Binding Fabricki_kod}"/>
+                        <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}"/>
+                        <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}"/>
+                        <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}"/>
+                        <DataGridTextColumn Header="Težina" Binding="{Binding Tezina}"/>
+                        <DataGridTextColumn Header="Količina" Binding="{Binding Kolicina}"/>
+                        <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}"/>
+                        <DataGridTextColumn Header="Ukupna puna" Binding="{Binding Ukupna_puna}"/>
+                        <DataGridTextColumn Header="Ukupna rabat" Binding="{Binding Ukupna_rabat}"/>
+                        <DataGridTextColumn Header="Ukupna disipacija" Binding="{Binding Ukupna_Disipacija}"/>
+                        <DataGridTextColumn Header="Ukupna težina" Binding="{Binding Ukupna_Tezina}"/>
+                        <DataGridTextColumn Header="Količina za naručivanje" Binding="{Binding KolicinaZaNarucivanje}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Dugmići u drugom redu -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,10">
+                    <Button Content="Formiraj ponudu" Click="GenerateExcel_Click" Margin="25,0,10,0" Width="157" Background="#001f5b"/>
+                    <Button Content="Potvrdi ponudu" Click="UpdateAndExport_Click" Width="157" Background="#001f5b"/>
+                </StackPanel>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

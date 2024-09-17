@@ -53,7 +53,7 @@ namespace PetkusApplication.Views
             }
             else
             {
-                MessageBox.Show("Invalid username or password. Please try again.", "Login Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Nevažeće korisničko ime ili lozinka. Pokušajte ponovo.", "Prijava nije uspela", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

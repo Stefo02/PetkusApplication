@@ -450,7 +450,7 @@ namespace PetkusApplication.Views
             var saveFileDialog = new SaveFileDialog
             {
                 Filter = "Excel Files (*.xlsx)|*.xlsx",
-                Title = "Save Selected Rows as Excel File"
+                Title = "Sačuvajte izabrane redove kao Excel fajl."
             };
 
             if (saveFileDialog.ShowDialog() == true)
@@ -492,7 +492,7 @@ namespace PetkusApplication.Views
                     workbook.SaveAs(filePath);
                 }
 
-                MessageBox.Show("Excel fajl je uspesno sacuvan.");
+                MessageBox.Show("Excel fajl je uspešno sačuvan.");
             }
         }
 

@@ -61,7 +61,7 @@ namespace PetkusApplication.Views
         {
             if (sender is TabControl tabControl &&
                 tabControl.SelectedItem is TabItem selectedTab &&
-                selectedTab.Header.ToString() == "Logout")
+                selectedTab.Header.ToString() == "Odjavite se")
             {
                 LogOutCurrentUser();
 

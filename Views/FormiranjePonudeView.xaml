@@ -100,8 +100,8 @@
                     <DataGrid Grid.Row="4" x:Name="GroupedDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding GroupedItems}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*"/>
-                            <DataGridTextColumn Header="Fabricki kod" Binding="{Binding GroupName}" Width="*"/>
-                            <DataGridTextColumn Header="Broj Komada" Binding="{Binding Quantity, Mode=TwoWay}" Width="*"/>
+                            <DataGridTextColumn Header="Fabrički kod" Binding="{Binding GroupName}" Width="*"/>
+                            <DataGridTextColumn Header="Broj komada" Binding="{Binding Quantity, Mode=TwoWay}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

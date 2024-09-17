@@ -59,13 +59,13 @@ namespace PetkusApplication.Views
 
             if (string.IsNullOrEmpty(newUsername) || string.IsNullOrEmpty(newPassword))
             {
-                MessageBox.Show("Username and password cannot be empty.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Polja za korisničko ime i lozinku ne mogu biti prazni.", "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (_validUsers.Exists(u => u.Username == newUsername))
             {
-                MessageBox.Show("Username already exists.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Korisničko ime već postoji.", "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -82,7 +82,7 @@ namespace PetkusApplication.Views
             _validUsers.Add(newUser);
             UpdateUserList();
 
-            MessageBox.Show($"User '{newUsername}' added successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"Korisnik '{newUsername}' je dodat uspešno.", "Uspešno", MessageBoxButton.OK, MessageBoxImage.Information);
 
             txtNewUsername.Text = "";
             txtNewPassword.Password = "";
@@ -92,7 +92,7 @@ namespace PetkusApplication.Views
         {
             if (lstUsers.SelectedItem == null)
             {
-                MessageBox.Show("Please select a user to delete.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Izaberite korisnika za brisanje.", "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -100,11 +100,11 @@ namespace PetkusApplication.Views
 
             if (selectedUser.Username == "admin")
             {
-                MessageBox.Show("Cannot delete admin user.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Nije moguće obrisati admin korisnika.", "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            MessageBoxResult result = MessageBox.Show($"Are you sure you want to delete user '{selectedUser.Username}'?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult result = MessageBox.Show($"Da li ste sigurni da želite obrisati korisnika '{selectedUser.Username}'?", "Obriši", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
             {
@@ -114,7 +114,7 @@ namespace PetkusApplication.Views
                 _validUsers.Remove(selectedUser);
                 UpdateUserList();
 
-                MessageBox.Show($"User '{selectedUser.Username}' deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Korisnik '{selectedUser.Username}' je uspešno obrisan.", "Uspešno", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

@@ -65,7 +65,7 @@ namespace PetkusApplication.Views
                         if (newQuantity < 0)
                         {
                             // Nema dovoljno zaliha
-                            MessageBox.Show($"Nema zalihe za {item.Opis}.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBox.Show($"Nema dovoljno zaliha za {item.Opis}.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
                             allQuantitiesValid = false;
                             break;
                         }
@@ -82,7 +82,7 @@ namespace PetkusApplication.Views
                     }
                     else
                     {
-                        MessageBox.Show($"Fabricki_kod {item.Fabricki_kod} nije pronađen.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show($"Fabrički kod {item.Fabricki_kod} nije pronađen.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
                         allQuantitiesValid = false;
                         break;
                     }
@@ -175,7 +175,7 @@ namespace PetkusApplication.Views
 
                 if (!updated)
                 {
-                    MessageBox.Show($"Fabricki_kod {item.Fabricki_kod} not found or column 'Kolicina' missing in any table.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show($"Fabrički kod {item.Fabricki_kod} nije pronađen ili kolona 'Količina' nedostaje u nekoj od tabela.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
@@ -257,7 +257,7 @@ namespace PetkusApplication.Views
                 SaveFileDialog saveFileDialog = new SaveFileDialog
                 {
                     Filter = "Excel Files (*.xlsx)|*.xlsx",
-                    Title = "Save Excel File",
+                    Title = "Sačuvajte Excel fajl",
                     FileName = "Ponuda.xlsx" // Default file name
                 };
 
@@ -269,7 +269,7 @@ namespace PetkusApplication.Views
                     var filePath = saveFileDialog.FileName;
                     File.WriteAllBytes(filePath, package.GetAsByteArray());
 
-                    MessageBox.Show($"Excel file created at: {filePath}");
+                    MessageBox.Show($"Excel fajl je kreiran u: {filePath}");
                 }
             }
         }

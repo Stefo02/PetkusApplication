@@ -132,10 +132,10 @@
 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" FontWeight="Bold" Width="auto" Foreground="#001f5b" CellStyle="{StaticResource OpisCellStyle}"/>
-                    <DataGridTextColumn Header="Proizvodjac" Binding="{Binding Proizvodjac}" Width="*" Foreground="#001f5b"/>
-                    <DataGridTextColumn Header="Fabricki Kod" Binding="{Binding Fabricki_kod}" Width="*" Foreground="#001f5b"/>
-                    <DataGridTextColumn Header="Kolicina" Binding="{Binding Kolicina}" Width="*" Foreground="#001f5b"/>
-                    <DataGridTemplateColumn Header="Jedinica Mere" Width="*">
+                    <DataGridTextColumn Header="Proizvođač" Binding="{Binding Proizvodjac}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Fabrički kod" Binding="{Binding Fabricki_kod}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Količina" Binding="{Binding Kolicina}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTemplateColumn Header="Jedinica mere" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <ComboBox SelectedValue="{Binding JedinicaMere, Mode=TwoWay}" Width="100">
@@ -147,11 +147,11 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Min Kolicina" Binding="{Binding MinKolicina}" Width="*" Foreground="#001f5b"/>
-                    <DataGridTextColumn Header="Puna Cena" Binding="{Binding Puna_cena}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Min količina" Binding="{Binding MinKolicina}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="*" Foreground="#001f5b"/>
-                    <DataGridTextColumn Header="Tezina" Binding="{Binding Tezina}" Width="*" Foreground="#001f5b"/>
-                    <DataGridTextColumn Header="Vrednost Rabata" Binding="{Binding Vrednost_rabata}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Težina" Binding="{Binding Tezina}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}" Width="*" Foreground="#001f5b"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

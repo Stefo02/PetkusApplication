@@ -42,7 +42,7 @@
                             <Image Margin="0 5 0 0" Source="images/petkus.png" Height="107" RenderTransformOrigin="0.492,-0.009"/>
                             <TextBlock Margin="0 0 0 0" HorizontalAlignment="Center" FontSize="36" FontWeight="Bold" Text="PETKUS" Foreground="#001f5b"/>
                             <TextBlock Margin="0 0 0 3" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Text="Process Control" Foreground="#001f5b"/>
-                            <TextBlock Margin="0 5 0 5" FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center" Text="Prijavite se na Vaš postojeći nalog" Foreground="#001f5b"/>
+                            <TextBlock Margin="0 5 0 5" FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center" Text="Prijavite se na Vaš postojeći nalog." Foreground="#001f5b"/>
                             <TextBox Margin="0 15 0 5" x:Name="txtUsername" Width="300" FontSize="18"
                                      materialDesign:HintAssist.Hint="Unesite korisničko ime" BorderThickness="2" Background="White"
                                      BorderBrush="{DynamicResource MaterialDesignDivider}" Style="{StaticResource MaterialDesignOutlinedTextBox}" Foreground="#001f5b"/>
