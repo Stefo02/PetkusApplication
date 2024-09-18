@@ -120,8 +120,8 @@
                     <!-- DataGrid to show grouped related items -->
                     <DataGrid Grid.Row="4" x:Name="GroupedDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding GroupedItems}" Height="200" SelectionChanged="GroupedDataGrid_SelectionChanged">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*"/>
-                            <DataGridTextColumn Header="Fabrički kod" Binding="{Binding GroupName}" Width="*"/>
+                            <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Fabrički kod" Binding="{Binding GroupName}" Width="*" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Broj komada" Binding="{Binding Quantity, Mode=TwoWay}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
