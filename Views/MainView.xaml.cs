@@ -80,5 +80,10 @@ namespace PetkusApplication.Views
         {
 
         }
+
+        private void FormiranjePonudeView_Loaded_1(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

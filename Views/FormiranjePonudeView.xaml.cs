@@ -544,6 +544,15 @@ namespace PetkusApplication.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            // Proveri da li postoji količina 0
+            bool hasZeroQuantity = GroupedItems.Any(item => item.Quantity <= 0);
+
+            if (hasZeroQuantity)
+            {
+                MessageBox.Show("Nije moguće nastaviti jer je broj komada 0.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return; // Prekini metodu ako je količina 0
+            }
+
             List<PonudaItem> selectedItems = new List<PonudaItem>();
 
             foreach (var groupedItem in GroupedItems)
@@ -578,6 +587,12 @@ namespace PetkusApplication.Views
             // Otvorite Racunanjeponude i prosledite selectedItems kao parametar
             Racunanjeponude racunanjePonude = new Racunanjeponude(this, selectedItems);
             racunanjePonude.Show();
+        }
+
+
+        private void GroupedDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 

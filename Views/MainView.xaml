@@ -29,7 +29,7 @@
 
         <TabControl Grid.Row="1" SelectionChanged="TabControl_SelectionChanged" Background="#ffb81c">
             <TabItem Header="Formiranje ponude">
-                <views:FormiranjePonudeView Padding="40"/>
+                <views:FormiranjePonudeView Padding="40" Loaded="FormiranjePonudeView_Loaded_1"/>
             </TabItem>
             <TabItem Header="Magacin">
                 <views:MagacinView />
