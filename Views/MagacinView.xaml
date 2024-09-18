@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:PetkusApplication.Views"
              xmlns:converters="clr-namespace:PetkusApplication.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="1600" Background="#ffb81c" MouseDown="Window_MouseDown">
+             d:DesignHeight="450" d:DesignWidth="1600" Background="#ffb81c" MouseDown="Window_MouseDown"
+             Loaded="MagacinView_Loaded">
 
     <UserControl.Resources>
         <converters:LessThanOrEqualConverter x:Key="LessThanOrEqualConverter" />
@@ -73,7 +74,7 @@
                     <StackPanel>
                         <TextBlock Text="Obaveštenja o niskim zalihama:" FontWeight="Bold" Margin="0,0,20,20"/>
                         <!-- Ograničenje visine ListBox-a da se omogući skrol -->
-                        <ListBox Name="lowStockList" MaxHeight="250" >
+                        <ListBox Name="lowStockList" MaxHeight="250" SelectionChanged="LowStockList_SelectionChanged" >
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">

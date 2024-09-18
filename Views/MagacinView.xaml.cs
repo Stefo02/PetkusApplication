@@ -98,6 +98,25 @@ namespace PetkusApplication.Views
             stockCheckTimer.Start(); // Pokreni timer
             CheckForLowStock();
         }
+        private void MagacinView_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Postavi "Svi podaci" kao selektovanu opciju
+            tableComboBox.SelectedItem = "Svi podaci";
+
+            // Učitaj podatke na osnovu selektovane opcije
+            LoadData();
+        }
+
+        private void LowStockList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (lowStockList.SelectedItem is Item selectedItem)
+            {
+                // Prekopiraj opis iz izabrane stavke u searchTextBox
+                searchTextBox.Text = selectedItem.Opis ?? string.Empty;
+            }
+        }
+
+
 
         private void OnApplicationExit(object sender, ExitEventArgs e)
         {
@@ -163,6 +182,7 @@ namespace PetkusApplication.Views
 
             dataGrid.ItemsSource = data;
             dataGrid.Items.Refresh();
+
 
             // Pozovi CheckForLowStock da bi se broj obaveštenja odmah ažurirao
             CheckForLowStock();
@@ -424,10 +444,18 @@ namespace PetkusApplication.Views
             {
                 data = dbContext.GetItemsFromTable(tableName);
             }
+
+            // Uklanjanje duplikata pomoću Distinct() ili GroupBy() po određenom ključu
+            data = data.GroupBy(item => item.Fabricki_kod)
+                       .Select(group => group.First()) // Uzmi prvi element iz svake grupe
+                       .ToList();
+
+            // Postavi očišćene podatke u DataGrid
             dataGrid.ItemsSource = data;
             dataGrid.Items.Refresh();
         }
-       
+
+
         private string GetTableNameFromComboBox()
         {
             var selectedOption = tableComboBox.SelectedItem as string;
