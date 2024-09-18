@@ -45,9 +45,9 @@
 
   <ItemGroup>
     <Resource Include="Views\Images\Add.png" />
-    <Content Include="Views\Images\arrow.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="Views\Images\arrow.png">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Views\Images\bell.png" />
     <Resource Include="Views\Images\delete.png" />
     <Resource Include="Views\Images\Download.png" />
