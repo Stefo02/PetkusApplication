@@ -75,5 +75,10 @@ namespace PetkusApplication.Views
                 this.Close();
             }
         }
+
+        private void FormiranjePonudeView_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

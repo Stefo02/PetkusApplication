@@ -64,6 +64,13 @@ namespace PetkusApplication.Views
             { "yd_si_sklopke", "Sklopke YD SI" },
             { "yd_si_yd_kombinacija", "Kombinacija YD SI" },
             { "yd_si_zastita", "Zaštita YD SI" },
+            { "kleme", "Kleme" },
+            { "ormani", "Ormani" },
+            { "napajanje_23", "Napajanje 23" },
+            { "napajanje_230", "Napajanje 230" },
+            { "prekidaci_se", "Prekidači SE" },
+            { "prekidaci_si", "Prekidači SI" },
+            { "sabirnicki_sistem", "Sabirnički sistem" },
         };
         
 

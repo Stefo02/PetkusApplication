@@ -5,7 +5,7 @@
         Title="Racunanjeponude" Height="450" Width="800">
     <Grid>
         <!-- Border sa bojom ffb81c koji obuhvata sve -->
-        <Border BorderBrush="#ffb81c" BorderThickness="20" Padding="5">
+        <Border BorderBrush="#ffb81c" BorderThickness="30" Padding="5">
             <Grid>
                 <!-- Definišemo dva reda, jedan za DataGrid i jedan za dugmiće -->
                 <Grid.RowDefinitions>
@@ -16,23 +16,33 @@
                 </Grid.RowDefinitions>
 
                 <!-- DataGrid u prvom redu -->
-                <DataGrid Grid.Row="0" Name="SelectedItemsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Opis" Binding="{Binding Opis}"/>
-                        <DataGridTextColumn Header="Fabrički kod" Binding="{Binding Fabricki_kod}"/>
-                        <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}"/>
-                        <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}"/>
-                        <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}"/>
-                        <DataGridTextColumn Header="Težina" Binding="{Binding Tezina}"/>
-                        <DataGridTextColumn Header="Količina" Binding="{Binding Kolicina}"/>
-                        <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}"/>
-                        <DataGridTextColumn Header="Ukupna puna" Binding="{Binding Ukupna_puna}"/>
-                        <DataGridTextColumn Header="Ukupna rabat" Binding="{Binding Ukupna_rabat}"/>
-                        <DataGridTextColumn Header="Ukupna disipacija" Binding="{Binding Ukupna_Disipacija}"/>
-                        <DataGridTextColumn Header="Ukupna težina" Binding="{Binding Ukupna_Tezina}"/>
-                        <DataGridTextColumn Header="Količina za naručivanje" Binding="{Binding KolicinaZaNarucivanje}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                <Grid Grid.Row="0">
+                    <Grid.Background>
+                        <ImageBrush ImageSource="Images\Untitled.jpg" Stretch="UniformToFill" Opacity="0.5"/>
+                    </Grid.Background>
+
+                    <DataGrid Name="SelectedItemsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False"
+              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+              Background="Transparent">
+                        <!-- Transparent Background to show image -->
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Opis" Binding="{Binding Opis}"/>
+                            <DataGridTextColumn Header="Fabrički kod" Binding="{Binding Fabricki_kod}"/>
+                            <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}"/>
+                            <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}"/>
+                            <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}"/>
+                            <DataGridTextColumn Header="Težina" Binding="{Binding Tezina}"/>
+                            <DataGridTextColumn Header="Količina" Binding="{Binding Kolicina}"/>
+                            <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}"/>
+                            <DataGridTextColumn Header="Ukupna puna" Binding="{Binding Ukupna_puna}"/>
+                            <DataGridTextColumn Header="Ukupna rabat" Binding="{Binding Ukupna_rabat}"/>
+                            <DataGridTextColumn Header="Ukupna disipacija" Binding="{Binding Ukupna_Disipacija}"/>
+                            <DataGridTextColumn Header="Ukupna težina" Binding="{Binding Ukupna_Tezina}"/>
+                            <DataGridTextColumn Header="Količina za naručivanje" Binding="{Binding KolicinaZaNarucivanje}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+
 
                 <!-- Dugmići u drugom redu -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,10">

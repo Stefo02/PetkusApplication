@@ -68,12 +68,12 @@
             <!-- Popup za obaveštenja o zalihama -->
             <!-- Popup za obaveštenja o zalihama -->
             <Popup Name="notificationPopup" PlacementTarget="{Binding ElementName=notificationBell}" 
-       Placement="Top" StaysOpen="False" AllowsTransparency="True">
+       Placement="Top" StaysOpen="False" AllowsTransparency="True" >
                 <Border BorderBrush="Gray" BorderThickness="1" Background="White" CornerRadius="5" Padding="10">
                     <StackPanel>
-                        <TextBlock Text="Obaveštenja o niskim zalihama:" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Obaveštenja o niskim zalihama:" FontWeight="Bold" Margin="0,0,20,20"/>
                         <!-- Ograničenje visine ListBox-a da se omogući skrol -->
-                        <ListBox Name="lowStockList" MaxHeight="250">
+                        <ListBox Name="lowStockList" MaxHeight="250" >
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -127,7 +127,7 @@
                 </DataGrid.Resources>
 
                 <DataGrid.Background>
-                    <ImageBrush ImageSource="Images\logo-page.jpg" Stretch="Fill"/>
+                    <ImageBrush ImageSource="Images\Untitled.jpg" Stretch="Fill" Opacity="1"/>
                 </DataGrid.Background>
 
                 <DataGrid.Columns>

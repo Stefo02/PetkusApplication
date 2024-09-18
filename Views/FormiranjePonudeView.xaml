@@ -6,7 +6,6 @@
              Height="Auto" Width="Auto"
              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
     <UserControl.Resources>
-
         <!-- Stil za zaglavlja kolona u DataGrid -->
         <Style x:Key="DataGridColumnHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="Foreground" Value="White"/>
@@ -74,21 +73,23 @@
                     <!-- DataGrid with ScrollViewer -->
 
                     <DataGrid Name="ResultsDataGrid" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  IsReadOnly="True" SelectionMode="Extended" SelectionChanged="ResultsDataGrid_SelectionChanged">
-                            <DataGrid.Resources>
-                                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}"/>
-                            </DataGrid.Resources>
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="auto"/>
-                                <DataGridTextColumn Header="Fabrički kod" Binding="{Binding Fabricki_kod}" Width="auto"/>
-                                <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}" Width="auto"/>
-                                <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="auto"/>
-                                <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}" Width="auto"/>
-                                <DataGridTextColumn Header="Težina" Binding="{Binding Tezina}" Width="auto"/>
-                                <DataGridTextColumn Header="Količina" Binding="{Binding Kolicina}" Width="auto"/>
-                                <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}" Width="auto"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle}"/>
+                        </DataGrid.Resources>
+                        <DataGrid.Background>
+                            <ImageBrush ImageSource="Images\Untitled.jpg" Opacity="0.5"/>
+                        </DataGrid.Background>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="auto"/>
+                            <DataGridTextColumn Header="Fabrički kod" Binding="{Binding Fabricki_kod}" Width="auto"/>
+                            <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}" Width="auto"/>
+                            <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="auto"/>
+                            <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}" Width="auto"/>
+                            <DataGridTextColumn Header="Težina" Binding="{Binding Tezina}" Width="auto"/>
+                            <DataGridTextColumn Header="Količina" Binding="{Binding Kolicina}" Width="auto"/>
+                            <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}" Width="auto"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
 
                     <!-- Button to confirm selection -->
                     <Button Content="Potvrdi Izbor" Click="ConfirmSelection_Click" Margin="10" HorizontalAlignment="center" Grid.Row="3" Background="#001f5b" Foreground="White"/>
