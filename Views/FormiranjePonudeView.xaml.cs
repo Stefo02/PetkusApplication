@@ -59,40 +59,103 @@ namespace PetkusApplication.Views
         private void InitializeComboBoxes()
         {
             comboBoxSetups = new Dictionary<string, Action>
-        {
-            {"Direktno", SetupForDirektno},
-            {"Zvezda-Trougao", SetupForZvezdaTrougao},
-            {"Soft", SetupForSoft},
-            {"Frekventno", SetupForFrekventno}
-        };
+    {
+        {"Direktno", SetupForDirektno},
+        {"Zvezda-Trougao", SetupForZvezdaTrougao},
+        {"Soft", SetupForSoft},
+        {"Frekventno", SetupForFrekventno}
+    };
 
             subComboBoxSetups = new Dictionary<string, Dictionary<string, Action>>
+    {
+        {"Direktno", new Dictionary<string, Action>
             {
-                {"Direktno", new Dictionary<string, Action>
+                {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Direktno", "Reverzibilni"})},
+                {"comboBox4", () => SetupComboBox(comboBox4, new[] {"0,09kW", "0,12kW", "0,37kW", "110kW"})}
+            }
+        },
+        {"Zvezda-Trougao", new Dictionary<string, Action>
+            {
+                {"comboBox4", () =>
                     {
-                        {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Direktno", "Reverzibilni"})},
-                        {"comboBox4", () => SetupComboBox(comboBox4, new[] {"0,09kW", "0,12kW", "0,37kW", "110kW"})}
-                    }
-                },
-                {"Zvezda-Trougao", new Dictionary<string, Action>
-                    {
-                        {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Option1", "Option2"})},
-                        {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Option3", "Option4"})}
-                    }
-                },
-                {"Soft", new Dictionary<string, Action>
-                    {
-                        {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Soft Option 1", "Soft Option 2"})},
-                        {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Soft Power 1", "Soft Power 2"})}
-                    }
-                },
-                {"Frekventno", new Dictionary<string, Action>
-                    {
-                        {"comboBox3", () => SetupComboBox(comboBox3, new[] {"Frekventno Option 1", "Frekventno Option 2"})},
-                        {"comboBox4", () => SetupComboBox(comboBox4, new[] {"Frekventno Power 1", "Frekventno Power 2"})}
+                        string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+                        if (selectedProizvodac == "Siemens")
+                        {
+                            // Opcije za Siemens
+                            SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW", "3kW", "4kW" });
+                        }
+                        else if (selectedProizvodac == "Schneider")
+                        {
+                            // Opcije za Schneider
+                            SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW" });
+                        }
                     }
                 }
-            };
+            }
+        },
+        {"Soft", new Dictionary<string, Action>
+    {
+        {"comboBox4", () =>
+            {
+                string selectedOption = (comboBox3.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+                if (selectedOption == "Soft Starter motor 1 SI")
+                {
+                    SetupComboBox(comboBox4, new[] { "1", "2" });
+                }
+                else if (selectedOption == "Soft Starter motor 1 SE")
+                {
+                    SetupComboBox(comboBox4, new[] { "3", "4" });
+                }
+            }
+        }
+    }
+},
+        {
+    "Frekventno", new Dictionary<string, Action>
+    {
+        {"comboBox3", () =>
+            {
+                string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+                if (selectedProizvodac == "Siemens")
+                {
+                    SetupComboBox(comboBox3, new[] { "Siemens Frekventno Opcija" });
+                }
+                else if (selectedProizvodac == "Schneider")
+                {
+                    SetupComboBox(comboBox3, new[] { "Schneider Frekventno Opcija" });
+                }
+                else if (selectedProizvodac == "Danfoss")
+                {
+                    SetupComboBox(comboBox3, new[] { "Danfoss Frekventno Opcija" });
+                }
+            }
+        },
+        {"comboBox4", () =>
+            {
+                string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                string selectedOption = (comboBox3.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+                if (selectedProizvodac == "Siemens" && selectedOption == "Siemens Frekventno Opcija")
+                {
+                    SetupComboBox(comboBox4, new[] { "Siemens Power 1", "Siemens Power 2" });
+                }
+                else if (selectedProizvodac == "Schneider" && selectedOption == "Schneider Frekventno Opcija")
+                {
+                    SetupComboBox(comboBox4, new[] { "Schneider Power 1", "Schneider Power 2" });
+                }
+                else if (selectedProizvodac == "Danfoss" && selectedOption == "Danfoss Frekventno Opcija")
+                {
+                    SetupComboBox(comboBox4, new[] { "Danfoss Power 1", "Danfoss Power 2" });
+                }
+            }
+        }
+    }
+}
+
+    };
 
             comboBox1.SelectionChanged += ComboBox_SelectionChanged;
             comboBox2.SelectionChanged += ComboBox_SelectionChanged;
@@ -102,19 +165,98 @@ namespace PetkusApplication.Views
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Logika za comboBox1 (nacin pokretanja)
+            // Provera da li je promenjen način pokretanja (comboBox1)
             if (sender == comboBox1)
             {
                 string selectedNacinPokretanja = (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+                // Provera da li je odabran validan način pokretanja
                 if (!string.IsNullOrEmpty(selectedNacinPokretanja) && comboBoxSetups.ContainsKey(selectedNacinPokretanja))
                 {
-                    ResetComboBoxes(comboBox2, comboBox3, comboBox4);  // Resetovanje drugih ComboBox-ova
-                    comboBoxSetups[selectedNacinPokretanja].Invoke();  // Postavljanje vrednosti u zavisnosti od izbora
-                    UpdateComboBoxVisibility(selectedNacinPokretanja); // Ažuriranje vidljivosti ComboBox-ova
+                    ResetComboBoxes(comboBox2, comboBox3, comboBox4);  // Resetovanje ComboBox-ova
+                    comboBoxSetups[selectedNacinPokretanja].Invoke();  // Postavljanje opcija za ComboBox-eve
+                    UpdateComboBoxVisibility(selectedNacinPokretanja); // Pozivanje funkcije za ažuriranje vidljivosti
+                }
+
+            }
+
+            // Posebna logika za "Direktno" način pokretanja
+            if (sender == comboBox2 && (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString() == "Direktno")
+            {
+                string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+                // Reset both comboBox3 and comboBox4 when comboBox2 changes in "Direktno"
+                ResetComboBoxes(comboBox3, comboBox4);
+
+                if (selectedProizvodac == "Siemens")
+                {
+                    SetupComboBox(comboBox3, new[] { "Direktno", "Reverzibilni" });
+                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,37kW", "110kW" });
+                }
+                else if (selectedProizvodac == "Schneider")
+                {
+                    SetupComboBox(comboBox3, new[] { "Direktno", "Reverzibilni" });
+                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,37kW" });
                 }
             }
 
-            // Logika za comboBox4 (poslednji ComboBox sa automatskom selekcijom redova)
+            // Posebna logika za "Zvezda-Trougao" način pokretanja
+            if (sender == comboBox2 && (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString() == "Zvezda-Trougao")
+            {
+                string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+                if (selectedProizvodac == "Siemens")
+                {
+                    SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW", "3kW", "4kW" });
+                }
+                else if (selectedProizvodac == "Schneider")
+                {
+                    SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW" });
+                }
+            }
+
+            // Posebna logika za "Soft" način pokretanja
+            if (sender == comboBox3 && (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString() == "Soft")
+            {
+                string selectedOption = (comboBox3.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+                // Resetovanje comboBox4 kada se promeni comboBox3 u "Soft" režimu
+                ResetComboBoxes(comboBox4);
+
+                if (selectedOption == "Soft Starter motor 1 SI")
+                {
+                    SetupComboBox(comboBox4, new[] { "1", "2" });
+                }
+                else if (selectedOption == "Soft Starter motor 1 SE")
+                {
+                    SetupComboBox(comboBox4, new[] { "3", "4" });
+                }
+            }
+
+            // Posebna logika za "Frekventno" način pokretanja
+            if (sender == comboBox2 && (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString() == "Frekventno")
+            {
+                string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                ResetComboBoxes(comboBox3, comboBox4);
+
+                if (!string.IsNullOrEmpty(selectedProizvodac))
+                {
+                    if (selectedProizvodac == "Siemens")
+                    {
+                        SetupComboBox(comboBox3, new[] { "Siemens Frekventno Opcija" });
+                    }
+                    else if (selectedProizvodac == "Schneider")
+                    {
+                        SetupComboBox(comboBox3, new[] { "Schneider Frekventno Opcija" });
+                    }
+                    else if (selectedProizvodac == "Danfoss")
+                    {
+                        SetupComboBox(comboBox3, new[] { "Danfoss Frekventno Opcija" });
+                    }
+                }
+            }
+
+            // Ako se promeni comboBox4, ažuriraj proceduru
             if (sender == comboBox4)
             {
                 UpdateProcedure();      // Ažuriraj podatke iz baze na osnovu izbora
@@ -130,14 +272,16 @@ namespace PetkusApplication.Views
         {
             string selectedOption = (comboBox3.SelectedItem as ComboBoxItem)?.Content?.ToString();
             string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            string selectedNacinPokretanja = (comboBox1.SelectedItem as ComboBoxItem)?.Content?.ToString();
 
+            // Logika za Siemens i Schneider
             if (selectedProizvodac == "Siemens")
             {
                 if (selectedOption == "Direktno")
                 {
                     SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,37kW", "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW", "5,5kW", "5,5kW_class20", "7,5kW", "7,5kW_class20",
-                "9,2kW", "9,2kW_class20", "11kW", "11kW_class20", "15kW", "15kW_class20", "18,5kW","18,5kW_class20", "22kW","22kW_class20",
-                "30kW","30kW_class20s", "37kW", "45kW", "55kW_(S3)", "55kW_(P)", "75kW", "90kW", "110kW" });
+        "9,2kW", "9,2kW_class20", "11kW", "11kW_class20", "15kW", "15kW_class20", "18,5kW", "18,5kW_class20", "22kW", "22kW_class20", "30kW", "30kW_class20s", "37kW", "45kW", "55kW_(S3)",
+        "55kW_(P)", "75kW", "90kW", "110kW" });
                 }
                 else if (selectedOption == "Reverzibilni")
                 {
@@ -148,15 +292,56 @@ namespace PetkusApplication.Views
             {
                 if (selectedOption == "Direktno")
                 {
-                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,18kW", "0,25kW", "0,37kW", "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW",
-                        "5,5kW", "5,5kW_2", "7,5kW", "7,5kW_2", "9,2kW", "9,2kW_2", "11kW","11kW_2", "15kW", "15kW_2","15kW_3", "18,5kW", "18,5kW_2", "22kW", "22kW_2",
-                        "30kW","30kW_2", "37kW","37kW_2", "45kW","45kW_2", "55kW", "55kW_2", "75kW","75kW_2", "90kW","90kW_2", "110kW", "110kW_2"});
+                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,18kW", "0,25kW", "0,37kW", "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW", "5,5kW", "5,5kW_2", "7,5kW", "7,5kW_2",
+        "9,2kW", "9,2kW_2", "11kW", "11kW_2", "15kW", "15kW_2", "15kW_3", "18,5kW", "18,5kW_2", "22kW", "22kW_2", "30kW", "30kW_2", "37kW", "37kW_2", "45kW", "45kW_2", "55kW", "55kW_2",
+        "75kW", "75kW_2", "90kW", "90kW_2", "110kW", "110kW_2" });
                 }
                 else if (selectedOption == "Reverzibilni")
                 {
                     SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,18kW", "0,25kW", "0,37kW", "0,55kW", "0,75kW" });
                 }
             }
+
+            if (selectedNacinPokretanja == "Zvezda-Trougao")
+            {
+                if (selectedProizvodac == "Siemens")
+                {
+                    // Opcije za Siemens: "1,5kW", "2,2kW", "3kW", "4kW"
+                    SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW", "3kW", "4kW" });
+                }
+                else if (selectedProizvodac == "Schneider")
+                {
+                    // Opcije za Schneider: "1,5kW", "2,2kW"
+                    SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW" });
+                }
+            }
+            else if (selectedNacinPokretanja == "Soft")
+            {
+                if (selectedOption == "Soft Starter motor 1 SI")
+                {
+                    SetupComboBox(comboBox4, new[] { "1", "2" });
+                }
+                else if (selectedOption == "Soft Starter motor 1 SE")
+                {
+                    SetupComboBox(comboBox4, new[] { "3", "4" });
+                }
+            }
+            else if (selectedNacinPokretanja == "Frekventno")
+            {
+                if (selectedProizvodac == "Siemens" && selectedOption == "Siemens Frekventno Opcija")
+                {
+                    SetupComboBox(comboBox4, new[] { "Siemens Power 1", "Siemens Power 2" });
+                }
+                else if (selectedProizvodac == "Schneider" && selectedOption == "Schneider Frekventno Opcija")
+                {
+                    SetupComboBox(comboBox4, new[] { "Schneider Power 1", "Schneider Power 2" });
+                }
+                else if (selectedProizvodac == "Danfoss" && selectedOption == "Danfoss Frekventno Opcija")
+                {
+                    SetupComboBox(comboBox4, new[] { "Danfoss Power 1", "Danfoss Power 2" });
+                }
+            }
+
         }
 
         private void UpdateComboBoxVisibility(string selectedNacinPokretanja)
@@ -170,6 +355,15 @@ namespace PetkusApplication.Views
             {
                 comboBox2.Visibility = ProizvodacTextBlock.Visibility =
                 comboBox3.Visibility = comboBox4.Visibility = Visibility.Visible;
+            }
+
+            if (selectedNacinPokretanja == "Zvezda-Trougao")
+            {
+                BrojSmerovaPanel.Visibility = Visibility.Collapsed; // Sakrij ceo StackPanel za "Broj smerova" i comboBox3
+            }
+            else
+            {
+                BrojSmerovaPanel.Visibility = Visibility.Visible;   // Prikaži StackPanel za druge opcije
             }
         }
 
@@ -193,14 +387,14 @@ namespace PetkusApplication.Views
 
         private void SetupForSoft()
         {
-            // Implementirajte specifičnu logiku za Soft
-            SetupSubComboBoxes("Soft");
+            SetupComboBox(comboBox3, new[] { "Soft Starter motor 1 SI", "Soft Starter motor 1 SE" });
         }
 
         private void SetupForFrekventno()
         {
+            // Postavljanje opcija za comboBox2 (proizvođači)
             SetupComboBox(comboBox2, new[] { "Siemens", "Schneider", "Danfoss" });
-            SetupSubComboBoxes("Frekventno");
+            // Ne postavljamo comboBox3 ovde jer korisnik još nije izabrao proizvođača
         }
 
         private void SetupSubComboBoxes(string key)
@@ -360,12 +554,55 @@ namespace PetkusApplication.Views
                         _ => "Direktini_d_se"
                     }
                 },
-                ("Zvezda-Trougao", "Siemens") => "YD_si_start",
-                ("Zvezda-Trougao", "Schneider") => "YD_se_start",
-                ("Soft", _) => "sp_get_soft",
-                ("Frekventno", "Siemens") => "FC_si",
-                ("Frekventno", "Schneider") => "FC_se",
-                ("Frekventno", "Danfoss") => "FC_d",
+                ("Zvezda-Trougao", "Siemens") => selectedSnaga switch
+                {
+                    "1,5kW" => "YD_si_start_1_5kW",
+                    "2,2kW" => "YD_SI_start_2_2kW_procedure",
+                    "3kW" => "YD_SI_start_3kW_procedure",
+                    "4kW" => "YD_SI_start_4kW_procedure",
+                    _ => "YD_si_start"
+                },
+                // Zvezda-Trougao Schneider
+                ("Zvezda-Trougao", "Schneider") => selectedSnaga switch
+                {
+                    "1,5kW" => "YD_se_start_1_5kW",
+                    "2,2kW" => "YD_SE_start_2_2kW_procedure",
+                    _ => "YD_se_start"
+                },
+                ("Soft", _) => selectedBrojSmerova switch
+                {
+                    "Soft Starter motor 1 SI" => selectedSnaga switch
+                    {
+                        "1" => "Soft_starter1_0_55kW",
+                        "2" => "Soft_starter1_0_75kW",
+                        _ => null
+                    },
+                    "Soft Starter motor 1 SE" => selectedSnaga switch
+                    {
+                        "3" => "Soft_starter1_110kW",
+                        "4" => "Soft_starter1_110kW2",
+                        _ => null
+                    },
+                    _ => null
+                },
+                ("Frekventno", "Siemens") => selectedSnaga switch
+                {
+                    "Siemens Power 1" => "FC_se_regulatori_0_25kW",
+                    "Siemens Power 2" => "FC_Siemens_Power2_Procedure",
+                    _ => null
+                },
+                ("Frekventno", "Schneider") => selectedSnaga switch
+                {
+                    "Schneider Power 1" => "FC_se_regulatori_0_25kW2",
+                    "Schneider Power 2" => "FC_Schneider_Power2_Procedure",
+                    _ => null
+                },
+                ("Frekventno", "Danfoss") => selectedSnaga switch
+                {
+                    "Danfoss Power 1" => "FC_se_regulatori_0_37kW2",
+                    "Danfoss Power 2" => "FC_Danfoss_Power2_Procedure",
+                    _ => null
+                },
                 _ => null
             };
         }
