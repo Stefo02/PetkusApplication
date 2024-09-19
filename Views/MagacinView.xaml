@@ -96,7 +96,7 @@
 
         <!-- DataGrid za prikaz podataka -->
         <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="20 10 20 10">
-            <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" IsReadOnly="True" Height="Auto">
+            <DataGrid  VirtualizingStackPanel.VirtualizationMode="Recycling" x:Name="dataGrid" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" IsReadOnly="True" Height="Auto">
                 <DataGrid.Resources>
                     <!-- Stil za zaglavlje kolona -->
                     <Style TargetType="DataGridColumnHeader">
@@ -105,7 +105,7 @@
                         <Setter Property="FontWeight" Value="Bold"/>
                         <Setter Property="Padding" Value="10,5"/>
                     </Style>
-
+                    
                     <!-- Stil za ćelije kolone Opis -->
                     <Style TargetType="DataGridCell" x:Key="OpisCellStyle">
                         <Style.Triggers>
@@ -119,9 +119,6 @@
                                 <DataTrigger.EnterActions>
                                     <BeginStoryboard Storyboard="{StaticResource BlinkStoryboard}" />
                                 </DataTrigger.EnterActions>
-                                <DataTrigger.ExitActions>
-                                    <StopStoryboard BeginStoryboardName="BlinkStoryboard" />
-                                </DataTrigger.ExitActions>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
