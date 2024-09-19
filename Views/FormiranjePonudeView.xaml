@@ -116,7 +116,7 @@
                     <Button Content="Potvrdi izbor" Click="Button_Click" Margin="0,4,0,15" HorizontalAlignment="Center" Grid.Row="3" Background="#001f5b" Foreground="White" Width="130" Height="40"/>
 
                     <!-- DataGrid to show grouped related items -->
-                    <DataGrid Grid.Row="4" x:Name="GroupedDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding GroupedItems}" Height="200" SelectionChanged="GroupedDataGrid_SelectionChanged">
+                    <DataGrid Grid.Row="4" x:Name="GroupedDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding GroupedItems}" Height="200" SelectionChanged="GroupedDataGrid_SelectionChanged" MouseDoubleClick="GroupedDataGrid_MouseDoubleClick">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Fabrički kod" Binding="{Binding GroupName}" Width="*" IsReadOnly="True"/>

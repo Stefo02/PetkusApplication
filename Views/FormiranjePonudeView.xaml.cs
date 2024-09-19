@@ -754,30 +754,31 @@ namespace PetkusApplication.Views
 
         private void ConfirmSelection_Click(object sender, RoutedEventArgs e)
         {
+            // Pronađi selektovane stavke iz ResultsDataGrid
             var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
+
+            // Proveri da li postoje selektovane stavke
             if (selectedItems.Count == 0)
             {
                 return;
             }
 
-            // Transfer selected items to GroupedDataGrid and accumulate in allGroupedItems
+            // Transferiši selektovane stavke u GroupedDataGrid
             foreach (var item in selectedItems)
             {
-                if (!allGroupedItems.Any(g => g.Fabricki_kod == item.Fabricki_kod))
+                // Uvek dodaj stavku bez obzira da li je prethodno bila obrisana
+                GroupedItems.Add(new GroupedItem
                 {
-                    allGroupedItems.Add(item);
-                    GroupedItems.Add(new GroupedItem
-                    {
-                        Opis = item.Opis,
-                        GroupName = item.Fabricki_kod,
-                        Quantity = 0 // Adjust logic if needed
-                    });
-                }
+                    Opis = item.Opis,
+                    GroupName = item.Fabricki_kod,
+                    Quantity = 0 // Postavi početnu količinu
+                });
             }
 
-            // Optionally clear the selection from ResultsDataGrid after moving
+            // Opciono: Očisti selekciju iz ResultsDataGrid nakon prebacivanja
             ResultsDataGrid.SelectedItems.Clear();
         }
+
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -831,6 +832,24 @@ namespace PetkusApplication.Views
         {
 
         }
+
+        private void GroupedDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // Proveri da li postoji selektovani red
+            if (GroupedDataGrid.SelectedItem is GroupedItem selectedItem)
+            {
+                // Ukloni selektovani red iz GroupedItems
+                GroupedItems.Remove(selectedItem);
+
+                // Ako želiš da ukloniš i iz originalne liste `allGroupedItems`, možeš ovo uraditi:
+                var itemToRemove = allGroupedItems.FirstOrDefault(i => i.Fabricki_kod == selectedItem.GroupName);
+                if (itemToRemove != null)
+                {
+                    allGroupedItems.Remove(itemToRemove);
+                }
+            }
+        }
+
     }
 
 
