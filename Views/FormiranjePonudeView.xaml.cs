@@ -176,11 +176,12 @@ namespace PetkusApplication.Views
                 else if (selectedOption == "V/F regulatori(FC102, Danfoss)")
                 {
                     SetupComboBox(comboBox4, new[] { "1,1kW_FC102","1,5kW_FC102","2,2kW_FC102","3kW_FC102","4kW_FC102","5,5kW_FC102","7,5kW_FC102","9,2kW_FC102",
-                        "11kW_FC102","15kW_FC102","18,5kW_FC102","22kW_FC102","22kW_FC102","30kW_FC102", "37kW_FC102","45kW_FC102","55kW_FC102","75kW_FC102","90kW_FC102",});
+                        "11kW_FC102","15kW_FC102","18,5kW_FC102","22kW_FC102","30kW_FC102", "37kW_FC102","45kW_FC102","55kW_FC102","75kW_FC102","90kW_FC102"});
                 }
                 else if (selectedOption == "V/F regulatori(FC302, Danfoss)")
                 {
-                    SetupComboBox(comboBox4, new[] { "Danfoss Power 3-1", "Danfoss Power 3-2" });
+                    SetupComboBox(comboBox4, new[] { "0,37kW_FC302","0,55kW_FC302","0,75kW_FC302","1,1kW_FC302","1,5kW_FC302","2,2kW_FC302","3kW_FC302","4kW_FC302","5,5kW_FC302","7,5kW_FC302","9,2kW_FC302","11kW_FC302",
+                    "15kW_FC302","18,5kW_FC302","22kW_FC302","30kW_FC302","37kW_FC302","45kW_FC302","55kW_FC302","75kW_FC302"});
                 }
 }
 
@@ -411,11 +412,12 @@ namespace PetkusApplication.Views
                     else if (selectedOption == "V/F regulatori(FC102, Danfoss)")
                     {
                         SetupComboBox(comboBox4, new[] {"1,1kW_FC102","1,5kW_FC102","2,2kW_FC102","3kW_FC102","4kW_FC102","5,5kW_FC102","7,5kW_FC102","9,2kW_FC102",
-                        "11kW_FC102","15kW_FC102","18,5kW_FC102","22kW_FC102","22kW_FC102","30kW_FC102", "37kW_FC102","45kW_FC102","55kW_FC102","75kW_FC102","90kW_FC102"});
+                        "11kW_FC102","15kW_FC102","18,5kW_FC102","22kW_FC102","30kW_FC102", "37kW_FC102","45kW_FC102","55kW_FC102","75kW_FC102","90kW_FC102"});
                     }
                     else if (selectedOption == "V/F regulatori(FC302, Danfoss)")
                     {
-                        SetupComboBox(comboBox4, new[] { "Danfoss Power 3-1", "Danfoss Power 3-2" });
+                        SetupComboBox(comboBox4, new[] {"0,37kW_FC302","0,55kW_FC302","0,75kW_FC302","1,1kW_FC302","1,5kW_FC302","2,2kW_FC302","3kW_FC302","4kW_FC302","5,5kW_FC302","7,5kW_FC302","9,2kW_FC302","11kW_FC302",
+                    "15kW_FC302","18,5kW_FC302","22kW_FC302","30kW_FC302","37kW_FC302","45kW_FC302","55kW_FC302","75kW_FC302" });
                     }
                 }
             }
@@ -995,10 +997,44 @@ namespace PetkusApplication.Views
                     "15kW_FC51" => "FC_d_regulatori1_15kW",
                     "18,5kW_FC51" => "FC_d_regulatori1_18_5kW",
                     "22kW_FC51" => "FC_d_regulatori1_22kW",
-                    "Danfoss Power 2-1" => "FC_d_regulatori2_1_1kW",
-                    "Danfoss Power 2-2" => "FC_Danfoss_FC102_2_Procedure",
-                    "Danfoss Power 3-1" => "FC_Danfoss_FC302_1_Procedure",
-                    "Danfoss Power 3-2" => "FC_Danfoss_FC302_2_Procedure",
+                    "1,1kW_FC102" => "FC_d_regulatori2_1_1kW",
+                    "1,5kW_FC102" => "FC_d_regulatori2_1_5kW",
+                    "2,2kW_FC102" => "FC_d_regulatori2_2_2kW",
+                    "3kW_FC102" => "FC_d_regulatori2_3kW",
+                    "4kW_FC102" => "FC_d_regulatori2_4kW",
+                    "5,5kW_FC102" => "FC_d_regulatori2_5_5kW",
+                    "7,5kW_FC102" => "FC_d_regulatori2_7_5kW",
+                    "9,2kW_FC102" => "FC_d_regulatori2_9_2kW",
+                    "11kW_FC102" => "FC_d_regulatori2_11kW",
+                    "15kW_FC102" => "FC_d_regulatori2_15kW",
+                    "18,5kW_FC102" => "FC_d_regulatori2_18_5kW",
+                    "22kW_FC102" => "FC_d_regulatori2_22kW",
+                    "30kW_FC102" => "FC_d_regulatori2_30kW",
+                    "37kW_FC102" => "FC_d_regulatori2_37kW",
+                    "45kW_FC102" => "FC_d_regulatori2_45kW",
+                    "55kW_FC102" => "FC_d_regulatori2_55kW",
+                    "75kW_FC102" => "FC_d_regulatori2_75kW",
+                    "90kW_FC102" => "FC_d_regulatori2_90kW",
+                    "0,37kW_FC302" => "FC_d_regulatori3_0_37kW",
+                    "0,55kW_FC302" => "FC_d_regulatori3_0_55kW",
+                    "0,75kW_FC302" => "FC_d_regulatori3_0_75kW",
+                    "1,1kW_FC302" => "FC_d_regulatori3_1_1kW",
+                    "1,5kW_FC302" => "FC_d_regulatori3_1_5kW",
+                    "2,2kW_FC302" => "FC_d_regulatori3_2_2kW",
+                    "3kW_FC302" => "FC_d_regulatori3_3kW",
+                    "4kW_FC302" => "FC_d_regulatori3_4kW",
+                    "5,5kW_FC302" => "FC_d_regulatori3_5_5kW",
+                    "7,5kW_FC302" => "FC_d_regulatori3_7_5kW",
+                    "9,2kW_FC302" => "FC_d_regulatori3_9_2kW",
+                    "11kW_FC302" => "FC_d_regulatori3_11kW",
+                    "15kW_FC302" => "FC_d_regulatori3_15kW",
+                    "18,5kW_FC302" => "FC_d_regulatori3_18_5kW",
+                    "22kW_FC302" => "FC_d_regulatori3_22kW",
+                    "30kW_FC302" => "FC_d_regulatori3_30kW",
+                    "37kW_FC302" => "FC_d_regulatori3_37kW",
+                    "45kW_FC302" => "FC_d_regulatori3_45kW",
+                    "55kW_FC302" => "FC_d_regulatori3_55kW",
+                    "75kW_FC302" => "FC_d_regulatori3_75kW",
                     _ => null
                 },
                 _ => null
