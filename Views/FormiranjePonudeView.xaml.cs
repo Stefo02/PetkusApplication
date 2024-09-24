@@ -101,14 +101,18 @@ namespace PetkusApplication.Views
             {
                 string selectedOption = (comboBox3.SelectedItem as ComboBoxItem)?.Content?.ToString();
 
-                if (selectedOption == "Soft Starter motor 1 SI")
-                {
-                    SetupComboBox(comboBox4, new[] { "1", "2" });
-                }
-                else if (selectedOption == "Soft Starter motor 1 SE")
-                {
-                    SetupComboBox(comboBox4, new[] { "3", "4" });
-                }
+            if (selectedOption == "Soft Starter motor 1 SI")
+            {
+                SetupComboBox(comboBox4, new[] { "1", "2" });
+            }
+            else if (selectedOption == "Soft Starter motor 1 SE")
+            {
+                SetupComboBox(comboBox4, new[] { "3", "4" });
+            }
+            else if (selectedOption == "Soft starter 2 motora (SI)")
+            {
+                SetupComboBox(comboBox4, new[] { "5", "6" });
+            }
             }
         }
     }
@@ -122,15 +126,15 @@ namespace PetkusApplication.Views
 
                 if (selectedProizvodac == "Siemens")
                 {
-                    SetupComboBox(comboBox3, new[] { "Siemens Frekventno Opcija" });
+                    SetupComboBox(comboBox3, new[] { "V/F regulatori(V20, Siemens)" });
                 }
                 else if (selectedProizvodac == "Schneider")
                 {
-                    SetupComboBox(comboBox3, new[] { "Schneider Frekventno Opcija" });
+                    SetupComboBox(comboBox3, new[] { "V/F regulatori(ATV310, 320 and 930 Schneider)" });
                 }
                 else if (selectedProizvodac == "Danfoss")
                 {
-                    SetupComboBox(comboBox3, new[] { "Danfoss Frekventno Opcija" });
+                    SetupComboBox(comboBox3, new[] { "V/F regulatori(FC51, Danfoss)", "V/F regulatori(FC102, Danfoss)", "V/F regulatori(FC302, Danfoss)" });
                 }
             }
         },
@@ -139,18 +143,30 @@ namespace PetkusApplication.Views
                 string selectedProizvodac = (comboBox2.SelectedItem as ComboBoxItem)?.Content?.ToString();
                 string selectedOption = (comboBox3.SelectedItem as ComboBoxItem)?.Content?.ToString();
 
-                if (selectedProizvodac == "Siemens" && selectedOption == "Siemens Frekventno Opcija")
+                if (selectedProizvodac == "Siemens" && selectedOption == "V/F regulatori(V20, Siemens)")
                 {
                     SetupComboBox(comboBox4, new[] { "Siemens Power 1", "Siemens Power 2" });
                 }
-                else if (selectedProizvodac == "Schneider" && selectedOption == "Schneider Frekventno Opcija")
+                else if (selectedProizvodac == "Schneider" && selectedOption == "V/F regulatori(ATV310, 320 and 930 Schneider)")
                 {
                     SetupComboBox(comboBox4, new[] { "Schneider Power 1", "Schneider Power 2" });
                 }
-                else if (selectedProizvodac == "Danfoss" && selectedOption == "Danfoss Frekventno Opcija")
+                else if (selectedProizvodac == "Danfoss")
+{
+                    if (selectedOption == "V/F regulatori(FC51, Danfoss)")
                 {
-                    SetupComboBox(comboBox4, new[] { "Danfoss Power 1", "Danfoss Power 2" });
+                    SetupComboBox(comboBox4, new[] { "Danfoss Power 1-1", "Danfoss Power 1-2" });
                 }
+                else if (selectedOption == "V/F regulatori(FC102, Danfoss)")
+                {
+                    SetupComboBox(comboBox4, new[] { "Danfoss Power 2-1", "Danfoss Power 2-2" });
+                }
+                else if (selectedOption == "V/F regulatori(FC302, Danfoss)")
+                {
+                    SetupComboBox(comboBox4, new[] { "Danfoss Power 3-1", "Danfoss Power 3-2" });
+                }
+}
+
             }
         }
     }
@@ -232,6 +248,10 @@ namespace PetkusApplication.Views
                 {
                     SetupComboBox(comboBox4, new[] { "3", "4" });
                 }
+                else if (selectedOption == "Soft starter 2 motora (SI)")  // Dodavanje nove opcije
+                {
+                    SetupComboBox(comboBox4, new[] { "5", "6" });
+                }
             }
 
             // Posebna logika za "Frekventno" način pokretanja
@@ -244,15 +264,15 @@ namespace PetkusApplication.Views
                 {
                     if (selectedProizvodac == "Siemens")
                     {
-                        SetupComboBox(comboBox3, new[] { "Siemens Frekventno Opcija" });
+                        SetupComboBox(comboBox3, new[] { "V/F regulatori(V20, Siemens)" });
                     }
                     else if (selectedProizvodac == "Schneider")
                     {
-                        SetupComboBox(comboBox3, new[] { "Schneider Frekventno Opcija" });
+                        SetupComboBox(comboBox3, new[] { "V/F regulatori(ATV310, 320 and 930 Schneider)" });
                     }
                     else if (selectedProizvodac == "Danfoss")
                     {
-                        SetupComboBox(comboBox3, new[] { "Danfoss Frekventno Opcija" });
+                        SetupComboBox(comboBox3, new[] { "V/F regulatori(FC51, Danfoss)", "V/F regulatori(FC102, Danfoss)", "V/F regulatori(FC302, Danfoss)" });
                     }
                 }
             }
@@ -326,20 +346,35 @@ namespace PetkusApplication.Views
                 {
                     SetupComboBox(comboBox4, new[] { "3", "4" });
                 }
+                else if (selectedOption == "Soft starter 2 motora (SI)") 
+                {
+                    SetupComboBox(comboBox4, new[] { "5", "6" });
+                }
             }
             else if (selectedNacinPokretanja == "Frekventno")
             {
-                if (selectedProizvodac == "Siemens" && selectedOption == "Siemens Frekventno Opcija")
+                if (selectedProizvodac == "Siemens" && selectedOption == "V/F regulatori(V20, Siemens)")
                 {
                     SetupComboBox(comboBox4, new[] { "Siemens Power 1", "Siemens Power 2" });
                 }
-                else if (selectedProizvodac == "Schneider" && selectedOption == "Schneider Frekventno Opcija")
+                else if (selectedProizvodac == "Schneider" && selectedOption == "V/F regulatori(ATV310, 320 and 930 Schneider)")
                 {
                     SetupComboBox(comboBox4, new[] { "Schneider Power 1", "Schneider Power 2" });
                 }
-                else if (selectedProizvodac == "Danfoss" && selectedOption == "Danfoss Frekventno Opcija")
+                else if (selectedProizvodac == "Danfoss")
                 {
-                    SetupComboBox(comboBox4, new[] { "Danfoss Power 1", "Danfoss Power 2" });
+                    if (selectedOption == "V/F regulatori(FC51, Danfoss)")
+                    {
+                        SetupComboBox(comboBox4, new[] { "Danfoss Power 1-1", "Danfoss Power 1-2" });
+                    }
+                    else if (selectedOption == "V/F regulatori(FC102, Danfoss)")
+                    {
+                        SetupComboBox(comboBox4, new[] { "Danfoss Power 2-1", "Danfoss Power 2-2" });
+                    }
+                    else if (selectedOption == "V/F regulatori(FC302, Danfoss)")
+                    {
+                        SetupComboBox(comboBox4, new[] { "Danfoss Power 3-1", "Danfoss Power 3-2" });
+                    }
                 }
             }
 
@@ -388,7 +423,7 @@ namespace PetkusApplication.Views
 
         private void SetupForSoft()
         {
-            SetupComboBox(comboBox3, new[] { "Soft Starter motor 1 SI", "Soft Starter motor 1 SE" });
+            SetupComboBox(comboBox3, new[] { "Soft Starter motor 1 SI", "Soft Starter motor 1 SE", "Soft starter 2 motora (SI)" });
         }
 
         private void SetupForFrekventno()
@@ -584,6 +619,12 @@ namespace PetkusApplication.Views
                         "4" => "Soft_starter1_110kW2",
                         _ => null
                     },
+                    "Soft starter 2 motora (SI)" => selectedSnaga switch
+                    {
+                        "5" => "Soft_starter2_0_55kW",
+                        "6" => "Soft_starter2_0_75kW",
+                        _ => null
+                    },
                     _ => null
                 },
                 ("Frekventno", "Siemens") => selectedSnaga switch
@@ -600,8 +641,12 @@ namespace PetkusApplication.Views
                 },
                 ("Frekventno", "Danfoss") => selectedSnaga switch
                 {
-                    "Danfoss Power 1" => "FC_se_regulatori_0_37kW2",
-                    "Danfoss Power 2" => "FC_Danfoss_Power2_Procedure",
+                    "Danfoss Power 1-1" => "FC_Danfoss_FC51_1_Procedure",
+                    "Danfoss Power 1-2" => "FC_Danfoss_FC51_2_Procedure",
+                    "Danfoss Power 2-1" => "FC_Danfoss_FC102_1_Procedure",
+                    "Danfoss Power 2-2" => "FC_Danfoss_FC102_2_Procedure",
+                    "Danfoss Power 3-1" => "FC_Danfoss_FC302_1_Procedure",
+                    "Danfoss Power 3-2" => "FC_Danfoss_FC302_2_Procedure",
                     _ => null
                 },
                 _ => null
