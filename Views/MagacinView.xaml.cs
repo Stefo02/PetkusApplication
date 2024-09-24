@@ -72,7 +72,7 @@ namespace PetkusApplication.Views
             { "prekidaci_si", "Prekidači SI" },
             { "sabirnicki_sistem", "Sabirnički sistem" },
         };
-        
+
 
         public MagacinView()
         {
@@ -105,7 +105,11 @@ namespace PetkusApplication.Views
 
             // Učitaj podatke na osnovu selektovane opcije
             LoadData();
+
+            // Ažuriraj obaveštenja o niskim zalihama odmah nakon učitavanja podataka
+            CheckForLowStock();
         }
+
 
         private void LowStockList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -194,20 +198,21 @@ namespace PetkusApplication.Views
 
         private void CheckForLowStock()
         {
+            // Preuzmi artikle sa niskim zalihama
             var lowStockItems = data.Where(item => item.Kolicina < item.MinKolicina).ToList();
 
-            // Ažuriraj broj obaveštenja
+            // Ažuriraj broj obaveštenja na zvoncu
             notificationCount.Text = lowStockItems.Count.ToString();
 
-            // Ako ima artikala sa niskim zalihama, popup može ostati zatvoren dok se ne klikne
+            // Ako ima artikala sa niskim zalihama, postavi ih u listu popup-a
             if (lowStockItems.Any())
             {
-                lowStockList.ItemsSource = lowStockItems; // Postavi listu artikala u popup
-                isNotificationShown = true; // Postavi zastavicu da je obaveštenje aktivno
+                lowStockList.ItemsSource = lowStockItems;
+                isNotificationShown = true;
             }
             else
             {
-                isNotificationShown = false; // Resetuj zastavicu kada nema zaliha
+                isNotificationShown = false;
             }
         }
 
@@ -265,7 +270,7 @@ namespace PetkusApplication.Views
 
             dataGrid.ItemsSource = filteredData;
             dataGrid.Items.Refresh();
-           
+
         }
 
         private void searchTextBox_KeyDown(object sender, KeyEventArgs e)

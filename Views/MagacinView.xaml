@@ -96,7 +96,7 @@
 
         <!-- DataGrid za prikaz podataka -->
         <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="20 10 20 10">
-            <DataGrid  VirtualizingStackPanel.VirtualizationMode="Recycling" x:Name="dataGrid" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" IsReadOnly="True" Height="Auto">
+            <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" SelectionChanged="dataGrid_SelectionChanged" IsReadOnly="True" Height="Auto" EnableRowVirtualization="True" VirtualizingStackPanel.IsVirtualizing="True">
                 <DataGrid.Resources>
                     <!-- Stil za zaglavlje kolona -->
                     <Style TargetType="DataGridColumnHeader">
@@ -105,10 +105,11 @@
                         <Setter Property="FontWeight" Value="Bold"/>
                         <Setter Property="Padding" Value="10,5"/>
                     </Style>
-                    
+
                     <!-- Stil za ćelije kolone Opis -->
                     <Style TargetType="DataGridCell" x:Key="OpisCellStyle">
                         <Style.Triggers>
+                            <!-- Animacija će se pokrenuti samo kada je Kolicina manja ili jednaka MinKolicina -->
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
                                     <MultiBinding Converter="{StaticResource LessThanOrEqualConverter}">
@@ -117,11 +118,21 @@
                                     </MultiBinding>
                                 </DataTrigger.Binding>
                                 <DataTrigger.EnterActions>
-                                    <BeginStoryboard Storyboard="{StaticResource BlinkStoryboard}" />
+                                    <BeginStoryboard x:Name="blinkStoryboard">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetProperty="(DataGridCell.Background).(SolidColorBrush.Color)"
+                                        From="Red" To="White" Duration="0:0:1.2" RepeatBehavior="Forever" AutoReverse="True"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
                                 </DataTrigger.EnterActions>
+                                <!-- Zaustavljanje animacije kada uslov nije ispunjen (kada je Kolicina > MinKolicina) -->
+                                <DataTrigger.ExitActions>
+                                    <StopStoryboard BeginStoryboardName="blinkStoryboard"/>
+                                </DataTrigger.ExitActions>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
+
                 </DataGrid.Resources>
 
                 <DataGrid.Background>

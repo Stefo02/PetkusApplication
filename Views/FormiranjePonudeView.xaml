@@ -3,6 +3,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PetkusApplication.Views"
+             xmlns:converters="clr-namespace:PetkusApplication.Converters"
              Height="Auto" Width="Auto"
              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
     <UserControl.Resources>
@@ -16,6 +17,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
+        <converters:IntToStringConverter x:Key="IntToStringConverter"/>
     </UserControl.Resources>
     <Grid>
         <TabControl x:Name="mainTabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -113,14 +115,14 @@
 
 
                     <!-- Button to transfer selected rows -->
-                    <Button Content="Potvrdi izbor" Click="Button_Click" Margin="0,4,0,15" HorizontalAlignment="Center" Grid.Row="3" Background="#001f5b" Foreground="White" Width="130" Height="40"/>
+                    <Button x:Name="potvrdiButton" Content="Potvrdi izbor" Click="Button_Click" Margin="0,4,0,15" HorizontalAlignment="Center" Grid.Row="3" Background="#001f5b" Foreground="White" Width="130" Height="40"/>
 
                     <!-- DataGrid to show grouped related items -->
-                    <DataGrid Grid.Row="4" x:Name="GroupedDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding GroupedItems}" Height="200" SelectionChanged="GroupedDataGrid_SelectionChanged" MouseDoubleClick="GroupedDataGrid_MouseDoubleClick">
+                    <DataGrid Grid.Row="4" x:Name="GroupedDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding GroupedItems}" Height="200" SelectionChanged="GroupedDataGrid_SelectionChanged" Margin="0,10,0,-10">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="*" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Fabrički kod" Binding="{Binding GroupName}" Width="*" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Broj komada" Binding="{Binding Quantity, Mode=TwoWay}" Width="*"/>
+                            <DataGridTextColumn Header="Broj komada" Binding="{Binding Quantity, Mode=TwoWay, Converter={StaticResource IntToStringConverter}}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

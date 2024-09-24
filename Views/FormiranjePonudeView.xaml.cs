@@ -25,6 +25,7 @@ namespace PetkusApplication.Views
         public ObservableCollection<GroupedItem> GroupedItems { get; set; }
         private List<PonudaItem> allGroupedItems = new List<PonudaItem>();
 
+
         private bool itemsGrouped = false;
 
         public FormiranjePonudeView()
@@ -708,7 +709,7 @@ namespace PetkusApplication.Views
 
             foreach (var selectedItem in selectedItems)
             {
-               
+
             }
 
             groupedPonudaItems.Add(currentGroupId, newGroup);
@@ -754,34 +755,47 @@ namespace PetkusApplication.Views
 
         private void ConfirmSelection_Click(object sender, RoutedEventArgs e)
         {
-            // Pronađi selektovane stavke iz ResultsDataGrid
             var selectedItems = ResultsDataGrid.SelectedItems.Cast<PonudaItem>().ToList();
-
-            // Proveri da li postoje selektovane stavke
             if (selectedItems.Count == 0)
             {
                 return;
             }
 
-            // Transferiši selektovane stavke u GroupedDataGrid
+            // Transfer selected items to GroupedDataGrid and accumulate in allGroupedItems
             foreach (var item in selectedItems)
             {
-                // Uvek dodaj stavku bez obzira da li je prethodno bila obrisana
-                GroupedItems.Add(new GroupedItem
+                // Check if the item exists in GroupedItems (even if it was deleted before, allow re-adding)
+                var existingGroupedItem = GroupedItems.FirstOrDefault(g => g.GroupName == item.Fabricki_kod);
+                if (existingGroupedItem == null)
                 {
-                    Opis = item.Opis,
-                    GroupName = item.Fabricki_kod,
-                    Quantity = 0 // Postavi početnu količinu
-                });
+                    // Add the item if it's not already present
+                    allGroupedItems.Add(item);  // Store in case we need to re-add later
+                    GroupedItems.Add(new GroupedItem
+                    {
+                        Opis = item.Opis,
+                        GroupName = item.Fabricki_kod,
+                        Quantity = 0 // Adjust logic if needed
+                    });
+                }
+                else
+                {
+                    // If the item exists (but may have been deleted before), re-add or update it
+                    existingGroupedItem.Quantity += 1; // You can adjust quantity or other properties as necessary
+                }
             }
 
-            // Opciono: Očisti selekciju iz ResultsDataGrid nakon prebacivanja
+            // Optionally clear the selection from ResultsDataGrid after moving
             ResultsDataGrid.SelectedItems.Clear();
         }
 
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (GroupedItems == null || GroupedItems.Count == 0)
+            {
+                MessageBox.Show("Nema odabranih podataka!", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return; // Prekini metodu ako nema podataka
+            }
             // Proveri da li postoji količina 0
             bool hasZeroQuantity = GroupedItems.Any(item => item.Quantity <= 0);
 
@@ -790,6 +804,7 @@ namespace PetkusApplication.Views
                 MessageBox.Show("Nije moguće nastaviti jer je broj komada 0.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return; // Prekini metodu ako je količina 0
             }
+
 
             List<PonudaItem> selectedItems = new List<PonudaItem>();
 
@@ -814,7 +829,7 @@ namespace PetkusApplication.Views
 
                     // Izračunaj ukupne vrijednosti koristeći KolicinaZaNarucivanje
                     itemForOrder.Ukupna_puna = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Puna_cena;
-                    itemForOrder.Ukupna_rabat = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Puna_cena * (1 - itemForOrder.Vrednost_rabata);
+                    itemForOrder.Ukupna_rabat = Math.Round(itemForOrder.KolicinaZaNarucivanje * itemForOrder.Puna_cena * (1 - itemForOrder.Vrednost_rabata), 2);
                     itemForOrder.Ukupna_Disipacija = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Disipacija;
                     itemForOrder.Ukupna_Tezina = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Tezina;
 
@@ -827,30 +842,19 @@ namespace PetkusApplication.Views
             racunanjePonude.Show();
         }
 
+        private void GroupedDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            // Proveri sve redove u DataGrid-u da li su uneti validni brojevi veći od 0
+            bool allValid = GroupedItems.All(item => item.Quantity > 0);
+
+            // Omogući dugme ako su svi unosi ispravni, tj. ako su svi brojevi veći od 0
+            potvrdiButton.IsEnabled = allValid;
+        }
 
         private void GroupedDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }
 
-        private void GroupedDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            // Proveri da li postoji selektovani red
-            if (GroupedDataGrid.SelectedItem is GroupedItem selectedItem)
-            {
-                // Ukloni selektovani red iz GroupedItems
-                GroupedItems.Remove(selectedItem);
-
-                // Ako želiš da ukloniš i iz originalne liste `allGroupedItems`, možeš ovo uraditi:
-                var itemToRemove = allGroupedItems.FirstOrDefault(i => i.Fabricki_kod == selectedItem.GroupName);
-                if (itemToRemove != null)
-                {
-                    allGroupedItems.Remove(itemToRemove);
-                }
-            }
-        }
-
     }
-
-
 }
