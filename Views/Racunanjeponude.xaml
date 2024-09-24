@@ -23,7 +23,7 @@
 
                     <DataGrid Name="SelectedItemsDataGrid" AutoGenerateColumns="False" CanUserAddRows="False"
                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                              Background="Transparent" ColumnWidth="*" Margin="10" IsReadOnly="True">
+                              Background="Transparent" ColumnWidth="*" Margin="10" IsReadOnly="True" ItemsSource="{Binding PonudaItems}">
                         <DataGrid.Resources>
                             <!-- Stil za redove -->
                             <Style TargetType="DataGridRow">

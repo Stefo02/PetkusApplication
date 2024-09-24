@@ -5,9 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using OfficeOpenXml;
-using Microsoft.Win32; // Dodajte ovaj using
+using Microsoft.Win32; 
 using PetkusApplication.Models;
 using System.Windows.Controls;
+using System.Collections.ObjectModel;
 
 namespace PetkusApplication.Views
 {
@@ -16,6 +17,7 @@ namespace PetkusApplication.Views
         private MySqlConnection connection;
         private FormiranjePonudeView _formiranjePonudeView;
         private List<PonudaItem> selectedItems;
+        public ObservableCollection<PonudaItem> PonudaItems { get; set; }
 
         public Racunanjeponude(FormiranjePonudeView parent, List<PonudaItem> selectedItems)
         {
@@ -24,6 +26,11 @@ namespace PetkusApplication.Views
             SelectedItemsDataGrid.ItemsSource = selectedItems;
             this._formiranjePonudeView = parent;
             InitializeDatabaseConnection();
+
+            // Proveri da li je ponudaItems null, ako jeste, inicijalizuj praznu kolekciju
+            PonudaItems = PonudaItems ?? new ObservableCollection<PonudaItem>();
+
+            this.DataContext = PonudaItems;
         }
 
         private void InitializeDatabaseConnection()
@@ -31,6 +38,22 @@ namespace PetkusApplication.Views
             string connectionString = "server=localhost;database=myappdb;user=root;password=;";
             connection = new MySqlConnection(connectionString);
             connection.Open();
+        }
+
+        // Metoda za dodavanje novih stavki u već otvoren prozor
+        public void DodajNoveStavke(List<PonudaItem> noveStavke)
+        {
+            foreach (var stavka in noveStavke)
+            {
+                // Proveri da li je stavka već dodana kako bi se izbeglo dupliranje
+                if (!PonudaItems.Any(p => p.Fabricki_kod == stavka.Fabricki_kod))
+                {
+                    PonudaItems.Add(stavka); // Dodaj novu stavku u kolekciju samo ako ne postoji
+                }
+            }
+
+            // Osvježi prikaz u DataGrid-u (ako postoji)
+            SelectedItemsDataGrid.Items.Refresh();
         }
 
         private void UpdateAndExport_Click(object sender, RoutedEventArgs e)

@@ -24,6 +24,8 @@ namespace PetkusApplication.Views
         public ObservableCollection<PonudaItem> PonudaItems { get; set; }
         public ObservableCollection<GroupedItem> GroupedItems { get; set; }
         private List<PonudaItem> allGroupedItems = new List<PonudaItem>();
+        private Racunanjeponude racunanjePonudeWindow;
+        private HashSet<string> preneseniKodovi = new HashSet<string>();
 
 
         private bool itemsGrouped = false;
@@ -84,12 +86,16 @@ namespace PetkusApplication.Views
                         if (selectedProizvodac == "Siemens")
                         {
                             // Opcije za Siemens
-                            SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW", "3kW", "4kW" });
+                            SetupComboBox(comboBox4, new[] {"1,5kW", "1,5kW_2", "2,2kW", "2,2kW_2", "3kW", "3kW_2", "4kW", "4kW_2", "5,5kW", "5,5kW_2", "5,5kW_class", "7,5kW", "7,5kW_2", "7,5kW_class",
+                    "9,2kW", "9,2kW_2", "9,2kW_class","11kW", "11kW_2", "11kW_class","15kW", "15kW_2", "15kW_class","18,5kW", "18,5kW_2", "18,5kW_class","22kW", "22kW_2", "22kW_class", "30kW", "30kW_2", "30kW_class",
+                    "37kW", "37kW_2","45kW", "45kW_2","55kW", "55kW_2","55kW_3","75kW", "75kW_2", "90kW", "90kW_2","110kW", "110kW_2","132kW", "132kW_2","160kW", "160kW_2","200kW", "200kW_2",
+                    "250kW", "250kW_2","315kW","355kW","400kW", "400kW_2"});
                         }
                         else if (selectedProizvodac == "Schneider")
                         {
                             // Opcije za Schneider
-                            SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW" });
+                            SetupComboBox(comboBox4, new[] {"1,5kW", "2,2kW","3kW", "4kW", "5,5kW", "7,5kW", "11kW", "15kW", "18,5kW", "22kW", "30kW", "37kW", "45kW", "45kW_2", "55kW", "55kW_2", "75kW", "75kW_2",
+                     "90kW", "90kW_2", "110kW", "110kW_2", "132kW", "132kW_2", "160kW", "160kW_2", "200kW", "200kW_2", "250kW", "250kW_2", "315kW", "315kW_2", "355kW", "355kW_2"});
                         }
                     }
                 }
@@ -103,15 +109,21 @@ namespace PetkusApplication.Views
 
             if (selectedOption == "Soft Starter motor 1 SI")
             {
-                SetupComboBox(comboBox4, new[] { "1", "2" });
+                SetupComboBox(comboBox4, new[] { "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW", "5,5kW", "5,5kW_2", "5,5kW_3", "5,5kW_4", "5,5kW_5", "7,5kW", "7,5kW_2", "7,5kW_3", "7,5kW_4", "7,5kW_5", "9,2kW", "9,2kW_2", "9,2kW_3", "9,2kW_4", "9,2kW_5",
+                    "11kW", "11kW_2", "11kW_3", "11kW_4", "11kW_5", "15kW", "15kW_2", "15kW_3", "15kW_4", "15kW_5","18,5kW", "18,5kW_2", "18,5kW_3", "18,5kW_4", "18,5kW_5","22kW", "22kW_2", "22kW_3", "22kW_4", "22kW_5", "30kW", "30kW_2", "30kW_3", "30kW_4", "30kW_5",
+                    "37kW", "37kW_2", "37kW_3", "37kW_4", "37kW_5","45kW", "45kW_2", "45kW_3", "45kW_4", "45kW_5", "55kW", "55kW_2", "55kW_3", "55kW_4", "55kW_5","55kW_6","75kW", "75kW_2", "75kW_3", "75kW_4", "75kW_5","90kW", "90kW_2", "90kW_3", "90kW_4", "90kW_5",
+                    "110kW", "110kW_2", "110kW_3", "110kW_4", "110kW_5","132kW", "132kW_2", "132kW_3", "132kW_4", "132kW_5", "160kW", "160kW_2", "160kW_3", "160kW_4", "160kW_5", "200kW", "200kW_2", "200kW_3", "200kW_4", "200kW_5","250kW", "250kW_2", "250kW_3", "250kW_4", "250kW_5",
+                    "315kW", "315kW_2","315kW_3", "315kW_4"});
             }
             else if (selectedOption == "Soft Starter motor 1 SE")
             {
-                SetupComboBox(comboBox4, new[] { "3", "4" });
+                SetupComboBox(comboBox4, new[] {"15kW", "18_5kW", "22kW", "30kW", "37kW", "45kW", "55kW", "75kW", "75kW_2", "90kW", "90kW_2", "110kW", "110kW_2", "132kW", "132kW_2", "160kW", "160kW_2", 
+                    "200kW", "200kW_2", "250kW", "250kW_2", "315kW", "315kW_2"});
             }
             else if (selectedOption == "Soft starter 2 motora (SI)")
             {
-                SetupComboBox(comboBox4, new[] { "5", "6" });
+                SetupComboBox(comboBox4, new[] { "2x0_55kW", "2x0_75kW", "2x1_1kW","2x1_5kW","2x2_2kW","2x3kW","2x4kW","2x5_5kW","2x7_5kW",
+                    "2x11kW","2x15kW","2x18_5kW","2x22kW","2x30kW","2x37kW","2x45kW","2x45kW_2","2x55kW", "2x75kW", "2x75kW_2"});
             }
             }
         }
@@ -145,21 +157,26 @@ namespace PetkusApplication.Views
 
                 if (selectedProizvodac == "Siemens" && selectedOption == "V/F regulatori(V20, Siemens)")
                 {
-                    SetupComboBox(comboBox4, new[] { "Siemens Power 1", "Siemens Power 2" });
+                    SetupComboBox(comboBox4, new[] {"0,12kW","0,25kW","0,37kW","0,55kW","0,75kW","1,1kW","1,5kW","2,2kW","3kW","0,18kW","0,25kW_2","0,37kW_2","0,55kW_2","0,75kW_2",
+                        "1,1kW_2","1,5kW_2","2,2kW_2","3kW_2","4kW","5,5kW","5,5kW","7,5kW","9,2kW","11kW","15kW","22kW","30kW"});
                 }
                 else if (selectedProizvodac == "Schneider" && selectedOption == "V/F regulatori(ATV310, 320 and 930 Schneider)")
                 {
-                    SetupComboBox(comboBox4, new[] { "Schneider Power 1", "Schneider Power 2" });
+                    SetupComboBox(comboBox4, new[] { "0,25kW","0,25kW_2","0,25kW_3","0,37kW","0,37kW_2","0,37kW_3","0,55kW","0,55kW_2","0,55kW_3","0,75kW","0,75kW_2","0,75kW_3","1,1kW","1,1kW_2","1,1kW_3","1,5kW","1,5kW_2","1,5kW_3",
+                    "2,2kW","2,2kW_2","2,2kW_3","3kW","3kW_2","3kW_3","4kW","4kW_2","4kW_3","5,5kW","5,5kW_2","5,5kW_3","7,5kW","7,5kW_2","7,5kW_3","9,2kW","9,2kW_2","9,2kW_3","11kW","11kW_2","11kW_3","11kW_4","15kW","15kW_2","15kW_3","15kW_4","18,5kW","18,5kW_2",
+                    "22kW","22kW_2","30kW","37kW","45kW","55kW","75kW","90kW"});
                 }
                 else if (selectedProizvodac == "Danfoss")
 {
                     if (selectedOption == "V/F regulatori(FC51, Danfoss)")
                 {
-                    SetupComboBox(comboBox4, new[] { "Danfoss Power 1-1", "Danfoss Power 1-2" });
+                    SetupComboBox(comboBox4, new[] {"0,37kW_FC51","0,55kW_FC51","0,75kW_FC51","1,1kW_FC51","1,5kW_FC51","2,2kW_FC51","3kW_FC51","4kW_FC51","5,5kW_FC51","7,5kW_FC51","9,2kW_FC51",
+                        "11kW_FC51","15kW_FC51","18,5kW_FC51","22kW_FC51"});
                 }
                 else if (selectedOption == "V/F regulatori(FC102, Danfoss)")
                 {
-                    SetupComboBox(comboBox4, new[] { "Danfoss Power 2-1", "Danfoss Power 2-2" });
+                    SetupComboBox(comboBox4, new[] { "1,1kW_FC102","1,5kW_FC102","2,2kW_FC102","3kW_FC102","4kW_FC102","5,5kW_FC102","7,5kW_FC102","9,2kW_FC102",
+                        "11kW_FC102","15kW_FC102","18,5kW_FC102","22kW_FC102","22kW_FC102","30kW_FC102", "37kW_FC102","45kW_FC102","55kW_FC102","75kW_FC102","90kW_FC102",});
                 }
                 else if (selectedOption == "V/F regulatori(FC302, Danfoss)")
                 {
@@ -224,11 +241,15 @@ namespace PetkusApplication.Views
 
                 if (selectedProizvodac == "Siemens")
                 {
-                    SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW", "3kW", "4kW" });
+                    SetupComboBox(comboBox4, new[] { "1,5kW", "1,5kW_2", "2,2kW", "2,2kW_2", "3kW", "3kW_2", "4kW", "4kW_2", "5,5kW", "5,5kW_2", "5,5kW_class", "7,5kW", "7,5kW_2", "7,5kW_class",
+                    "9,2kW", "9,2kW_2", "9,2kW_class","11kW", "11kW_2", "11kW_class","15kW", "15kW_2", "15kW_class","18,5kW", "18,5kW_2", "18,5kW_class","22kW", "22kW_2", "22kW_class", "30kW", "30kW_2", "30kW_class",
+                    "37kW", "37kW_2","45kW", "45kW_2","55kW", "55kW_2","55kW_3","75kW", "75kW_2", "90kW", "90kW_2","110kW", "110kW_2","132kW", "132kW_2","160kW", "160kW_2","200kW", "200kW_2",
+                    "250kW", "250kW_2","315kW","355kW","400kW", "400kW_2"});
                 }
                 else if (selectedProizvodac == "Schneider")
                 {
-                    SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW" });
+                    SetupComboBox(comboBox4, new[] {"1,5kW", "2,2kW","3kW", "4kW", "5,5kW", "7,5kW", "11kW", "15kW", "18,5kW", "22kW", "30kW", "37kW", "45kW", "45kW_2", "55kW", "55kW_2", "75kW", "75kW_2",
+                     "90kW", "90kW_2", "110kW", "110kW_2", "132kW", "132kW_2", "160kW", "160kW_2", "200kW", "200kW_2", "250kW", "250kW_2", "315kW", "315kW_2", "355kW", "355kW_2"});
                 }
             }
 
@@ -242,15 +263,21 @@ namespace PetkusApplication.Views
 
                 if (selectedOption == "Soft Starter motor 1 SI")
                 {
-                    SetupComboBox(comboBox4, new[] { "1", "2" });
+                    SetupComboBox(comboBox4, new[] { "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW", "5,5kW", "5,5kW_2", "5,5kW_3", "5,5kW_4", "5,5kW_5", "7,5kW", "7,5kW_2", "7,5kW_3", "7,5kW_4", "7,5kW_5", "9,2kW", "9,2kW_2", "9,2kW_3", "9,2kW_4", "9,2kW_5",
+                    "11kW", "11kW_2", "11kW_3", "11kW_4", "11kW_5", "15kW", "15kW_2", "15kW_3", "15kW_4", "15kW_5","18,5kW", "18,5kW_2", "18,5kW_3", "18,5kW_4", "18,5kW_5","22kW", "22kW_2", "22kW_3", "22kW_4", "22kW_5", "30kW", "30kW_2", "30kW_3", "30kW_4", "30kW_5",
+                    "37kW", "37kW_2", "37kW_3", "37kW_4", "37kW_5","45kW", "45kW_2", "45kW_3", "45kW_4", "45kW_5", "55kW", "55kW_2", "55kW_3", "55kW_4", "55kW_5","55kW_6","75kW", "75kW_2", "75kW_3", "75kW_4", "75kW_5","90kW", "90kW_2", "90kW_3", "90kW_4", "90kW_5",
+                    "110kW", "110kW_2", "110kW_3", "110kW_4", "110kW_5","132kW", "132kW_2", "132kW_3", "132kW_4", "132kW_5", "160kW", "160kW_2", "160kW_3", "160kW_4", "160kW_5", "200kW", "200kW_2", "200kW_3", "200kW_4", "200kW_5","250kW", "250kW_2", "250kW_3", "250kW_4", "250kW_5",
+                    "315kW", "315kW_2","315kW_3", "315kW_4"});
                 }
                 else if (selectedOption == "Soft Starter motor 1 SE")
                 {
-                    SetupComboBox(comboBox4, new[] { "3", "4" });
+                    SetupComboBox(comboBox4, new[] { "15kW", "18_5kW", "22kW", "30kW", "37kW", "45kW", "55kW", "75kW", "75kW_2", "90kW", "90kW_2", "110kW", "110kW_2", "132kW", "132kW_2", 
+                        "160kW", "160kW_2", "200kW", "200kW_2", "250kW", "250kW_2", "315kW", "315kW_2"});
                 }
                 else if (selectedOption == "Soft starter 2 motora (SI)")  // Dodavanje nove opcije
                 {
-                    SetupComboBox(comboBox4, new[] { "5", "6" });
+                    SetupComboBox(comboBox4, new[] {"2x0_55kW", "2x0_75kW", "2x1_1kW","2x1_5kW","2x2_2kW","2x3kW","2x4kW","2x5_5kW","2x7_5kW",
+                    "2x11kW","2x15kW","2x18_5kW","2x22kW","2x30kW","2x37kW","2x45kW","2x45kW_2","2x55kW", "2x75kW", "2x75kW_2" });
                 }
             }
 
@@ -328,48 +355,63 @@ namespace PetkusApplication.Views
                 if (selectedProizvodac == "Siemens")
                 {
                     // Opcije za Siemens: "1,5kW", "2,2kW", "3kW", "4kW"
-                    SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW", "3kW", "4kW" });
+                    SetupComboBox(comboBox4, new[] { "1,5kW", "1,5kW_2", "2,2kW", "2,2kW_2", "3kW", "3kW_2", "4kW", "4kW_2", "5,5kW", "5,5kW_2", "5,5kW_class", "7,5kW", "7,5kW_2", "7,5kW_class",
+                    "9,2kW", "9,2kW_2", "9,2kW_class","11kW", "11kW_2", "11kW_class","15kW", "15kW_2", "15kW_class","18,5kW", "18,5kW_2", "18,5kW_class","22kW", "22kW_2", "22kW_class", "30kW", "30kW_2", "30kW_class",
+                    "37kW", "37kW_2","45kW", "45kW_2","55kW", "55kW_2","55kW_3","75kW", "75kW_2", "90kW", "90kW_2","110kW", "110kW_2","132kW", "132kW_2","160kW", "160kW_2","200kW", "200kW_2",
+                    "250kW", "250kW_2","315kW","355kW","400kW", "400kW_2"});
                 }
                 else if (selectedProizvodac == "Schneider")
                 {
                     // Opcije za Schneider: "1,5kW", "2,2kW"
-                    SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW" });
+                    SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW","3kW", "4kW", "5,5kW", "7,5kW", "11kW", "15kW", "18,5kW", "22kW", "30kW", "37kW", "45kW", "45kW_2", "55kW", "55kW_2", "75kW", "75kW_2",
+                     "90kW", "90kW_2", "110kW", "110kW_2", "132kW", "132kW_2", "160kW", "160kW_2", "200kW", "200kW_2", "250kW", "250kW_2", "315kW", "315kW_2", "355kW", "355kW_2"});
                 }
             }
             else if (selectedNacinPokretanja == "Soft")
             {
                 if (selectedOption == "Soft Starter motor 1 SI")
                 {
-                    SetupComboBox(comboBox4, new[] { "1", "2" });
+                    SetupComboBox(comboBox4, new[] {"0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW", "5,5kW", "5,5kW_2", "5,5kW_3", "5,5kW_4", "5,5kW_5", "7,5kW", "7,5kW_2", "7,5kW_3", "7,5kW_4", "7,5kW_5", "9,2kW", "9,2kW_2", "9,2kW_3", "9,2kW_4", "9,2kW_5",
+                    "11kW", "11kW_2", "11kW_3", "11kW_4", "11kW_5", "15kW", "15kW_2", "15kW_3", "15kW_4", "15kW_5","18,5kW", "18,5kW_2", "18,5kW_3", "18,5kW_4", "18,5kW_5","22kW", "22kW_2", "22kW_3", "22kW_4", "22kW_5", "30kW", "30kW_2", "30kW_3", "30kW_4", "30kW_5",
+                    "37kW", "37kW_2", "37kW_3", "37kW_4", "37kW_5","45kW", "45kW_2", "45kW_3", "45kW_4", "45kW_5", "55kW", "55kW_2", "55kW_3", "55kW_4", "55kW_5","55kW_6","75kW", "75kW_2", "75kW_3", "75kW_4", "75kW_5","90kW", "90kW_2", "90kW_3", "90kW_4", "90kW_5",
+                    "110kW", "110kW_2", "110kW_3", "110kW_4", "110kW_5","132kW", "132kW_2", "132kW_3", "132kW_4", "132kW_5", "160kW", "160kW_2", "160kW_3", "160kW_4", "160kW_5", "200kW", "200kW_2", "200kW_3", "200kW_4", "200kW_5","250kW", "250kW_2", "250kW_3", "250kW_4", "250kW_5",
+                    "315kW", "315kW_2","315kW_3", "315kW_4"});
                 }
                 else if (selectedOption == "Soft Starter motor 1 SE")
                 {
-                    SetupComboBox(comboBox4, new[] { "3", "4" });
+                    SetupComboBox(comboBox4, new[] {"15kW", "18_5kW", "22kW", "30kW", "37kW", "45kW", "55kW", "75kW", "75kW_2", "90kW", "90kW_2", "110kW", "110kW_2", "132kW", "132kW_2", "160kW", "160kW_2",
+                    "200kW", "200kW_2", "250kW", "250kW_2", "315kW", "315kW_2"});
                 }
                 else if (selectedOption == "Soft starter 2 motora (SI)") 
                 {
-                    SetupComboBox(comboBox4, new[] { "5", "6" });
+                    SetupComboBox(comboBox4, new[] {"2x0_55kW", "2x0_75kW", "2x1_1kW","2x1_5kW","2x2_2kW","2x3kW","2x4kW","2x5_5kW","2x7_5kW",
+                    "2x11kW","2x15kW","2x18_5kW","2x22kW","2x30kW","2x37kW","2x45kW","2x45kW_2","2x55kW", "2x75kW", "2x75kW_2" });
                 }
             }
             else if (selectedNacinPokretanja == "Frekventno")
             {
                 if (selectedProizvodac == "Siemens" && selectedOption == "V/F regulatori(V20, Siemens)")
                 {
-                    SetupComboBox(comboBox4, new[] { "Siemens Power 1", "Siemens Power 2" });
+                    SetupComboBox(comboBox4, new[] {"0,12kW","0,25kW","0,37kW","0,55kW","0,75kW","1,1kW","1,5kW","2,2kW","3kW","0,18kW","0,25kW_2","0,37kW_2","0,55kW_2","0,75kW_2",
+                        "1,1kW_2","1,5kW_2","2,2kW_2","3kW_2","4kW","5,5kW","5,5kW","7,5kW","9,2kW","11kW","15kW","22kW","30kW"});
                 }
                 else if (selectedProizvodac == "Schneider" && selectedOption == "V/F regulatori(ATV310, 320 and 930 Schneider)")
                 {
-                    SetupComboBox(comboBox4, new[] { "Schneider Power 1", "Schneider Power 2" });
+                    SetupComboBox(comboBox4, new[] {"0,25kW","0,25kW_2","0,25kW_3","0,37kW","0,37kW_2","0,37kW_3","0,55kW","0,55kW_2","0,55kW_3","0,75kW","0,75kW_2","0,75kW_3","1,1kW","1,1kW_2","1,1kW_3","1,5kW","1,5kW_2","1,5kW_3",
+                    "2,2kW","2,2kW_2","2,2kW_3","3kW","3kW_2","3kW_3","4kW","4kW_2","4kW_3","5,5kW","5,5kW_2","5,5kW_3","7,5kW","7,5kW_2","7,5kW_3","9,2kW","9,2kW_2","9,2kW_3","11kW","11kW_2","11kW_3","11kW_4","15kW","15kW_2","15kW_3","15kW_4","18,5kW","18,5kW_2",
+                    "22kW","22kW_2","30kW","37kW","45kW","55kW","75kW","90kW"});
                 }
                 else if (selectedProizvodac == "Danfoss")
                 {
                     if (selectedOption == "V/F regulatori(FC51, Danfoss)")
                     {
-                        SetupComboBox(comboBox4, new[] { "Danfoss Power 1-1", "Danfoss Power 1-2" });
+                        SetupComboBox(comboBox4, new[] { "0,37kW_FC51","0,55kW_FC51","0,75kW_FC51","1,1kW_FC51","1,5kW_FC51","2,2kW_FC51","3kW_FC51","4kW_FC51","5,5kW_FC51","7,5kW_FC51","9,2kW_FC51",
+                        "11kW_FC51","15kW_FC51","18,5kW_FC51","22kW_FC51" });
                     }
                     else if (selectedOption == "V/F regulatori(FC102, Danfoss)")
                     {
-                        SetupComboBox(comboBox4, new[] { "Danfoss Power 2-1", "Danfoss Power 2-2" });
+                        SetupComboBox(comboBox4, new[] {"1,1kW_FC102","1,5kW_FC102","2,2kW_FC102","3kW_FC102","4kW_FC102","5,5kW_FC102","7,5kW_FC102","9,2kW_FC102",
+                        "11kW_FC102","15kW_FC102","18,5kW_FC102","22kW_FC102","22kW_FC102","30kW_FC102", "37kW_FC102","45kW_FC102","55kW_FC102","75kW_FC102","90kW_FC102"});
                     }
                     else if (selectedOption == "V/F regulatori(FC302, Danfoss)")
                     {
@@ -593,57 +635,367 @@ namespace PetkusApplication.Views
                 ("Zvezda-Trougao", "Siemens") => selectedSnaga switch
                 {
                     "1,5kW" => "YD_si_start_1_5kW",
-                    "2,2kW" => "YD_SI_start_2_2kW_procedure",
-                    "3kW" => "YD_SI_start_3kW_procedure",
-                    "4kW" => "YD_SI_start_4kW_procedure",
+                    "1,5kW_2" => "YD_si_start_1_5kW2",
+                    "2,2kW" => "YD_si_start_2_2kW",
+                    "2,2kW_2" => "YD_si_start_2_2kW2",
+                    "3kW" => "YD_si_start_3kW",
+                    "3kW_2" => "YD_si_start_3kW2",
+                    "4kW" => "YD_si_start_4kW",
+                    "4kW_2" => "YD_si_start_4kW2",
+                    "5,5kW" => "YD_si_start_5_5kW",
+                    "5,5kW_2" => "YD_si_start_5_5kW2",
+                    "5,5kW_class" => "YD_si_start_5_5kWclass",
+                    "7,5kW" => "YD_si_start_7_5kW",
+                    "7,5kW_2" => "YD_si_start_7_5kW2",
+                    "7,5kW_class" => "YD_si_start_7_5kWclass",
+                    "9,2kW" => "YD_si_start_9_2kW",
+                    "9,2kW_2" => "YD_si_start_9_2kW2",
+                    "9,2kW_class" => "YD_si_start_9_2kWclass",
+                    "11kW" => "YD_si_start_11kW",
+                    "11kW_2" => "YD_si_start_11kW2",
+                    "11kW_class" => "YD_si_start_11kWclass",
+                    "15kW" => "YD_si_start_15kW",
+                    "15kW_2" => "YD_si_start_15kW2",
+                    "15kW_class" => "YD_si_start_15kWclass",
+                    "18,5kW" => "YD_si_start_18_5kW",
+                    "18,5kW_2" => "YD_si_start_18_5kW2",
+                    "18,5kW_class" => "YD_si_start_18_5kWclass",
+                    "22kW" => "YD_si_start_22kW",
+                    "22kW_2" => "YD_si_start_22kW2",
+                    "22kW_class" => "YD_si_start_22kWclass",
+                    "30kW" => "YD_si_start_30kW",
+                    "30kW_2" => "YD_si_start_30kW2",
+                    "30kW_class" => "YD_si_start_30kWclass",
+                    "37kW" => "YD_si_start_37kW",
+                    "37kW_2" => "YD_si_start_37kW2",
+                    "45kW" => "YD_si_start_45kW",
+                    "45kW_2" => "YD_si_start_45kW2",
+                    "55kW" => "YD_si_start_55kW",
+                    "55kW_2" => "YD_si_start_55kW2",
+                    "55kW_3" => "YD_si_start_55kW3",
+                    "75kW" => "YD_si_start_75kW",
+                    "75kW_2" => "YD_si_start_75kW2",
+                    "90kW" => "YD_si_start_90kW",
+                    "90kW_2" => "YD_si_start_90kW2",
+                    "110kW" => "YD_si_start_110kW",
+                    "110kW_2" => "YD_si_start_110kW2",
+                    "132kW" => "YD_si_start_132kw",
+                    "132kW_2" => "YD_si_start_132kW2",
+                    "160kW" => "YD_si_start_160kw",
+                    "160kW_2" => "YD_si_start_160kw2",
+                    "200kW" => "YD_si_start_200kw",
+                    "200kW_2" => "YD_si_start_200kw2",
+                    "250kW" => "YD_si_start_250kw",
+                    "250kW_2" => "YD_si_start_250kw2",
+                    "315kW" => "YD_si_start_315kw",
+                    "355kW" => "YD_si_start_355kw",
+                    "400kW" => "YD_si_start_400kw",
+                    "400kW_2" => "YD_si_start_400kw2",
                     _ => "YD_si_start"
                 },
                 // Zvezda-Trougao Schneider
                 ("Zvezda-Trougao", "Schneider") => selectedSnaga switch
                 {
                     "1,5kW" => "YD_se_start_1_5kW",
-                    "2,2kW" => "YD_SE_start_2_2kW_procedure",
+                    "2,2kW" => "YD_se_start_2_2kW",
+                    "3kW" => "YD_se_start_3kW",
+                    "4kW" => "YD_se_start_4kW",
+                    "5,5kW" => "YD_se_start_5_5kW",
+                    "7,5kW" => "YD_se_start_7_5kW",
+                    "11kW" => "YD_se_start_11kW",
+                    "15kW" => "YD_se_start_15kW",
+                    "18,5kW" => "YD_se_start_18_5kW",
+                    "22kW" => "YD_se_start_22kW",
+                    "30kW" => "YD_se_start_30kW",
+                    "37kW" => "YD_se_start_37kW",
+                    "45kW" => "YD_se_start_45kW",
+                    "45kW_2" => "YD_se_start_45kW2",
+                    "55kW" => "YD_se_start_55kW",
+                    "55kW_2" => "YD_se_start_55kW2",
+                    "75kW" => "YD_se_start_75kW",
+                    "75kW_2" => "YD_se_start_7 5kW2",
+                    "90kW" => "YD_se_start_90kW",
+                    "90kW_2" => "YD_se_start_90kW2",
+                    "110kW" => "YD_se_start_110kW",
+                    "110kW_2" => "YD_se_start_110kW2",
+                    "132kW" => "YD_se_start_132kW",
+                    "132kW_2" => "YD_se_start_132kW2",
+                    "160kW" => "YD_se_start_160kW",
+                    "160kW_2" => "YD_se_start_160kW2",
+                    "200kW" => "YD_se_start_200kW",
+                    "200kW_2" => "YD_se_start_200kW2",
+                    "250kW" => "YD_se_start_250kW",
+                    "250kW_2" => "YD_se_start_250kW2",
+                    "315kW" => "YD_se_start_315kW",
+                    "315kW_2" => "YD_se_start_315kW2",
+                    "355kW" => "YD_se_start_355kW",
+                    "355kW_2" => "YD_se_start_355kW",
                     _ => "YD_se_start"
                 },
                 ("Soft", _) => selectedBrojSmerova switch
                 {
                     "Soft Starter motor 1 SI" => selectedSnaga switch
                     {
-                        "1" => "Soft_starter1_0_55kW",
-                        "2" => "Soft_starter1_0_75kW",
+                        "0,55kW" => "Soft_starter1_0_55kW",
+                        "0,75kW" => "Soft_starter1_0_75kW",
+                        "1,1kW" => "Soft_starter1_1_1kW",
+                        "1,5kW" => "Soft_starter1_1_5kW",
+                        "2,2kW" => "Soft_starter1_2_2kW",
+                        "3kW" => "Soft_starter1_3kW",
+                        "4kW" => "Soft_starter1_4kW",
+                        "5,5kW" => "Soft_starter1_5_5kW",
+                        "5,5kW_2" => "Soft_starter1_5_5kW2",
+                        "5,5kW_3" => "Soft_starter1_5_5kW3",
+                        "5,5kW_4" => "Soft_starter1_5_5kW4",
+                        "5,5kW_5" => "Soft_starter1_5_5kW5",
+                        "7,5kW" => "Soft_starter1_7_5kW",
+                        "7,5kW_2" => "Soft_starter1_7_5kW2",
+                        "7,5kW_3" => "Soft_starter1_7_5kW2",
+                        "7,5kW_4" => "Soft_starter1_7_5kW2",
+                        "7,5kW_5" => "Soft_starter1_7_5kW2",
+                        "9,2kW" => "Soft_starter1_9_2kW",
+                        "9,2kW_2" => "Soft_starter1_9_2kW2",
+                        "9,2kW_3" => "Soft_starter1_9_2kW3",
+                        "9,2kW_4" => "Soft_starter1_9_2kW4",
+                        "9,2kW_5" => "Soft_starter1_9_2kW5",
+                        "11kW" => "Soft_starter1_11kW",
+                        "11kW_2" => "Soft_starter1_11kW2",
+                        "11kW_3" => "Soft_starter1_11kW3",
+                        "11kW_4" => "Soft_starter1_11kW4",
+                        "11kW_5" => "Soft_starter1_11kW5",
+                        "15kW" => "Soft_starter1_15kW",
+                        "15kW_2" => "Soft_starter1_15kW2",
+                        "15kW_3" => "Soft_starter1_15kW3",
+                        "15kW_4" => "Soft_starter1_15kW4",
+                        "15kW_5" => "Soft_starter1_15kW5",
+                        "18,5kW" => "Soft_starter1_18_5kW",
+                        "18,5kW_2" => "Soft_starter1_18_5kW2",
+                        "18,5kW_3" => "Soft_starter1_18_5kW3",
+                        "18,5kW_4" => "Soft_starter1_18_5kW4",
+                        "18,5kW_5" => "Soft_starter1_18_5kW5",
+                        "22kW" => "Soft_starter1_22kW",
+                        "22kW_2" => "Soft_starter1_22kW2",
+                        "22kW_3" => "Soft_starter1_22kW3",
+                        "22kW_4" => "Soft_starter1_22kW4",
+                        "22kW_5" => "Soft_starter1_22kW5",
+                        "30kW" => "Soft_starter1_30kW",
+                        "30kW_2" => "Soft_starter1_30kW2",
+                        "30kW_3" => "Soft_starter1_30kW3",
+                        "30kW_4" => "Soft_starter1_30kW4",
+                        "30kW_5" => "Soft_starter1_30kW5",
+                        "37kW" => "Soft_starter1_37kW",
+                        "37kW_2" => "Soft_starter1_37kW2",
+                        "37kW_3" => "Soft_starter1_37kW3",
+                        "37kW_4" => "Soft_starter1_37kW4",
+                        "37kW_5" => "Soft_starter1_37kW5",
+                        "45kW" => "Soft_starter1_45kW",
+                        "45kW_2" => "Soft_starter1_45kW2",
+                        "45kW_3" => "Soft_starter1_45kW3",
+                        "45kW_4" => "Soft_starter1_45kW4",
+                        "45kW_5" => "Soft_starter1_45kW5",
+                        "55kW" => "Soft_starter1_55kW",
+                        "55kW_2" => "Soft_starter1_55kW2",
+                        "55kW_3" => "Soft_starter1_55kW3",
+                        "55kW_4" => "Soft_starter1_55kW4",
+                        "55kW_5" => "Soft_starter1_55kW5",
+                        "55kW_6" => "Soft_starter1_55kW6",
+                        "75kW" => "Soft_starter1_75kW",
+                        "75kW_2" => "Soft_starter1_75kW2",
+                        "75kW_3" => "Soft_starter1_75kW3",
+                        "75kW_4" => "Soft_starter1_75kW4",
+                        "75kW_5" => "Soft_starter1_75kW5",
+                        "90kW" => "Soft_starter1_90kW",
+                        "90kW_2" => "Soft_starter1_90kW2",
+                        "90kW_3" => "Soft_starter1_90kW3",
+                        "90kW_4" => "Soft_starter1_90kW4",
+                        "90kW_5" => "Soft_starter1_90kW5",
+                        "110kW" => "Soft_starter1_110kW",
+                        "110kW_2" => "Soft_starter1_110kW2",
+                        "110kW_3" => "Soft_starter1_110kW3",
+                        "110kW_4" => "Soft_starter1_110kW4",
+                        "110kW_5" => "Soft_starter1_110kW5",
+                        "132kW" => "Soft_starter1_132kW",
+                        "132kW_2" => "Soft_starter1_132kW2",
+                        "132kW_3" => "Soft_starter1_132kW3",
+                        "132kW_4" => "Soft_starter1_132kW4",
+                        "132kW_5" => "Soft_starter1_132kW5",
+                        "160kW" => "Soft_starter1_160kW",
+                        "160kW_2" => "Soft_starter1_160kW2",
+                        "160kW_3" => "Soft_starter1_160kW3",
+                        "160kW_4" => "Soft_starter1_160kW4",
+                        "160kW_5" => "Soft_starter1_160kW5",
+                        "200kW" => "Soft_starter1_200kW",
+                        "200kW_2" => "Soft_starter1_200kW2",
+                        "200kW_3" => "Soft_starter1_200kW3",
+                        "200kW_4" => "Soft_starter1_200kW4",
+                        "200kW_5" => "Soft_starter1_200kW5",
+                        "250kW" => "Soft_starter1_250kW",
+                        "250kW_2" => "Soft_starter1_250kW2",
+                        "250kW_3" => "Soft_starter1_250kW3",
+                        "250kW_4" => "Soft_starter1_250kW4",
+                        "250kW_5" => "Soft_starter1_250kW5",
+                        "315kW" => "Soft_starter1_315kW",
+                        "315kW_2" => "Soft_starter1_315kW2",
+                        "315kW_3" => "Soft_starter1_315kW3",
+                        "315kW_4" => "Soft_starter1_315kW4",
                         _ => null
                     },
                     "Soft Starter motor 1 SE" => selectedSnaga switch
                     {
-                        "3" => "Soft_starter1_110kW",
-                        "4" => "Soft_starter1_110kW2",
+                        "15kW" => "Soft_starter1_SE_15kW",
+                        "18,5kW" => "Soft_starter1_SE_18_5kW",
+                        "22kW" => "Soft_starter1_SE_22kW",
+                        "30kW" => "Soft_starter1_SE_30kW",
+                        "37kW" => "Soft_starter1_SE_37kW",
+                        "45kW" => "Soft_starter1_SE_45kW",
+                        "55kW" => "Soft_starter1_SE_55kW",
+                        "75kW" => "Soft_starter1_SE_75kW",
+                        "75kW_2" => "Soft_starter1_SE_75kW2",
+                        "90kW" => "Soft_starter1_SE_90kW",
+                        "90kW_2" => "Soft_starter1_SE_90kW2",
+                        "110kW" => "Soft_starter1_SE_110kW",
+                        "110kW_2" => "Soft_starter1_SE_110kW2",
+                        "132kW" => "Soft_starter1_SE_132kW",
+                        "132kW_2" => "Soft_starter1_SE_132kW2",
+                        "160kW" => "Soft_starter1_SE_160kW",
+                        "160kW_2" => "Soft_starter1_SE_160kW2",
+                        "200kW" => "Soft_starter1_SE_200kW",
+                        "200kW_2" => "Soft_starter1_SE_200kW2",
+                        "250kW" => "Soft_starter1_SE_250kW",
+                        "250kW_2" => "Soft_starter1_SE_250kW2",
+                        "315kW" => "Soft_starter1_SE_315kW",
+                        "315kW_2" => "Soft_starter1_SE_315kW2",
                         _ => null
                     },
                     "Soft starter 2 motora (SI)" => selectedSnaga switch
                     {
-                        "5" => "Soft_starter2_0_55kW",
-                        "6" => "Soft_starter2_0_75kW",
+                        "2x0_55kW" => "Soft_starter2_SI_2x0_55kW",
+                        "2x0_75kW" => "Soft_starter2_SI_2x0_75kW",
+                        "2x1_1kW" => "Soft_starter2_SI_2x1_1kW",
+                        "2x1_5kW" => "Soft_starter2_SI_2x1_5kW",
+                        "2x2_2kW" => "Soft_starter2_SI_2x2_2kW",
+                        "2x3kW" => "Soft_starter2_SI_2x3kW",
+                        "2x4kW" => "Soft_starter2_SI_2x4kW",
+                        "2x5_5kW" => "Soft_starter2_SI_2x5_5kW",
+                        "2x7_5kW" => "Soft_starter2_SI_2x7_5kW",
+                        "2x11kW" => "Soft_starter2_SI_2x11kW",
+                        "2x15kW" => "Soft_starter2_SI_2x15kW",
+                        "2x18_5kW" => "Soft_starter2_SI_2x18_5kW",
+                        "2x22kW" => "Soft_starter2_SI_2x22kW",
+                        "2x30kW" => "Soft_starter2_SI_2x30kW",
+                        "2x37kW" => "Soft_starter2_SI_2x37kW",
+                        "2x45kW" => "Soft_starter2_SI_2x45kW",
+                        "2x45kW_2" => "Soft_starter2_SI_2x45kW2",
+                        "2x55kW" => "Soft_starter2_SI_2x55kW",
+                        "2x75kW" => "Soft_starter2_SI_2x75kW",
+                        "2x75kW_2" => "Soft_starter2_SI_2x75kW2",
                         _ => null
                     },
                     _ => null
                 },
                 ("Frekventno", "Siemens") => selectedSnaga switch
                 {
-                    "Siemens Power 1" => "FC_se_regulatori_0_25kW",
-                    "Siemens Power 2" => "FC_Siemens_Power2_Procedure",
+                    "0,12kW" => "FC_si_regulatoriV20_0_12kW",
+                    "0,18kW" => "FC_si_regulatoriV20_0_18kW",
+                    "0,25kW" => "FC_si_regulatoriV20_0_25kW",
+                    "0,25kW_2" => "FC_si_regulatoriV20_0_25kW2",
+                    "0,37kW" => "FC_si_regulatoriV20_0_37kW",
+                    "0,37kW_2" => "FC_si_regulatoriV20_0_37kW2",
+                    "0,55kW" => "FC_si_regulatoriV20_0_55kW",
+                    "0,55kW_2" => "FC_si_regulatoriV20_0_55kW2",
+                    "0,75kW" => "FC_si_regulatoriV20_0_75kW",
+                    "0,75kW_2" => "FC_si_regulatoriV20_0_75kW2",
+                    "1,1kW" => "FC_si_regulatoriV20_1_1kW",
+                    "1,1kW_2" => "FC_si_regulatoriV20_1_1kW2",
+                    "1,5kW" => "FC_si_regulatoriV20_1_5kW",
+                    "1,5kW_2" => "FC_si_regulatoriV20_1_5kW2",
+                    "2,2kW" => "FC_si_regulatoriV20_2_2kW",
+                    "2,2kW_2" => "FC_si_regulatoriV20_2_2kW2",
+                    "3kW" => "FC_si_regulatoriV20_3kW",
+                    "3kW_2" => "FC_si_regulatoriV20_3kW2",
+                    "4kW" => "FC_si_regulatoriV20_4kW",
+                    "5,5kW" => "FC_si_regulatoriV20_5_5kW",
+                    "7,5kW" => "FC_si_regulatoriV20_7_5kW",
+                    "9,2kW" => "FC_si_regulatoriV20_9_2kW",
+                    "11kW" => "FC_si_regulatoriV20_11kW",
+                    "15kW" => "FC_si_regulatoriV20_15kW",
+                    "22kW" => "FC_si_regulatoriV20_22kW",
+                    "30kW" => "FC_si_regulatoriV20_30kW",
                     _ => null
                 },
                 ("Frekventno", "Schneider") => selectedSnaga switch
                 {
-                    "Schneider Power 1" => "FC_se_regulatori_0_25kW2",
-                    "Schneider Power 2" => "FC_Schneider_Power2_Procedure",
+                    "0,25kW" => "FC_se_regulatori_0_25kW",
+                    "0,25kW_2" => "FC_se_regulatori_0_25kW2",
+                    "0,25kW_3" => "FC_se_regulatori_0_25kW3",
+                    "0,37kW" => "FC_se_regulatori_0_37kW",
+                    "0,37kW_2" => "FC_se_regulatori_0_37kW2",
+                    "0,37kW_3" => "FC_se_regulatori_0_37kW3",
+                    "0,55kW" => "FC_se_regulatori_0_55kW",
+                    "0,55kW_2" => "FC_se_regulatori_0_55kW2",
+                    "0,55kW_3" => "FC_se_regulatori_0_55kW3",
+                    "0,75kW" => "FC_se_regulatori_0_75kW",
+                    "0,75kW_2" => "FC_se_regulatori_0_75kW2",
+                    "0,75kW_3" => "FC_se_regulatori_0_75kW3",
+                    "1,1kW" => "FC_se_regulatori_1_1kW",
+                    "1,1kW_2" => "FC_se_regulatori_1_1kW2",
+                    "1,1kW_3" => "FC_se_regulatori_1_1kW3",
+                    "1,5kW" => "FC_se_regulatori_1_5kW",
+                    "1,5kW_2" => "FC_se_regulatori_1_5kW2",
+                    "1,5kW_3" => "FC_se_regulatori_1_5kW3",
+                    "2,2kW" => "FC_se_regulatori_2_2kW",
+                    "2,2kW_2" => "FC_se_regulatori_2_2kW2",
+                    "2,2kW_3" => "FC_se_regulatori_2_2kW3",
+                    "3kW" => "FC_se_regulatori_3kW",
+                    "3kW_2" => "FC_se_regulatori_3kW2",
+                    "3kW_3" => "FC_se_regulatori_3kW3",
+                    "4kW" => "FC_se_regulatori_4kW",
+                    "4kW_2" => "FC_se_regulatori_4kW2",
+                    "4kW_3" => "FC_se_regulatori_4kW3",
+                    "5,5kW" => "FC_se_regulatori_5_5kW",
+                    "5,5kW_2" => "FC_se_regulatori_5_5kW2",
+                    "5,5kW_3" => "FC_se_regulatori_5_5kW3",
+                    "7,5kW" => "FC_se_regulatori_7_5kW",
+                    "7,5kW_2" => "FC_se_regulatori_7_5kW2",
+                    "7,5kW_3" => "FC_se_regulatori_7_5kW3",
+                    "11kW" => "FC_se_regulatori_11kW",
+                    "11kW_2" => "FC_se_regulatori_11kW2",
+                    "11kW_3" => "FC_se_regulatori_11kW3",
+                    "11kW_4" => "FC_se_regulatori_11kW4",
+                    "15kW" => "FC_se_regulatori_15kW",
+                    "15kW_2" => "FC_se_regulatori_15kW2",
+                    "15kW_3" => "FC_se_regulatori_15kW3",
+                    "15kW_4" => "FC_se_regulatori_15kW4",
+                    "18,5kW" => "FC_se_regulatori_18_5kW",
+                    "18,5kW_2" => "FC_se_regulatori_18_5kW2",
+                    "22kW" => "FC_se_regulatori_22kW",
+                    "22kW_2" => "FC_se_regulatori_22kW2",
+                    "30kW" => "FC_se_regulatori_30kW",
+                    "37kW" => "FC_se_regulatori_37kW",
+                    "45kW" => "FC_se_regulatori_45kW",
+                    "55kW" => "FC_se_regulatori_55kW",
+                    "75kW" => "FC_se_regulatori_75kW",
+                    "90kW" => "FC_se_regulatori_90kW",
                     _ => null
                 },
                 ("Frekventno", "Danfoss") => selectedSnaga switch
                 {
-                    "Danfoss Power 1-1" => "FC_Danfoss_FC51_1_Procedure",
-                    "Danfoss Power 1-2" => "FC_Danfoss_FC51_2_Procedure",
-                    "Danfoss Power 2-1" => "FC_Danfoss_FC102_1_Procedure",
+                    "0,37kW_FC51" => "FC_d_regulatori1_0_37kW",
+                    "0,55kW_FC51" => "FC_d_regulatori1_0_55kW",
+                    "0,75kW_FC51" => "FC_d_regulatori1_0_75kW",
+                    "1,1kW_FC51" => "FC_d_regulatori1_1_1kW",
+                    "1,5kW_FC51" => "FC_d_regulatori1_1_5kW",
+                    "2,2kW_FC51" => "FC_d_regulatori1_2_2kW",
+                    "3kW_FC51" => "FC_d_regulatori1_3kW",
+                    "4kW_FC51" => "FC_d_regulatori1_4kW",
+                    "5,5kW_FC51" => "FC_d_regulatori1_5_5kW",
+                    "7,5W_FC51" => "FC_d_regulatori1_7_5kW",
+                    "9,2W_FC51" => "FC_d_regulatori1_9_2kW",
+                    "11kW_FC51" => "FC_d_regulatori1_11kW",
+                    "15kW_FC51" => "FC_d_regulatori1_15kW",
+                    "18,5kW_FC51" => "FC_d_regulatori1_18_5kW",
+                    "22kW_FC51" => "FC_d_regulatori1_22kW",
+                    "Danfoss Power 2-1" => "FC_d_regulatori2_1_1kW",
                     "Danfoss Power 2-2" => "FC_Danfoss_FC102_2_Procedure",
                     "Danfoss Power 3-1" => "FC_Danfoss_FC302_1_Procedure",
                     "Danfoss Power 3-2" => "FC_Danfoss_FC302_2_Procedure",
@@ -824,8 +1176,8 @@ namespace PetkusApplication.Views
                 }
                 else
                 {
-                    // If the item exists (but may have been deleted before), re-add or update it
-                    existingGroupedItem.Quantity += 1; // You can adjust quantity or other properties as necessary
+                    
+                    continue;
                 }
             }
 
@@ -841,50 +1193,102 @@ namespace PetkusApplication.Views
                 MessageBox.Show("Nema odabranih podataka!", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return; // Prekini metodu ako nema podataka
             }
+
             // Proveri da li postoji količina 0
             bool hasZeroQuantity = GroupedItems.Any(item => item.Quantity <= 0);
-
             if (hasZeroQuantity)
             {
                 MessageBox.Show("Nije moguće nastaviti jer je broj komada 0.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return; // Prekini metodu ako je količina 0
             }
 
+            // Kreiraj listu za nove stavke koje još nisu prenesene
+            List<PonudaItem> noviSelectedItems = new List<PonudaItem>();
 
-            List<PonudaItem> selectedItems = new List<PonudaItem>();
-
+            // Prolazimo kroz sve stavke u GroupedDataGrid
             foreach (var groupedItem in GroupedItems)
             {
-                var matchingPonudaItem = allGroupedItems.FirstOrDefault(p => p.Fabricki_kod == groupedItem.GroupName);
-                if (matchingPonudaItem != null)
+                string fabrickiKod = groupedItem.GroupName;
+
+                // Proveri da li je fabrički kod već prenesen
+                if (!preneseniKodovi.Contains(fabrickiKod))
                 {
-                    // Kopiraj originalni PonudaItem
-                    PonudaItem itemForOrder = new PonudaItem
+                    // SQL upit za multiplikator
+                    string query = $"SELECT Multiplikator FROM FabrickiKodovi WHERE Fabricki_kod = @fabrickiKod";
+
+                    // Defaultna vrednost za KolicinaZaNarucivanje je broj koji je uneo korisnik (broj komada)
+                    int brojKomada = groupedItem.Quantity;
+                    int ukupnaKolicina = brojKomada;  // Ako nema multiplikatora, ovo će ostati nepromenjeno
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
-                        Fabricki_kod = matchingPonudaItem.Fabricki_kod,
-                        Opis = matchingPonudaItem.Opis,
-                        Puna_cena = matchingPonudaItem.Puna_cena,
-                        Dimenzije = matchingPonudaItem.Dimenzije,
-                        Disipacija = matchingPonudaItem.Disipacija,
-                        Tezina = matchingPonudaItem.Tezina,
-                        Kolicina = matchingPonudaItem.Kolicina,  // Originalna količina
-                        Vrednost_rabata = matchingPonudaItem.Vrednost_rabata,
-                        KolicinaZaNarucivanje = groupedItem.Quantity  // Nova količina za naručivanje
-                    };
+                        // Parametrizovan upit
+                        cmd.Parameters.AddWithValue("@fabrickiKod", fabrickiKod);
 
-                    // Izračunaj ukupne vrijednosti koristeći KolicinaZaNarucivanje
-                    itemForOrder.Ukupna_puna = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Puna_cena;
-                    itemForOrder.Ukupna_rabat = Math.Round(itemForOrder.KolicinaZaNarucivanje * itemForOrder.Puna_cena * (1 - itemForOrder.Vrednost_rabata), 2);
-                    itemForOrder.Ukupna_Disipacija = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Disipacija;
-                    itemForOrder.Ukupna_Tezina = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Tezina;
+                        var result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            // Ako multiplikator postoji, množi sa brojem komada
+                            int multiplikator = Convert.ToInt32(result);
+                            ukupnaKolicina = brojKomada * multiplikator;
+                        }
+                    }
 
-                    selectedItems.Add(itemForOrder);
+                    // Pronađi originalni PonudaItem
+                    var matchingPonudaItem = allGroupedItems.FirstOrDefault(p => p.Fabricki_kod == fabrickiKod);
+                    if (matchingPonudaItem != null)
+                    {
+                        PonudaItem itemForOrder = new PonudaItem
+                        {
+                            Fabricki_kod = matchingPonudaItem.Fabricki_kod,
+                            Opis = matchingPonudaItem.Opis,
+                            Puna_cena = matchingPonudaItem.Puna_cena,
+                            Dimenzije = matchingPonudaItem.Dimenzije,
+                            Disipacija = matchingPonudaItem.Disipacija,
+                            Tezina = matchingPonudaItem.Tezina,
+                            KolicinaZaNarucivanje = ukupnaKolicina // Osiguraj da je ukupnaKolicina ispravna i nije 0
+                        };
+
+                        // Ostatak koda za izračunavanje vrednosti
+                        itemForOrder.Ukupna_puna = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Puna_cena;
+                        itemForOrder.Ukupna_rabat = Math.Round(itemForOrder.KolicinaZaNarucivanje * itemForOrder.Puna_cena * (1 - itemForOrder.Vrednost_rabata), 2);
+                        itemForOrder.Ukupna_Disipacija = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Disipacija;
+                        itemForOrder.Ukupna_Tezina = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Tezina;
+
+                        noviSelectedItems.Add(itemForOrder);
+                    }
+
                 }
             }
 
-            // Otvorite Racunanjeponude i prosledite selectedItems kao parametar
-            Racunanjeponude racunanjePonude = new Racunanjeponude(this, selectedItems);
-            racunanjePonude.Show();
+            // Proveri da li postoje novi redovi za prenos
+            if (noviSelectedItems.Count == 0)
+            {
+                MessageBox.Show("Nema novih stavki za prenos.", "Informacija", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            // Proveri da li je prozor RacunanjePonude već otvoren
+            if (racunanjePonudeWindow != null)
+            {
+                racunanjePonudeWindow.Close(); // Zatvori stari prozor
+                racunanjePonudeWindow = null;
+            }
+            // Kreiraj listu svih prenesenih stavki
+            List<PonudaItem> svePreneseneStavke = new List<PonudaItem>();
+
+            // Dodaj sve prenesene kodove koji su već u listi
+            svePreneseneStavke.AddRange(preneseniKodovi.Select(kod => allGroupedItems.First(p => p.Fabricki_kod == kod)));
+
+            // Dodaj nove stavke koje nisu ranije prenesene
+            svePreneseneStavke.AddRange(noviSelectedItems);
+
+            // Otvori novi prozor sa novim stavkama
+            racunanjePonudeWindow = new Racunanjeponude(this, svePreneseneStavke);
+            racunanjePonudeWindow.PonudaItems = new ObservableCollection<PonudaItem>(svePreneseneStavke);
+            racunanjePonudeWindow.Closed += (s, args) => racunanjePonudeWindow = null;
+            racunanjePonudeWindow.Show();
+
         }
 
         private void GroupedDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
