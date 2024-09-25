@@ -704,6 +704,7 @@ namespace PetkusApplication.Views
                     "4kW" => "YD_se_start_4kW",
                     "5,5kW" => "YD_se_start_5_5kW",
                     "7,5kW" => "YD_se_start_7_5kW",
+                    "9,2kW" => "YD_se_start_9_2kW",
                     "11kW" => "YD_se_start_11kW",
                     "15kW" => "YD_se_start_15kW",
                     "18,5kW" => "YD_se_start_18_5kW",
