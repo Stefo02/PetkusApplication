@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:PetkusApplication.Views"
-        Title="Racunanjeponude" Height="450" Width="800">
+        Title="Racunanjeponude" Height="450" Width="800"
+        WindowState="Maximized">
     <Grid>
         <!-- Border sa bojom ffb81c koji obuhvata sve -->
         <Border BorderBrush="#ffb81c" BorderThickness="30" Padding="5">
@@ -42,10 +43,10 @@
 
                         <!-- Definisanje kolona sa raspodelom -->
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="200"/>
+                            <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="300"/>
                             <DataGridTextColumn Header="Fabrički kod" Binding="{Binding Fabricki_kod}" Width="150"/>
                             <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}" Width="100"/>
-                            <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="100"/>
+                            <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="150"/>
                             <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}" Width="100"/>
                             <DataGridTextColumn Header="Težina" Binding="{Binding Tezina}" Width="100"/>
                             <DataGridTextColumn Header="Količina" Binding="{Binding Kolicina}" Width="80"/>
