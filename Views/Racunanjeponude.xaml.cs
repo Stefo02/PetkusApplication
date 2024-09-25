@@ -166,8 +166,8 @@ namespace PetkusApplication.Views
 
         private void UpdateDatabase(List<PonudaItem> items, int brojKomada)
         {
-            // Lista tabela koje treba ažurirati
-            var tablesToUpdate = new List<string> { "zastita_d_se", "zastita_d_si", "sklopka_d_se", "sklopka_d_si" };
+            // Retrieve all table names from the database
+            var tablesToUpdate = GetAllTableNames();
 
             foreach (var item in items)
             {
@@ -176,13 +176,13 @@ namespace PetkusApplication.Views
 
                 foreach (var table in tablesToUpdate)
                 {
-                    // Ako se nalazi u tabeli i ako tabela ima kolonu 'Kolicina', ažuriraj
+                    // Check if the table contains the 'Fabricki_kod' column and 'Kolicina' column
                     if (TableContainsFabrickiKod(table, item.Fabricki_kod) && TableContainsColumn(table, "Kolicina"))
                     {
-                        // Preuzmi trenutnu količinu iz baze podataka
+                        // Retrieve the current quantity
                         int currentQuantity = GetCurrentQuantity(table, item.Fabricki_kod);
 
-                        // Izračunaj novu količinu
+                        // Calculate the new quantity
                         int newQuantity = currentQuantity + brojKomada;
 
                         using (var command = new MySqlCommand($"UPDATE {table} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
@@ -191,7 +191,7 @@ namespace PetkusApplication.Views
                             command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
                             command.ExecuteNonQuery();
                             updated = true;
-                            break; // Ako je ažurirano u tabeli, ne treba dalje pretraživati
+                            break; // If updated, break out of the loop
                         }
                     }
                 }
@@ -201,6 +201,25 @@ namespace PetkusApplication.Views
                     MessageBox.Show($"Fabrički kod {item.Fabricki_kod} nije pronađen ili kolona 'Količina' nedostaje u nekoj od tabela.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
+        }
+
+        // Helper method to get all table names from the database
+        private List<string> GetAllTableNames()
+        {
+            var tableNames = new List<string>();
+
+            using (var command = new MySqlCommand("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'myappdb';", connection))
+            {
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        tableNames.Add(reader.GetString(0));
+                    }
+                }
+            }
+
+            return tableNames;
         }
 
         private int GetCurrentQuantity(string tableName, string fabrickiKod)

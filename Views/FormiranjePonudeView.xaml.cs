@@ -328,8 +328,8 @@ namespace PetkusApplication.Views
             {
                 if (selectedOption == "Direktno")
                 {
-                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW", "0,37kW", "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW", "5,5kW", "5,5kW_class20", "7,5kW", "7,5kW_class20",
-        "9,2kW", "9,2kW_class20", "11kW", "11kW_class20", "15kW", "15kW_class20", "18,5kW", "18,5kW_class20", "22kW", "22kW_class20", "30kW", "30kW_class20s", "37kW", "45kW", "55kW_(S3)",
+                    SetupComboBox(comboBox4, new[] { "0,09kW", "0,12kW","0,18kW", "0,25kW", "0,37kW", "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW", "5,5kW", "5,5kW_class20", "7,5kW", "7,5kW_class20",
+        "9,2kW", "9,2kW_class20", "11kW", "11kW_class20", "15kW", "15kW_class20", "18,5kW", "18,5kW_class20", "22kW", "22kW_class20", "30kW", "30kW_class20", "37kW", "45kW", "55kW_(S3)",
         "55kW_(P)", "75kW", "90kW", "110kW" });
                 }
                 else if (selectedOption == "Reverzibilni")
@@ -715,7 +715,7 @@ namespace PetkusApplication.Views
                     "55kW" => "YD_se_start_55kW",
                     "55kW_2" => "YD_se_start_55kW2",
                     "75kW" => "YD_se_start_75kW",
-                    "75kW_2" => "YD_se_start_7 5kW2",
+                    "75kW_2" => "YD_se_start_75kW2",
                     "90kW" => "YD_se_start_90kW",
                     "90kW_2" => "YD_se_start_90kW2",
                     "110kW" => "YD_se_start_110kW",
@@ -731,7 +731,7 @@ namespace PetkusApplication.Views
                     "315kW" => "YD_se_start_315kW",
                     "315kW_2" => "YD_se_start_315kW2",
                     "355kW" => "YD_se_start_355kW",
-                    "355kW_2" => "YD_se_start_355kW",
+                    "355kW_2" => "YD_se_start_355kW2",
                     _ => "YD_se_start"
                 },
                 ("Soft", _) => selectedBrojSmerova switch
