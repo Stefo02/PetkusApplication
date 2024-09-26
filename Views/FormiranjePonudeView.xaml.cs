@@ -158,7 +158,7 @@ namespace PetkusApplication.Views
                 if (selectedProizvodac == "Siemens" && selectedOption == "V/F regulatori(V20, Siemens)")
                 {
                     SetupComboBox(comboBox4, new[] {"0,12kW","0,25kW","0,37kW","0,55kW","0,75kW","1,1kW","1,5kW","2,2kW","3kW","0,18kW","0,25kW_2","0,37kW_2","0,55kW_2","0,75kW_2",
-                        "1,1kW_2","1,5kW_2","2,2kW_2","3kW_2","4kW","5,5kW","5,5kW","7,5kW","9,2kW","11kW","15kW","22kW","30kW"});
+                        "1,1kW_2","1,5kW_2","2,2kW_2","3kW_2","4kW","5,5kW","5,5kW","7,5kW","9,2kW","11kW","15kW","18,5kW","22kW","30kW"});
                 }
                 else if (selectedProizvodac == "Schneider" && selectedOption == "V/F regulatori(ATV310, 320 and 930 Schneider)")
                 {
@@ -394,7 +394,7 @@ namespace PetkusApplication.Views
                 if (selectedProizvodac == "Siemens" && selectedOption == "V/F regulatori(V20, Siemens)")
                 {
                     SetupComboBox(comboBox4, new[] {"0,12kW","0,25kW","0,37kW","0,55kW","0,75kW","1,1kW","1,5kW","2,2kW","3kW","0,18kW","0,25kW_2","0,37kW_2","0,55kW_2","0,75kW_2",
-                        "1,1kW_2","1,5kW_2","2,2kW_2","3kW_2","4kW","5,5kW","5,5kW","7,5kW","9,2kW","11kW","15kW","22kW","30kW"});
+                        "1,1kW_2","1,5kW_2","2,2kW_2","3kW_2","4kW","5,5kW","5,5kW","7,5kW","9,2kW","11kW","15kW","18,5kW","22kW","30kW"});
                 }
                 else if (selectedProizvodac == "Schneider" && selectedOption == "V/F regulatori(ATV310, 320 and 930 Schneider)")
                 {
@@ -872,26 +872,26 @@ namespace PetkusApplication.Views
                     },
                     "Soft starter 2 motora (SI)" => selectedSnaga switch
                     {
-                        "2x0_55kW" => "Soft_starter2_SI_2x0_55kW",
-                        "2x0_75kW" => "Soft_starter2_SI_2x0_75kW",
-                        "2x1_1kW" => "Soft_starter2_SI_2x1_1kW",
-                        "2x1_5kW" => "Soft_starter2_SI_2x1_5kW",
-                        "2x2_2kW" => "Soft_starter2_SI_2x2_2kW",
-                        "2x3kW" => "Soft_starter2_SI_2x3kW",
-                        "2x4kW" => "Soft_starter2_SI_2x4kW",
-                        "2x5_5kW" => "Soft_starter2_SI_2x5_5kW",
-                        "2x7_5kW" => "Soft_starter2_SI_2x7_5kW",
-                        "2x11kW" => "Soft_starter2_SI_2x11kW",
-                        "2x15kW" => "Soft_starter2_SI_2x15kW",
-                        "2x18_5kW" => "Soft_starter2_SI_2x18_5kW",
-                        "2x22kW" => "Soft_starter2_SI_2x22kW",
-                        "2x30kW" => "Soft_starter2_SI_2x30kW",
-                        "2x37kW" => "Soft_starter2_SI_2x37kW",
-                        "2x45kW" => "Soft_starter2_SI_2x45kW",
-                        "2x45kW_2" => "Soft_starter2_SI_2x45kW2",
-                        "2x55kW" => "Soft_starter2_SI_2x55kW",
-                        "2x75kW" => "Soft_starter2_SI_2x75kW",
-                        "2x75kW_2" => "Soft_starter2_SI_2x75kW2",
+                        "2x0_55kW" => "Soft_starter2_2x0_55kW",
+                        "2x0_75kW" => "Soft_starter2_2x0_75kW",
+                        "2x1_1kW" => "Soft_starter2_2x1_1kW",
+                        "2x1_5kW" => "Soft_starter2_2x1_5kW",
+                        "2x2_2kW" => "Soft_starter2_2x2_2kW",
+                        "2x3kW" => "Soft_starter2_2x3kW",
+                        "2x4kW" => "Soft_starter2_2x4kW",
+                        "2x5_5kW" => "Soft_starter2_2x5_5kW",
+                        "2x7_5kW" => "Soft_starter2_2x7_5kW",
+                        "2x11kW" => "Soft_starter2_2x11kW",
+                        "2x15kW" => "Soft_starter2_2x15kW",
+                        "2x18_5kW" => "Soft_starter2_2x18_5kW",
+                        "2x22kW" => "Soft_starter2_2x22kW",
+                        "2x30kW" => "Soft_starter2_2x30kW",
+                        "2x37kW" => "Soft_starter2_2x37kW",
+                        "2x45kW" => "Soft_starter2_2x45kW",
+                        "2x45kW_2" => "Soft_starter2_2x45kW2",
+                        "2x55kW" => "Soft_starter2_2x55kW",
+                        "2x75kW" => "Soft_starter2_2x75kW",
+                        "2x75kW_2" => "Soft_starter2_2x75kW2",
                         _ => null
                     },
                     _ => null
@@ -922,6 +922,7 @@ namespace PetkusApplication.Views
                     "9,2kW" => "FC_si_regulatoriV20_9_2kW",
                     "11kW" => "FC_si_regulatoriV20_11kW",
                     "15kW" => "FC_si_regulatoriV20_15kW",
+                    "18,5kW" => "FC_si_regulatoriV20_18_5kW",
                     "22kW" => "FC_si_regulatoriV20_22kW",
                     "30kW" => "FC_si_regulatoriV20_30kW",
                     _ => null
@@ -961,6 +962,9 @@ namespace PetkusApplication.Views
                     "7,5kW" => "FC_se_regulatori_7_5kW",
                     "7,5kW_2" => "FC_se_regulatori_7_5kW2",
                     "7,5kW_3" => "FC_se_regulatori_7_5kW3",
+                    "9,2kW" => "FC_se_regulatori_9_2kW",
+                    "9,2kW_2" => "FC_se_regulatori_9_2kW2",
+                    "9,2kW_3" => "FC_se_regulatori_9_2kW3",
                     "11kW" => "FC_se_regulatori_11kW",
                     "11kW_2" => "FC_se_regulatori_11kW2",
                     "11kW_3" => "FC_se_regulatori_11kW3",
