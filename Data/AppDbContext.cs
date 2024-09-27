@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocumentFormat.OpenXml.Office.Word;
+using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using PetkusApplication.Models;
 using System;
@@ -57,12 +58,12 @@ namespace PetkusApplication.Data
             {
                 connection.Open();
                 string query = @"
-                    SELECT DISTINCT TABLE_NAME
-                    FROM INFORMATION_SCHEMA.COLUMNS
-                    WHERE TABLE_SCHEMA = 'myappdb'
-                    AND COLUMN_NAME IN ('Id', 'Opis', 'Proizvodjac', 'Fabricki_kod', 'Kolicina', 'Puna_cena', 'Dimenzije', 'Tezina', 'Vrednost_rabata', 'Min_Kolicina')
-                    GROUP BY TABLE_NAME
-                    HAVING COUNT(DISTINCT COLUMN_NAME) = 10";
+            SELECT DISTINCT TABLE_NAME
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = 'myappdb'
+            AND COLUMN_NAME IN ('Id', 'Opis', 'Proizvodjac', 'Fabricki_kod', 'Kolicina', 'Puna_cena', 'Dimenzije', 'Tezina', 'Vrednost_rabata', 'Min_Kolicina', 'JedinicaMere')
+            GROUP BY TABLE_NAME
+            HAVING COUNT(DISTINCT COLUMN_NAME) = 11";  // Promeni na 11 zbog dodatne kolone
 
                 using (var command = new MySqlCommand(query, connection))
                 {
@@ -88,8 +89,8 @@ namespace PetkusApplication.Data
             {
                 connection.Open();
                 string query = $@"
-            SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina
-            FROM `{tableName}`";
+    SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina, JedinicaMere
+    FROM `{tableName}`";
 
                 using (var command = new MySqlCommand(query, connection))
                 {
@@ -109,11 +110,13 @@ namespace PetkusApplication.Data
                                 Tezina = reader.IsDBNull(reader.GetOrdinal("Tezina")) ? 0 : reader.GetDecimal("Tezina"),
                                 Vrednost_rabata = reader.IsDBNull(reader.GetOrdinal("Vrednost_rabata")) ? 0 : reader.GetDecimal("Vrednost_rabata"),
                                 MinKolicina = reader.IsDBNull(reader.GetOrdinal("Min_Kolicina")) ? 0 : reader.GetInt32("Min_Kolicina"),
-                                OriginalTable = tableName // Populate OriginalTable
+                                JedinicaMere = reader.IsDBNull(reader.GetOrdinal("JedinicaMere")) ? string.Empty : reader.GetString("JedinicaMere"),  // Dodaj čitanje JedinicaMere
+                                OriginalTable = tableName
                             });
                         }
                     }
                 }
+
             }
 
             return items;
@@ -142,9 +145,9 @@ namespace PetkusApplication.Data
             {
                 connection.Open();
                 string query = $@"
-                    SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina
-                    FROM `{tableName}`
-                    WHERE Kolicina < @Threshold";
+    SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina, JedinicaMere
+    FROM `{tableName}`
+    WHERE Kolicina < @Threshold";
 
                 using (var command = new MySqlCommand(query, connection))
                 {
@@ -165,11 +168,13 @@ namespace PetkusApplication.Data
                                 Dimenzije = reader.IsDBNull(reader.GetOrdinal("Dimenzije")) ? string.Empty : reader.GetString("Dimenzije"),
                                 Tezina = reader.IsDBNull(reader.GetOrdinal("Tezina")) ? 0 : reader.GetDecimal("Tezina"),
                                 Vrednost_rabata = reader.IsDBNull(reader.GetOrdinal("Vrednost_rabata")) ? 0 : reader.GetDecimal("Vrednost_rabata"),
-                                MinKolicina = reader.IsDBNull(reader.GetOrdinal("Min_Kolicina")) ? 0 : reader.GetInt32("Min_Kolicina")
+                                MinKolicina = reader.IsDBNull(reader.GetOrdinal("Min_Kolicina")) ? 0 : reader.GetInt32("Min_Kolicina"),
+                                JedinicaMere = reader.IsDBNull(reader.GetOrdinal("JedinicaMere")) ? string.Empty : reader.GetString("JedinicaMere"),  // Dodaj JedinicaMere
                             });
                         }
                     }
                 }
+
             }
 
             return items;
@@ -181,47 +186,10 @@ namespace PetkusApplication.Data
             using (var connection = new MySqlConnection("server=localhost;database=myappdb;user=root;password="))
             {
                 connection.Open();
+
                 string query = $@"
-                    INSERT INTO {tableName} (Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina)
-                    VALUES (@Opis, @Proizvodjac, @Fabricki_kod, @Kolicina, @Puna_cena, @Dimenzije, @Tezina, @Vrednost_rabata, @Min_Kolicina)";
-
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Opis", item.Opis);
-                    command.Parameters.AddWithValue("@Proizvodjac", item.Proizvodjac);
-                    command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
-                    command.Parameters.AddWithValue("@Kolicina", item.Kolicina);
-                    command.Parameters.AddWithValue("@Puna_cena", item.Puna_cena);
-                    command.Parameters.AddWithValue("@Dimenzije", item.Dimenzije);
-                    command.Parameters.AddWithValue("@Tezina", item.Tezina);
-                    command.Parameters.AddWithValue("@Vrednost_rabata", item.Vrednost_rabata);
-                    command.Parameters.AddWithValue("@Min_Kolicina", item.MinKolicina);
-
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
-
-        // Method to update an item in a table
-        public void UpdateItem(string tableName, Item item)
-        {
-            using (var connection = new MySqlConnection("server=localhost;database=myappdb;user=root;password="))
-            {
-                connection.Open();
-
-                // Wrap tableName in backticks
-                string query = $@"
-            UPDATE `{tableName}` SET 
-            Opis = @Opis, 
-            Proizvodjac = @Proizvodjac, 
-            Fabricki_kod = @Fabricki_kod, 
-            Kolicina = @Kolicina, 
-            Puna_cena = @Puna_cena, 
-            Dimenzije = @Dimenzije, 
-            Tezina = @Tezina, 
-            Vrednost_rabata = @Vrednost_rabata,
-            Min_Kolicina = @Min_Kolicina
-            WHERE Id = @Id";
+INSERT INTO `{tableName}` (Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina, JedinicaMere)
+VALUES (@Opis, @Proizvodjac, @Fabricki_kod, @Kolicina, @Puna_cena, @Dimenzije, @Tezina, @Vrednost_rabata, @Min_Kolicina, @JedinicaMere)";
 
                 using (var cmd = new MySqlCommand(query, connection))
                 {
@@ -234,12 +202,54 @@ namespace PetkusApplication.Data
                     cmd.Parameters.AddWithValue("@Tezina", item.Tezina);
                     cmd.Parameters.AddWithValue("@Vrednost_rabata", item.Vrednost_rabata);
                     cmd.Parameters.AddWithValue("@Min_Kolicina", item.MinKolicina);
+                    cmd.Parameters.AddWithValue("@JedinicaMere", item.JedinicaMere);  // Postavi vrednost JedinicaMere
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+        // Method to update an item in a table
+        public void UpdateItem(string tableName, Item item)
+        {
+            using (var connection = new MySqlConnection("server=localhost;database=myappdb;user=root;password="))
+            {
+                connection.Open();
+
+                string query = $@"
+UPDATE `{tableName}` SET 
+Opis = @Opis, 
+Proizvodjac = @Proizvodjac, 
+Fabricki_kod = @Fabricki_kod, 
+Kolicina = @Kolicina, 
+Puna_cena = @Puna_cena, 
+Dimenzije = @Dimenzije, 
+Tezina = @Tezina, 
+Vrednost_rabata = @Vrednost_rabata,
+Min_Kolicina = @Min_Kolicina,
+JedinicaMere = @JedinicaMere  -- Uklonjen backtick
+WHERE Id = @Id";
+
+                using (var cmd = new MySqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@Opis", item.Opis);
+                    cmd.Parameters.AddWithValue("@Proizvodjac", item.Proizvodjac);
+                    cmd.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
+                    cmd.Parameters.AddWithValue("@Kolicina", item.Kolicina);
+                    cmd.Parameters.AddWithValue("@Puna_cena", item.Puna_cena);
+                    cmd.Parameters.AddWithValue("@Dimenzije", item.Dimenzije);
+                    cmd.Parameters.AddWithValue("@Tezina", item.Tezina);
+                    cmd.Parameters.AddWithValue("@Vrednost_rabata", item.Vrednost_rabata);
+                    cmd.Parameters.AddWithValue("@Min_Kolicina", item.MinKolicina);
+                    cmd.Parameters.AddWithValue("@JedinicaMere", item.JedinicaMere);  // Ažuriraj JedinicaMere
                     cmd.Parameters.AddWithValue("@Id", item.Id);
 
                     cmd.ExecuteNonQuery();
                 }
             }
         }
+
 
 
         // Method to delete an item from a table

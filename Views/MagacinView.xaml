@@ -144,18 +144,7 @@
                     <DataGridTextColumn Header="Proizvođač" Binding="{Binding Proizvodjac}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Fabrički kod" Binding="{Binding Fabricki_kod}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Količina" Binding="{Binding Kolicina}" Width="*" Foreground="#001f5b"/>
-                    <DataGridTemplateColumn Header="Jedinica mere" Width="*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <ComboBox SelectedValue="{Binding JedinicaMere, Mode=TwoWay}" Width="100">
-                                    <ComboBoxItem Content="kom" />
-                                    <ComboBoxItem Content="kg" />
-                                    <ComboBoxItem Content="pakovanje" />
-                                    <ComboBoxItem Content="m" />
-                                </ComboBox>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Jedinica Mere" Binding="{Binding JedinicaMere}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Min količina" Binding="{Binding MinKolicina}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="*" Foreground="#001f5b"/>
@@ -174,6 +163,12 @@
             <TextBox x:Name="proizvodjacTextBox" Width="100" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
             <TextBox x:Name="fabrickiKodTextBox" Width="100" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
             <TextBox x:Name="kolicinaTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
+            <ComboBox x:Name="jedinicamereComboBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2">
+                <ComboBoxItem Content="kg" />
+                <ComboBoxItem Content="komad" />
+                <ComboBoxItem Content="pakovanje" />
+                <ComboBoxItem Content="m" />
+            </ComboBox>
             <TextBox x:Name="minKolicinaTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
             <TextBox x:Name="punaCenaTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
             <TextBox x:Name="dimenzijeTextBox" Width="100" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>

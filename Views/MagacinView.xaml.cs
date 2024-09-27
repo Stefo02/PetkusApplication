@@ -335,14 +335,21 @@ namespace PetkusApplication.Views
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            // Provera da li je selektovana tabela "Svi podaci"
             if (tableComboBox.SelectedItem.ToString() == "Svi podaci")
             {
                 MessageBox.Show("Nije moguće dodati nove podatke dok ne odaberete specifičnu tabelu.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // Kreiranje novog Item objekta
+            // Preuzimanje izabrane vrednosti iz ComboBox-a
+            string jedinicaMere = (jedinicamereComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+            if (string.IsNullOrEmpty(jedinicaMere))
+            {
+                MessageBox.Show("Molimo izaberite jedinicu mere.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Kreiranje novog Item-a
             var newItem = new Item
             {
                 Opis = opisTextBox.Text,
@@ -353,19 +360,27 @@ namespace PetkusApplication.Views
                 Dimenzije = dimenzijeTextBox.Text,
                 Tezina = decimal.Parse(tezinaTextBox.Text),
                 Vrednost_rabata = decimal.Parse(vrednostRabataTextBox.Text),
-                MinKolicina = int.Parse(minKolicinaTextBox.Text)
+                MinKolicina = int.Parse(minKolicinaTextBox.Text),
+
+                // Ovde dodaj izabranu jedinicu mere
+                JedinicaMere = jedinicaMere  // Dodavanje jedinice mere
             };
 
-            // Preuzimanje imena selektovane tabele
+            // Dodaj novi element u bazu
             string tableName = GetTableNameFromComboBox();
             dbContext.AddItem(tableName, newItem);
 
+            // Očisti polja nakon dodavanja
             ClearTextBoxes();
             LoadData();
 
-            // Pozivamo funkciju za proveru zaliha nakon dodavanja nove stavke
+            // Resetuj ComboBox nakon dodavanja
+            jedinicamereComboBox.SelectedIndex = -1;
+
+            // Provera zaliha nakon dodavanja stavke
             CheckForLowStock();
         }
+
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
@@ -381,23 +396,21 @@ namespace PetkusApplication.Views
                 selectedItem.Vrednost_rabata = decimal.Parse(vrednostRabataTextBox.Text);
                 selectedItem.MinKolicina = int.Parse(minKolicinaTextBox.Text);
 
-                string tableName = !string.IsNullOrEmpty(selectedItem.OriginalTable)
-                    ? selectedItem.OriginalTable
-                    : GetTableNameFromComboBox();
-
-                if (!string.IsNullOrEmpty(tableName))
+                // Preuzimanje vrednosti iz ComboBox-a
+                string jedinicaMere = (jedinicamereComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                if (!string.IsNullOrEmpty(jedinicaMere))
                 {
-                    dbContext.UpdateItem(tableName, selectedItem);
-                    ClearTextBoxes();
-                    LoadData();
+                    selectedItem.JedinicaMere = jedinicaMere;  // Ažuriranje vrednosti JedinicaMere
+                }
 
-                    // Pozivamo funkciju za proveru zaliha nakon ažuriranja
-                    CheckForLowStock();
-                }
-                else
-                {
-                    MessageBox.Show("Nije moguće odrediti ime tabele za izabranu stavku.");
-                }
+                string tableName = GetTableNameFromComboBox();
+                dbContext.UpdateItem(tableName, selectedItem);  // Ažuriraj stavku u bazi
+
+                ClearTextBoxes();
+                LoadData();
+
+                // Pozivamo funkciju za proveru zaliha nakon ažuriranja
+                CheckForLowStock();
             }
             else
             {
@@ -459,6 +472,7 @@ namespace PetkusApplication.Views
             dataGrid.ItemsSource = data;
             dataGrid.Items.Refresh();
         }
+
 
 
         private string GetTableNameFromComboBox()
