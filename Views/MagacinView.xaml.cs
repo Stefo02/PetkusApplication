@@ -403,20 +403,30 @@ namespace PetkusApplication.Views
                     selectedItem.JedinicaMere = jedinicaMere;  // Ažuriranje vrednosti JedinicaMere
                 }
 
-                string tableName = GetTableNameFromComboBox();
-                dbContext.UpdateItem(tableName, selectedItem);  // Ažuriraj stavku u bazi
+                string tableName = !string.IsNullOrEmpty(selectedItem.OriginalTable)
+                    ? selectedItem.OriginalTable
+                    : GetTableNameFromComboBox();
 
-                ClearTextBoxes();
-                LoadData();
+                if (!string.IsNullOrEmpty(tableName))
+                {
+                    dbContext.UpdateItem(tableName, selectedItem);  // Ažuriraj stavku u bazi
+                    ClearTextBoxes();
+                    LoadData();
 
-                // Pozivamo funkciju za proveru zaliha nakon ažuriranja
-                CheckForLowStock();
+                    // Pozivamo funkciju za proveru zaliha nakon ažuriranja
+                    CheckForLowStock();
+                }
+                else
+                {
+                    MessageBox.Show("Nije moguće odrediti ime tabele za izabranu stavku.");
+                }
             }
             else
             {
                 MessageBox.Show("Odaberite stavku za ažuriranje.");
             }
         }
+
 
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
