@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PetkusApplication.Views"
              xmlns:converters="clr-namespace:PetkusApplication.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1600" Background="#ffb81c" MouseDown="Window_MouseDown"
              Loaded="MagacinView_Loaded">
@@ -176,21 +177,61 @@
             <Button Click="SaveToExcelButton_Click" Grid.ColumnSpan="2" Margin="0,0,20,0" Background="Transparent" BorderThickness="0" Height="42">
                 <Image Source="Images/Download.png" Width="30" Height="36"/>
             </Button>
-            <TextBox x:Name="opisTextBox" Width="100" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
-            <TextBox x:Name="proizvodjacTextBox" Width="100" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
-            <TextBox x:Name="fabrickiKodTextBox" Width="100" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
-            <TextBox x:Name="kolicinaTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
-            <ComboBox x:Name="jedinicamereComboBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2">
+            <TextBox x:Name="opisTextBox" Width="110"  Height="52" Background="White" Foreground="Black" Margin="3"
+         BorderThickness="2" 
+         materialDesign:HintAssist.Hint="Opis" 
+         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+            <TextBox x:Name="proizvodjacTextBox" Width="110" Height="50" Margin="3" Background="White"
+         BorderThickness="2"
+         materialDesign:HintAssist.Hint="Proizvođač"
+         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+            <TextBox x:Name="fabrickiKodTextBox" Width="100" Height="50" Margin="3" Background="White"
+         BorderThickness="2"
+         materialDesign:HintAssist.Hint="Fabrički kod"
+         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+            <TextBox x:Name="kolicinaTextBox" Width="80" Height="50" Margin="3" Background="White"
+         BorderThickness="2"
+         materialDesign:HintAssist.Hint="Količina"
+         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+            <ComboBox x:Name="jedinicamereComboBox" Width="130" Height="50" Margin="3"  Background="White"
+          BorderThickness="2"
+          materialDesign:HintAssist.Hint="Jedinica mere"
+          Style="{StaticResource MaterialDesignOutlinedComboBox}">
                 <ComboBoxItem Content="kg" />
                 <ComboBoxItem Content="komad" />
                 <ComboBoxItem Content="pakovanje" />
                 <ComboBoxItem Content="m" />
             </ComboBox>
-            <TextBox x:Name="minKolicinaTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
-            <TextBox x:Name="punaCenaTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
-            <TextBox x:Name="dimenzijeTextBox" Width="100" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
-            <TextBox x:Name="tezinaTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
-            <TextBox x:Name="vrednostRabataTextBox" Width="50" Height="30" Margin="5" Background="White" BorderThickness="2 2 2 2"/>
+
+            <TextBox x:Name="minKolicinaTextBox" Width="100" Height="50" Margin="3"  Background="White"
+         BorderThickness="2"
+         materialDesign:HintAssist.Hint="Min količina"
+         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+            <TextBox x:Name="punaCenaTextBox" Width="90" Height="50" Margin="3" Background="White"
+         BorderThickness="2"
+         materialDesign:HintAssist.Hint="Puna cena"
+         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+            <TextBox x:Name="dimenzijeTextBox" Width="90" Height="50" Margin="5" Background="White"
+         BorderThickness="2"
+         materialDesign:HintAssist.Hint="Dimenzije"
+         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+            <TextBox x:Name="tezinaTextBox" Width="70" Height="50" Margin="5" Background="White"
+         BorderThickness="2"
+         materialDesign:HintAssist.Hint="Težina"
+         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+            <TextBox x:Name="vrednostRabataTextBox" Width="120" Height="50" Margin="5" Background="White"
+         BorderThickness="2"
+         materialDesign:HintAssist.Hint="Vrednost rabata"
+         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
             <Button Width="63" Height="40" Margin="5" Click="AddButton_Click" Background="Transparent" BorderThickness="0">
                 <Image Source="Images/Add.png" Width="30" Height="30"/>
             </Button>
