@@ -1254,8 +1254,11 @@ namespace PetkusApplication.Views
                 // Proveri da li je fabrički kod već prenesen
                 if (!preneseniKodovi.Contains(fabrickiKod))
                 {
-                    // SQL upit za multiplikator
-                    string query = $"SELECT Multiplikator FROM FabrickiKodovi WHERE Fabricki_kod = @fabrickiKod";
+                    // Izaberi opciju iz ComboBox4
+                    string selectedOption = (comboBox4.SelectedItem as ComboBoxItem)?.Content?.ToString(); // Izbor iz ComboBox4
+
+                    // SQL upit za multiplikator na osnovu fabričkog koda i opcije
+                    string query = $"SELECT Multiplikator FROM FabrickiKodovi WHERE Fabricki_kod = @fabrickiKod AND (Opcija = @opcija OR Opcija IS NULL)";
 
                     // Defaultna vrednost za KolicinaZaNarucivanje je broj koji je uneo korisnik (broj komada)
                     int brojKomada = groupedItem.Quantity;
@@ -1265,14 +1268,19 @@ namespace PetkusApplication.Views
                     {
                         // Parametrizovan upit
                         cmd.Parameters.AddWithValue("@fabrickiKod", fabrickiKod);
+                        cmd.Parameters.AddWithValue("@opcija", selectedOption);
 
                         var result = cmd.ExecuteScalar();
+                        int multiplikator = 1; // Defaultni multiplikator
+
                         if (result != null)
                         {
                             // Ako multiplikator postoji, množi sa brojem komada
-                            int multiplikator = Convert.ToInt32(result);
-                            ukupnaKolicina = brojKomada * multiplikator;
+                            multiplikator = Convert.ToInt32(result);
                         }
+
+                        // Izračunaj ukupnu količinu
+                        ukupnaKolicina = brojKomada * multiplikator;
                     }
 
                     // Pronađi originalni PonudaItem
@@ -1298,7 +1306,6 @@ namespace PetkusApplication.Views
 
                         noviSelectedItems.Add(itemForOrder);
                     }
-
                 }
             }
 
