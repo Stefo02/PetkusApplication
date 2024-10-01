@@ -81,6 +81,7 @@ namespace PetkusApplication.Views
 
         private void UpdateAndExport_Click(object sender, RoutedEventArgs e)
         {
+            // Prvo proverite sve stavke pre nego što obrišete redove
             var selectedNacinPokretanja = _formiranjePonudeView.comboBox1.SelectedItem as ComboBoxItem;
             var selectedProizvodac = _formiranjePonudeView.comboBox2.SelectedItem as ComboBoxItem;
             var selectedBrojSmerova = _formiranjePonudeView.comboBox3.SelectedItem as ComboBoxItem;
@@ -98,32 +99,17 @@ namespace PetkusApplication.Views
 
                     if (tableName != null)
                     {
-                        // Dohvati trenutnu količinu iz baze
                         int currentQuantity = GetCurrentQuantity(tableName, item.Fabricki_kod);
-
-                        // Ažuriraj količinu u DataGrid-u
                         item.Kolicina = currentQuantity;
-
-                        // Osveži DataGrid
                         SelectedItemsDataGrid.Items.Refresh();
 
-                        // Logika za ažuriranje baze kao što je već implementirano...
                         int newQuantity = currentQuantity - item.KolicinaZaNarucivanje;
-
                         if (newQuantity < 0)
                         {
+                            // Ako količina pređe ispod 0, prikaži poruku i postavi flag
                             MessageBox.Show($"Nema dovoljno zaliha za {item.Opis}.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
                             allQuantitiesValid = false;
                             break;
-                        }
-                        else
-                        {
-                            using (var command = new MySqlCommand($"UPDATE {tableName} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
-                            {
-                                command.Parameters.AddWithValue("@Kolicina", newQuantity);
-                                command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
-                                command.ExecuteNonQuery();
-                            }
                         }
                     }
                     else
@@ -134,28 +120,43 @@ namespace PetkusApplication.Views
                     }
                 }
 
+                // Ako su sve količine validne, brišemo redove i nastavljamo sa operacijom
                 if (allQuantitiesValid)
                 {
+                    // Ažuriraj bazu
+                    foreach (var item in selectedItems)
+                    {
+                        string tableName = FindTableWithFabrickiKod(item.Fabricki_kod);
+                        if (tableName != null)
+                        {
+                            int newQuantity = GetCurrentQuantity(tableName, item.Fabricki_kod) - item.KolicinaZaNarucivanje;
+                            using (var command = new MySqlCommand($"UPDATE {tableName} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
+                            {
+                                command.Parameters.AddWithValue("@Kolicina", newQuantity);
+                                command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
+                                command.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
                     // Export podataka u Excel
                     GenerateExcelFile(selectedItems);
 
                     // Osveži podatke u FormiranjePonudeView
                     _formiranjePonudeView.RefreshData();
+
+                    // Brišemo stavke iz gridova samo ako je sve validno
+                    if (_formiranjePonudeView.GroupedItems != null)
+                    {
+                        _formiranjePonudeView.GroupedItems.Clear();
+                    }
+
+                    if (SelectedItemsDataGrid.ItemsSource is List<PonudaItem> selectedList)
+                    {
+                        selectedList.Clear();
+                        SelectedItemsDataGrid.Items.Refresh();
+                    }
                 }
-            }
-
-            // OBRISATI REDOVE NA KRAJU
-            if (_formiranjePonudeView.GroupedItems != null)
-            {
-                _formiranjePonudeView.GroupedItems.Clear();
-            }
-
-
-            if (SelectedItemsDataGrid.ItemsSource is List<PonudaItem> selectedList)
-            {
-                var selectedCollection = new ObservableCollection<PonudaItem>(selectedList);
-                selectedCollection.Clear();
-                SelectedItemsDataGrid.ItemsSource = selectedCollection;
             }
         }
 
