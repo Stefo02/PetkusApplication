@@ -31,6 +31,9 @@ namespace PetkusApplication.Views
             PonudaItems = PonudaItems ?? new ObservableCollection<PonudaItem>();
 
             this.DataContext = PonudaItems;
+
+            // Učitaj količine iz baze odmah nakon otvaranja prozora
+            LoadQuantitiesFromDatabase();
         }
 
         private void InitializeDatabaseConnection()
@@ -38,6 +41,26 @@ namespace PetkusApplication.Views
             string connectionString = "server=localhost;database=myappdb;user=root;password=;";
             connection = new MySqlConnection(connectionString);
             connection.Open();
+        }
+
+        private void LoadQuantitiesFromDatabase()
+        {
+            foreach (var item in selectedItems)
+            {
+                string tableName = FindTableWithFabrickiKod(item.Fabricki_kod);
+
+                if (tableName != null)
+                {
+                    // Dohvati trenutnu količinu iz baze
+                    int currentQuantity = GetCurrentQuantity(tableName, item.Fabricki_kod);
+
+                    // Postavi trenutnu količinu u stavku
+                    item.Kolicina = currentQuantity;
+
+                    // Osvježi DataGrid
+                    SelectedItemsDataGrid.Items.Refresh();
+                }
+            }
         }
 
         // Metoda za dodavanje novih stavki u već otvoren prozor
@@ -58,7 +81,6 @@ namespace PetkusApplication.Views
 
         private void UpdateAndExport_Click(object sender, RoutedEventArgs e)
         {
-            // Osveži trenutno stanje izabranih opcija u FormiranjePonudeView pre izvoza
             var selectedNacinPokretanja = _formiranjePonudeView.comboBox1.SelectedItem as ComboBoxItem;
             var selectedProizvodac = _formiranjePonudeView.comboBox2.SelectedItem as ComboBoxItem;
             var selectedBrojSmerova = _formiranjePonudeView.comboBox3.SelectedItem as ComboBoxItem;
@@ -66,35 +88,36 @@ namespace PetkusApplication.Views
 
             if (selectedNacinPokretanja != null && selectedProizvodac != null && selectedBrojSmerova != null && selectedSnaga != null)
             {
-                // Osveži podatke u trenutnom prikazu na osnovu novih selekcija
                 _formiranjePonudeView.UpdateProcedure();
 
-                // Logika za proveru količine i ažuriranje baze podataka
                 bool allQuantitiesValid = true;
 
                 foreach (var item in selectedItems)
                 {
-                    // Nađi tabelu sa Fabricki_kod
                     string tableName = FindTableWithFabrickiKod(item.Fabricki_kod);
 
                     if (tableName != null)
                     {
-                        // Dobij trenutnu količinu iz baze
+                        // Dohvati trenutnu količinu iz baze
                         int currentQuantity = GetCurrentQuantity(tableName, item.Fabricki_kod);
 
-                        // Izračunaj novu količinu
+                        // Ažuriraj količinu u DataGrid-u
+                        item.Kolicina = currentQuantity;
+
+                        // Osveži DataGrid
+                        SelectedItemsDataGrid.Items.Refresh();
+
+                        // Logika za ažuriranje baze kao što je već implementirano...
                         int newQuantity = currentQuantity - item.KolicinaZaNarucivanje;
 
                         if (newQuantity < 0)
                         {
-                            // Nema dovoljno zaliha
                             MessageBox.Show($"Nema dovoljno zaliha za {item.Opis}.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
                             allQuantitiesValid = false;
                             break;
                         }
                         else
                         {
-                            // Ažuriraj bazu podataka
                             using (var command = new MySqlCommand($"UPDATE {tableName} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
                             {
                                 command.Parameters.AddWithValue("@Kolicina", newQuantity);
@@ -113,12 +136,26 @@ namespace PetkusApplication.Views
 
                 if (allQuantitiesValid)
                 {
-                    // Export data to Excel
+                    // Export podataka u Excel
                     GenerateExcelFile(selectedItems);
 
-                    // Pozovi funkciju za osvežavanje podataka u FormiranjePonudeView
-                    _formiranjePonudeView.RefreshData(); // Ova metoda treba da ponovo učita podatke iz baze
+                    // Osveži podatke u FormiranjePonudeView
+                    _formiranjePonudeView.RefreshData();
                 }
+            }
+
+            // OBRISATI REDOVE NA KRAJU
+            if (_formiranjePonudeView.GroupedItems != null)
+            {
+                _formiranjePonudeView.GroupedItems.Clear();
+            }
+
+
+            if (SelectedItemsDataGrid.ItemsSource is List<PonudaItem> selectedList)
+            {
+                var selectedCollection = new ObservableCollection<PonudaItem>(selectedList);
+                selectedCollection.Clear();
+                SelectedItemsDataGrid.ItemsSource = selectedCollection;
             }
         }
 

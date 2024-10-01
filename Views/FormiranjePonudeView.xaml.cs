@@ -249,7 +249,7 @@ namespace PetkusApplication.Views
                 }
                 else if (selectedProizvodac == "Schneider")
                 {
-                    SetupComboBox(comboBox4, new[] {"1,5kW", "2,2kW","3kW", "4kW", "5,5kW", "7,5kW", "11kW", "15kW", "18,5kW", "22kW", "30kW", "37kW", "45kW", "45kW_2", "55kW", "55kW_2", "75kW", "75kW_2",
+                    SetupComboBox(comboBox4, new[] {"1,5kW", "2,2kW","3kW", "4kW", "5,5kW", "7,5kW", "9,2kW", "11kW", "15kW", "18,5kW", "22kW", "30kW", "37kW", "45kW", "45kW_2", "55kW", "55kW_2", "75kW", "75kW_2",
                      "90kW", "90kW_2", "110kW", "110kW_2", "132kW", "132kW_2", "160kW", "160kW_2", "200kW", "200kW_2", "250kW", "250kW_2", "315kW", "315kW_2", "355kW", "355kW_2"});
                 }
             }
@@ -364,7 +364,7 @@ namespace PetkusApplication.Views
                 else if (selectedProizvodac == "Schneider")
                 {
                     // Opcije za Schneider: "1,5kW", "2,2kW"
-                    SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW","3kW", "4kW", "5,5kW", "7,5kW", "11kW", "15kW", "18,5kW", "22kW", "30kW", "37kW", "45kW", "45kW_2", "55kW", "55kW_2", "75kW", "75kW_2",
+                    SetupComboBox(comboBox4, new[] { "1,5kW", "2,2kW","3kW", "4kW", "5,5kW", "7,5kW", "9,2kW", "11kW", "15kW", "18,5kW", "22kW", "30kW", "37kW", "45kW", "45kW_2", "55kW", "55kW_2", "75kW", "75kW_2",
                      "90kW", "90kW_2", "110kW", "110kW_2", "132kW", "132kW_2", "160kW", "160kW_2", "200kW", "200kW_2", "250kW", "250kW_2", "315kW", "315kW_2", "355kW", "355kW_2"});
                 }
             }
@@ -1293,8 +1293,9 @@ namespace PetkusApplication.Views
                             Opis = matchingPonudaItem.Opis,
                             Puna_cena = matchingPonudaItem.Puna_cena,
                             Dimenzije = matchingPonudaItem.Dimenzije,
-                            Disipacija = matchingPonudaItem.Disipacija,
+                            Disipacija = Math.Round(matchingPonudaItem.Disipacija, 2),
                             Tezina = matchingPonudaItem.Tezina,
+                            Vrednost_rabata = matchingPonudaItem.Vrednost_rabata,
                             KolicinaZaNarucivanje = ukupnaKolicina // Osiguraj da je ukupnaKolicina ispravna i nije 0
                         };
 
