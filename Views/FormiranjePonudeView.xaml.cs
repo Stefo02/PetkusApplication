@@ -111,9 +111,8 @@ namespace PetkusApplication.Views
             {
                 SetupComboBox(comboBox4, new[] { "0,55kW", "0,75kW", "1,1kW", "1,5kW", "2,2kW", "3kW", "4kW", "5,5kW", "5,5kW_2", "5,5kW_3", "5,5kW_4", "5,5kW_5", "7,5kW", "7,5kW_2", "7,5kW_3", "7,5kW_4", "7,5kW_5", "9,2kW", "9,2kW_2", "9,2kW_3", "9,2kW_4", "9,2kW_5",
                     "11kW", "11kW_2", "11kW_3", "11kW_4", "11kW_5", "15kW", "15kW_2", "15kW_3", "15kW_4", "15kW_5","18,5kW", "18,5kW_2", "18,5kW_3", "18,5kW_4", "18,5kW_5","22kW", "22kW_2", "22kW_3", "22kW_4", "22kW_5", "30kW", "30kW_2", "30kW_3", "30kW_4", "30kW_5",
-                    "37kW", "37kW_2", "37kW_3", "37kW_4", "37kW_5","45kW", "45kW_2", "45kW_3", "45kW_4", "45kW_5", "55kW", "55kW_2", "55kW_3", "55kW_4", "55kW_5","55kW_6","75kW", "75kW_2", "75kW_3", "75kW_4", "75kW_5","90kW", "90kW_2", "90kW_3", "90kW_4", "90kW_5",
-                    "110kW", "110kW_2", "110kW_3", "110kW_4", "110kW_5","132kW", "132kW_2", "132kW_3", "132kW_4", "132kW_5", "160kW", "160kW_2", "160kW_3", "160kW_4", "160kW_5", "200kW", "200kW_2", "200kW_3", "200kW_4", "200kW_5","250kW", "250kW_2", "250kW_3", "250kW_4", "250kW_5",
-                    "315kW", "315kW_2","315kW_3", "315kW_4"});
+                    "37kW", "37kW_2", "37kW_3", "37kW_4", "37kW_5","45kW_SE", "55kW_SE", "75kW_SE", "75kW_2_SE", "90kW_SE", "90kW_2_SE", "110kW_SE", "110kW_2_SE", "132kW_SE", "132kW_2_SE",
+                        "160kW_SE", "160kW_2_SE", "200kW_SE", "200kW_2_SE", "250kW_SE", "250kW_2_SE", "315kW_SE", "315kW_2_SE"});
             }
             else if (selectedOption == "Soft Starter motor 1 SE")
             {
@@ -272,8 +271,8 @@ namespace PetkusApplication.Views
                 }
                 else if (selectedOption == "Soft Starter motor 1 SE")
                 {
-                    SetupComboBox(comboBox4, new[] { "15kW", "18_5kW", "22kW", "30kW", "37kW", "45kW", "55kW", "75kW", "75kW_2", "90kW", "90kW_2", "110kW", "110kW_2", "132kW", "132kW_2", 
-                        "160kW", "160kW_2", "200kW", "200kW_2", "250kW", "250kW_2", "315kW", "315kW_2"});
+                    SetupComboBox(comboBox4, new[] { "15kW", "18_5kW", "22kW", "30kW", "37kW", "45kW_SE", "55kW_SE", "75kW_SE", "75kW_2_SE", "90kW_SE", "90kW_2_SE", "110kW_SE", "110kW_2_SE", "132kW_SE", "132kW_2_SE",
+                        "160kW_SE", "160kW_2_SE", "200kW_SE", "200kW_2_SE", "250kW_SE", "250kW_2_SE", "315kW_SE", "315kW_2_SE"});
                 }
                 else if (selectedOption == "Soft starter 2 motora (SI)")  // Dodavanje nove opcije
                 {
@@ -380,8 +379,8 @@ namespace PetkusApplication.Views
                 }
                 else if (selectedOption == "Soft Starter motor 1 SE")
                 {
-                    SetupComboBox(comboBox4, new[] {"15kW", "18_5kW", "22kW", "30kW", "37kW", "45kW", "55kW", "75kW", "75kW_2", "90kW", "90kW_2", "110kW", "110kW_2", "132kW", "132kW_2", "160kW", "160kW_2",
-                    "200kW", "200kW_2", "250kW", "250kW_2", "315kW", "315kW_2"});
+                    SetupComboBox(comboBox4, new[] {"15kW", "18_5kW", "22kW", "30kW", "37kW", "45kW_SE", "55kW_SE", "75kW_SE", "75kW_2_SE", "90kW_SE", "90kW_2_SE", "110kW_SE", "110kW_2_SE", "132kW_SE", "132kW_2_SE",
+                        "160kW_SE", "160kW_2_SE", "200kW_SE", "200kW_2_SE", "250kW_SE", "250kW_2_SE", "315kW_SE", "315kW_2_SE"});
                 }
                 else if (selectedOption == "Soft starter 2 motora (SI)") 
                 {
@@ -850,24 +849,24 @@ namespace PetkusApplication.Views
                         "22kW" => "Soft_starter1_SE_22kW",
                         "30kW" => "Soft_starter1_SE_30kW",
                         "37kW" => "Soft_starter1_SE_37kW",
-                        "45kW" => "Soft_starter1_SE_45kW",
-                        "55kW" => "Soft_starter1_SE_55kW",
-                        "75kW" => "Soft_starter1_SE_75kW",
-                        "75kW_2" => "Soft_starter1_SE_75kW2",
-                        "90kW" => "Soft_starter1_SE_90kW",
-                        "90kW_2" => "Soft_starter1_SE_90kW2",
-                        "110kW" => "Soft_starter1_SE_110kW",
-                        "110kW_2" => "Soft_starter1_SE_110kW2",
-                        "132kW" => "Soft_starter1_SE_132kW",
-                        "132kW_2" => "Soft_starter1_SE_132kW2",
-                        "160kW" => "Soft_starter1_SE_160kW",
-                        "160kW_2" => "Soft_starter1_SE_160kW2",
-                        "200kW" => "Soft_starter1_SE_200kW",
-                        "200kW_2" => "Soft_starter1_SE_200kW2",
-                        "250kW" => "Soft_starter1_SE_250kW",
-                        "250kW_2" => "Soft_starter1_SE_250kW2",
-                        "315kW" => "Soft_starter1_SE_315kW",
-                        "315kW_2" => "Soft_starter1_SE_315kW2",
+                        "45kW_SE" => "Soft_starter1_SE_45kW",
+                        "55kW_SE" => "Soft_starter1_SE_55kW",
+                        "75kW_SE" => "Soft_starter1_SE_75kW",
+                        "75kW_2_SE" => "Soft_starter1_SE_75kW2",
+                        "90kW_SE" => "Soft_starter1_SE_90kW",
+                        "90kW_2_SE" => "Soft_starter1_SE_90kW2",
+                        "110kW_SE" => "Soft_starter1_SE_110kW",
+                        "110kW_2_SE" => "Soft_starter1_SE_110kW2",
+                        "132kW_SE" => "Soft_starter1_SE_132kW",
+                        "132kW_2_SE" => "Soft_starter1_SE_132kW2",
+                        "160kW_SE" => "Soft_starter1_SE_160kW",
+                        "160kW_2_SE" => "Soft_starter1_SE_160kW2",
+                        "200kW_SE" => "Soft_starter1_SE_200kW",
+                        "200kW_2_SE" => "Soft_starter1_SE_200kW2",
+                        "250kW_SE" => "Soft_starter1_SE_250kW",
+                        "250kW_2_SE" => "Soft_starter1_SE_250kW2",
+                        "315kW_SE" => "Soft_starter1_SE_315kW",
+                        "315kW_2_SE" => "Soft_starter1_SE_315kW2",
                         _ => null
                     },
                     "Soft starter 2 motora (SI)" => selectedSnaga switch
