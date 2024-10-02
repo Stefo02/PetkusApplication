@@ -12,11 +12,6 @@
 
     <UserControl.Resources>
         <converters:LessThanOrEqualConverter x:Key="LessThanOrEqualConverter" />
-
-        <Storyboard x:Key="BlinkStoryboard">
-            <ColorAnimation Storyboard.TargetProperty="(DataGridCell.Background).(SolidColorBrush.Color)"
-                            From="Red" To="White" Duration="0:0:1.2" RepeatBehavior="Forever" AutoReverse="True"/>
-        </Storyboard>
     </UserControl.Resources>
 
     <Grid>
@@ -125,28 +120,9 @@
                                         <Binding Path="MinKolicina" />
                                     </MultiBinding>
                                 </DataTrigger.Binding>
-
-                                <!-- When condition is met, animate the Background color to blink -->
-                                <DataTrigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
-                                        From="Red" To="White" Duration="0:0:1.2" 
-                                        RepeatBehavior="Forever" AutoReverse="True" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
-
-                                <!-- When condition is no longer met, reset the Background to White -->
-                                <DataTrigger.ExitActions>
-                                    <StopStoryboard />
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
-                                        To="White" Duration="0:0:0.2" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.ExitActions>
+                                <DataTrigger.Setters>
+                                    <Setter Property="Background" Value="Red"/>
+                                </DataTrigger.Setters>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
