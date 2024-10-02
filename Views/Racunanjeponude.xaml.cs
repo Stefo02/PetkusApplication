@@ -289,7 +289,37 @@ namespace PetkusApplication.Views
 
         private void GenerateExcel_Click(object sender, RoutedEventArgs e)
         {
+            // Generiši Excel fajl
             GenerateExcelFile(selectedItems);
+
+            // Obrisati redove iz dva grida
+            if (_formiranjePonudeView.GroupedItems != null)
+            {
+                _formiranjePonudeView.GroupedItems.Clear();
+            }
+
+            if (SelectedItemsDataGrid.ItemsSource is List<PonudaItem> selectedList)
+            {
+                selectedList.Clear();
+                SelectedItemsDataGrid.Items.Refresh();
+            }
+        }
+
+        private void UpdateQuantitiesFromDatabase()
+        {
+            foreach (var item in selectedItems)
+            {
+                string tableName = FindTableWithFabrickiKod(item.Fabricki_kod);
+
+                if (tableName != null)
+                {
+                    // Ponovo dohvati trenutnu količinu iz baze
+                    int currentQuantity = GetCurrentQuantity(tableName, item.Fabricki_kod);
+
+                    // Ažuriraj stavku
+                    item.Kolicina = currentQuantity;
+                }
+            }
         }
 
         private void GenerateExcelFile(List<PonudaItem> items)
@@ -297,9 +327,14 @@ namespace PetkusApplication.Views
             // Postavite licencni kontekst
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
+            // Ažuriraj količine iz baze pre generisanja Excel-a
+            UpdateQuantitiesFromDatabase();
+
             using (var package = new ExcelPackage())
             {
                 var worksheet = package.Workbook.Worksheets.Add("Ponuda");
+
+                // Naslovi kolona
                 worksheet.Cells[1, 1].Value = "Fabricki_kod";
                 worksheet.Cells[1, 2].Value = "Opis";
                 worksheet.Cells[1, 3].Value = "Puna_cena";
@@ -323,7 +358,7 @@ namespace PetkusApplication.Views
                     worksheet.Cells[row, 4].Value = item.Dimenzije;
                     worksheet.Cells[row, 5].Value = item.Disipacija;
                     worksheet.Cells[row, 6].Value = item.Tezina;
-                    worksheet.Cells[row, 7].Value = item.Kolicina;
+                    worksheet.Cells[row, 7].Value = item.Kolicina; 
                     worksheet.Cells[row, 8].Value = item.Vrednost_rabata;
                     worksheet.Cells[row, 9].Value = item.Ukupna_puna;
                     worksheet.Cells[row, 10].Value = item.Ukupna_rabat;
@@ -334,25 +369,21 @@ namespace PetkusApplication.Views
                     row++;
                 }
 
-                // Create a save file dialog
+                // Sačuvaj Excel fajl
                 SaveFileDialog saveFileDialog = new SaveFileDialog
                 {
                     Filter = "Excel Files (*.xlsx)|*.xlsx",
                     Title = "Sačuvajte Excel fajl",
-                    FileName = "Ponuda.xlsx" // Default file name
+                    FileName = "Ponuda.xlsx" // Defaultni naziv
                 };
 
-                // Show the dialog and wait for user input
-                bool? result = saveFileDialog.ShowDialog();
-
-                if (result == true)
+                if (saveFileDialog.ShowDialog() == true)
                 {
-                    var filePath = saveFileDialog.FileName;
-                    File.WriteAllBytes(filePath, package.GetAsByteArray());
-
-                    MessageBox.Show($"Excel fajl je kreiran u: {filePath}");
+                    File.WriteAllBytes(saveFileDialog.FileName, package.GetAsByteArray());
+                    MessageBox.Show($"Excel fajl je kreiran u: {saveFileDialog.FileName}");
                 }
             }
         }
+
     }
 }
