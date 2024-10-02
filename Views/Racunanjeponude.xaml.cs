@@ -165,12 +165,13 @@ namespace PetkusApplication.Views
             string tableName = null;
             var tableNames = new List<string>();
 
-            // Pronađi sve tabele koje imaju kolonu 'Fabricki_kod'
+            // Pronađi sve tabele koje imaju kolonu 'Fabricki_kod', osim 'FabrickiKodovi'
             using (var command = new MySqlCommand(@"
-                SELECT TABLE_NAME
-                    FROM INFORMATION_SCHEMA.COLUMNS
-                    WHERE COLUMN_NAME = 'Fabricki_kod'
-                        AND TABLE_SCHEMA = 'myappdb';", connection))
+        SELECT TABLE_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE COLUMN_NAME = 'Fabricki_kod'
+        AND TABLE_SCHEMA = 'myappdb'
+        AND TABLE_NAME != 'FabrickiKodovi';", connection))
             {
                 using (var reader = command.ExecuteReader())
                 {
