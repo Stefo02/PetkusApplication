@@ -14,6 +14,7 @@ using PetkusApplication.Models;
 using ClosedXML.Excel;
 using System.IO;
 using System.Text.Json;
+using System.Collections.Generic;
 
 namespace PetkusApplication.Views
 {
@@ -386,6 +387,10 @@ namespace PetkusApplication.Views
         {
             if (selectedItem != null)
             {
+                // Preuzmite staru verziju podataka pre ažuriranja
+                var oldData = dbContext.GetItemsFromTable(selectedItem.OriginalTable)
+                    .FirstOrDefault(i => i.Id == selectedItem.Id);
+
                 selectedItem.Opis = opisTextBox.Text;
                 selectedItem.Proizvodjac = proizvodjacTextBox.Text;
                 selectedItem.Fabricki_kod = fabrickiKodTextBox.Text;
@@ -410,6 +415,29 @@ namespace PetkusApplication.Views
                 if (!string.IsNullOrEmpty(tableName))
                 {
                     dbContext.UpdateItemAcrossTables(selectedItem);
+
+                    // Preuzmite ID trenutno prijavljenog korisnika
+                    int currentUserId = GetCurrentUserId();
+
+                    // Kreirajte audit log zapis
+                    var oldValues = GetOldValues(oldData, selectedItem);  // Samo stare vrednosti
+                    var newValues = GetNewValues(oldData, selectedItem);  // Samo nove vrednosti
+
+                    // Kreirajte audit log zapis
+                    var auditLog = new AuditLog
+                    {
+                        UserId = currentUserId,  // Ovaj parametar je korisnički ID
+                        Action = "Ažurirano",
+                        TableAffected = tableName,
+                        RecordId = selectedItem.Id,
+                        Timestamp = DateTime.Now,
+                        OldValue = oldValues,  // Konvertujte staru vrednost u string
+                        NewValue = newValues  // Konvertujte novu vrednost u string
+                    };
+
+                    // Sačuvajte audit log
+                    dbContext.SaveAuditLog(auditLog);
+
                     ClearTextBoxes();
                     LoadData();
                     CheckForLowStock();
@@ -425,7 +453,91 @@ namespace PetkusApplication.Views
             }
         }
 
+        private int GetCurrentUserId()
+        {
+            var currentUser = dbContext.Users.FirstOrDefault(u => u.IsLoggedIn);
+            if (currentUser != null)
+            {
+                return currentUser.Id;  // Vraćanje ID trenutno prijavljenog korisnika
+            }
+            return 0;  // Vratite 0 ili drugi odgovarajući ID ako nema prijavljenih korisnika
+        }
 
+        public string GetOldValues(Item oldItem, Item newItem)
+        {
+            var oldValues = new Dictionary<string, object>();
+
+            if (oldItem.Opis != newItem.Opis)
+                oldValues.Add(nameof(oldItem.Opis), oldItem.Opis);
+
+            if (oldItem.Proizvodjac != newItem.Proizvodjac)
+                oldValues.Add(nameof(oldItem.Proizvodjac), oldItem.Proizvodjac);
+
+            if (oldItem.Fabricki_kod != newItem.Fabricki_kod)
+                oldValues.Add(nameof(oldItem.Fabricki_kod), oldItem.Fabricki_kod);
+
+            if (oldItem.Kolicina != newItem.Kolicina)
+                oldValues.Add(nameof(oldItem.Kolicina), oldItem.Kolicina);
+
+            if (oldItem.Puna_cena != newItem.Puna_cena)
+                oldValues.Add(nameof(oldItem.Puna_cena), oldItem.Puna_cena);
+
+            if (oldItem.Dimenzije != newItem.Dimenzije)
+                oldValues.Add(nameof(oldItem.Dimenzije), oldItem.Dimenzije);
+
+            if (oldItem.Tezina != newItem.Tezina)
+                oldValues.Add(nameof(oldItem.Tezina), oldItem.Tezina);
+
+            if (oldItem.Vrednost_rabata != newItem.Vrednost_rabata)
+                oldValues.Add(nameof(oldItem.Vrednost_rabata), oldItem.Vrednost_rabata);
+
+            if (oldItem.MinKolicina != newItem.MinKolicina)
+                oldValues.Add(nameof(oldItem.MinKolicina), oldItem.MinKolicina);
+
+            if (oldItem.JedinicaMere != newItem.JedinicaMere)
+                oldValues.Add(nameof(oldItem.JedinicaMere), oldItem.JedinicaMere);
+
+            // Konvertujte stare vrednosti u JSON
+            return JsonSerializer.Serialize(oldValues);
+        }
+
+        public string GetNewValues(Item oldItem, Item newItem)
+        {
+            var newValues = new Dictionary<string, object>();
+
+            if (oldItem.Opis != newItem.Opis)
+                newValues.Add(nameof(newItem.Opis), newItem.Opis);
+
+            if (oldItem.Proizvodjac != newItem.Proizvodjac)
+                newValues.Add(nameof(newItem.Proizvodjac), newItem.Proizvodjac);
+
+            if (oldItem.Fabricki_kod != newItem.Fabricki_kod)
+                newValues.Add(nameof(newItem.Fabricki_kod), newItem.Fabricki_kod);
+
+            if (oldItem.Kolicina != newItem.Kolicina)
+                newValues.Add(nameof(newItem.Kolicina), newItem.Kolicina);
+
+            if (oldItem.Puna_cena != newItem.Puna_cena)
+                newValues.Add(nameof(newItem.Puna_cena), newItem.Puna_cena);
+
+            if (oldItem.Dimenzije != newItem.Dimenzije)
+                newValues.Add(nameof(newItem.Dimenzije), newItem.Dimenzije);
+
+            if (oldItem.Tezina != newItem.Tezina)
+                newValues.Add(nameof(newItem.Tezina), newItem.Tezina);
+
+            if (oldItem.Vrednost_rabata != newItem.Vrednost_rabata)
+                newValues.Add(nameof(newItem.Vrednost_rabata), newItem.Vrednost_rabata);
+
+            if (oldItem.MinKolicina != newItem.MinKolicina)
+                newValues.Add(nameof(newItem.MinKolicina), newItem.MinKolicina);
+
+            if (oldItem.JedinicaMere != newItem.JedinicaMere)
+                newValues.Add(nameof(newItem.JedinicaMere), newItem.JedinicaMere);
+
+            // Konvertujte nove vrednosti u JSON
+            return JsonSerializer.Serialize(newValues);
+        }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {

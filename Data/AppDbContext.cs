@@ -141,6 +141,30 @@ namespace PetkusApplication.Data
             return tableNames;
         }
 
+        public void SaveAuditLog(AuditLog auditLog)
+        {
+            using (var connection = new MySqlConnection("server=localhost;database=myappdb;user=root;password="))
+            {
+                connection.Open();
+
+                string query = @"INSERT INTO AuditLogs (UserId, Action, TableAffected, RecordId, Timestamp, OldValue, NewValue)
+                         VALUES (@UserId, @Action, @TableAffected, @RecordId, @Timestamp, @OldValue, @NewValue)";
+
+                using (var cmd = new MySqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", auditLog.UserId);
+                    cmd.Parameters.AddWithValue("@Action", auditLog.Action);
+                    cmd.Parameters.AddWithValue("@TableAffected", auditLog.TableAffected);
+                    cmd.Parameters.AddWithValue("@RecordId", auditLog.RecordId);
+                    cmd.Parameters.AddWithValue("@Timestamp", auditLog.Timestamp);
+                    cmd.Parameters.AddWithValue("@OldValue", auditLog.OldValue);
+                    cmd.Parameters.AddWithValue("@NewValue", auditLog.NewValue);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         // Method to get items from a specific table
         public List<Item> GetItemsFromTable(string tableName)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace PetkusApplication.Models
 {
@@ -20,5 +21,10 @@ namespace PetkusApplication.Models
         public int MinKolicina { get; set; }
         public string OriginalTable { get; set; }
         public string JedinicaMere { get; set; }
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }
