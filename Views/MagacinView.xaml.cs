@@ -455,12 +455,11 @@ namespace PetkusApplication.Views
 
         private int GetCurrentUserId()
         {
-            var currentUser = dbContext.Users.FirstOrDefault(u => u.IsLoggedIn);
-            if (currentUser != null)
+            if (App.CurrentUser != null)
             {
-                return currentUser.Id;  // Vraćanje ID trenutno prijavljenog korisnika
+                return App.CurrentUser.Id;
             }
-            return 0;  // Vratite 0 ili drugi odgovarajući ID ako nema prijavljenih korisnika
+            return 0;  // Return 0 if no user is logged in
         }
 
         public string GetOldValues(Item oldItem, Item newItem)

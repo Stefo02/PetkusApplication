@@ -35,27 +35,33 @@ namespace PetkusApplication.Views
                 {
                     user.LastLogin = DateTime.Now;
                 }
+
                 user.IsLoggedIn = true;
                 _context.SaveChanges();
 
-                Window targetWindow;
-                if (user.IsAdmin)
+                var session = new UserSession
                 {
-                    targetWindow = new AdminWindow();
-                }
-                else
-                {
-                    targetWindow = new MainView(user);
-                }
+                    UserId = user.Id,
+                    LoginTime = DateTime.Now,
+                    IsActive = true
+                };
+                _context.UserSessions.Add(session);
+                _context.SaveChanges();
 
+                // Set _currentUser to the logged-in user
+                App.CurrentUser = user;
+
+                // Open the appropriate window
+                Window targetWindow = user.IsAdmin ? new AdminWindow() : new MainView(user);
                 targetWindow.Show();
-                Close();
+                this.Close();
             }
             else
             {
                 MessageBox.Show("Nevažeće korisničko ime ili lozinka. Pokušajte ponovo.", "Prijava nije uspela", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
 
         private void exitApp(object sender, RoutedEventArgs e)

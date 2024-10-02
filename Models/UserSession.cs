@@ -13,5 +13,6 @@ namespace PetkusApplication.Models
         public DateTime LoginTime { get; set; }
         public DateTime? LogoutTime { get; set; }
         public TimeSpan? Duration => LogoutTime.HasValue ? LogoutTime - LoginTime : (TimeSpan?)null;
+        public bool IsActive { get; set; }
     }
 }

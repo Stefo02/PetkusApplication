@@ -9,6 +9,11 @@ namespace PetkusApplication
     public partial class App : Application
     {
         private static User _currentUser; // Assuming you have a way to access the current user
+        public static User CurrentUser
+        {
+            get { return _currentUser; }
+            set { _currentUser = value; }
+        }
         private static DbContextOptions<AppDbContext> _dbContextOptions;
 
         protected override void OnStartup(StartupEventArgs e)
@@ -47,12 +52,23 @@ namespace PetkusApplication
 
                 using (var context = new AppDbContext(_dbContextOptions))
                 {
+                    // Ažuriranje sesije korisnika
+                    var session = context.UserSessions.FirstOrDefault(s => s.UserId == _currentUser.Id && s.IsActive);
+                    if (session != null)
+                    {
+                        session.LogoutTime = DateTime.Now;
+                        session.IsActive = false;
+                        context.UserSessions.Update(session);
+                    }
+
+                    // Ažuriranje korisnika
                     context.Users.Update(_currentUser);
                     context.SaveChanges();
                 }
 
-                _currentUser = null; // Clear the user reference after logout
+                _currentUser = null; // Očisti referencu na korisnika nakon odjave
             }
         }
+
     }
 }
