@@ -17,6 +17,67 @@ namespace PetkusApplication.Data
         {
         }
 
+        public void UpdateItemAcrossTables(Item item)
+        {
+            // Pronađi sve tabele koje sadrže potrebne kolone
+            var tableNames = GetTablesWithColumns();
+
+            foreach (var tableName in tableNames)
+            {
+                // Pronađi duplikate u svakoj tabeli na osnovu Fabricki_kod
+                var duplicates = GetItemsFromTable(tableName)
+                    .Where(i => i.Fabricki_kod == item.Fabricki_kod && i.Id != item.Id)
+                    .ToList();
+
+                foreach (var duplicate in duplicates)
+                {
+                    // Ažuriraj podatke duplikata
+                    duplicate.Opis = item.Opis;
+                    duplicate.Proizvodjac = item.Proizvodjac;
+                    duplicate.Kolicina = item.Kolicina;
+                    duplicate.Puna_cena = item.Puna_cena;
+                    duplicate.Dimenzije = item.Dimenzije;
+                    duplicate.Tezina = item.Tezina;
+                    duplicate.Vrednost_rabata = item.Vrednost_rabata;
+                    duplicate.MinKolicina = item.MinKolicina;
+                    duplicate.JedinicaMere = item.JedinicaMere;
+
+                    // Ažuriraj duplikat u bazi
+                    UpdateItem(tableName, duplicate);
+                }
+            }
+
+            // Konačno ažuriraj originalni red u njegovoj tabeli
+            UpdateItem(item.OriginalTable, item);
+        }
+
+        public void UpdateItemWithDuplicateHandling(string tableName, Item item)
+        {
+            UpdateItem(tableName, item);
+
+            // Pronađi sve duplikate koji imaju isti Fabricki_kod, bez obzira na ostale vrednosti
+            var duplicates = GetItemsFromTable(tableName)
+                .Where(i => i.Fabricki_kod == item.Fabricki_kod && i.Id != item.Id)  // Ova linija osigurava da svi redovi sa istim Fabricki_kod budu obuhvaćeni, osim originalnog reda
+                .ToList();
+
+            foreach (var duplicate in duplicates)
+            {
+                // Ažuriraj podatke u duplikatima samo na osnovu originalnog reda
+                duplicate.Opis = item.Opis;
+                duplicate.Proizvodjac = item.Proizvodjac;
+                duplicate.Kolicina = item.Kolicina;
+                duplicate.Puna_cena = item.Puna_cena;
+                duplicate.Dimenzije = item.Dimenzije;
+                duplicate.Tezina = item.Tezina;
+                duplicate.Vrednost_rabata = item.Vrednost_rabata;
+                duplicate.MinKolicina = item.MinKolicina;
+                duplicate.JedinicaMere = item.JedinicaMere;
+
+                // Ažuriraj duplikat u bazi
+                UpdateItem(tableName, duplicate);
+            }
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

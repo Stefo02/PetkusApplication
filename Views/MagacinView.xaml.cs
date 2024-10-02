@@ -404,16 +404,14 @@ namespace PetkusApplication.Views
                 }
 
                 string tableName = !string.IsNullOrEmpty(selectedItem.OriginalTable)
-                    ? selectedItem.OriginalTable
-                    : GetTableNameFromComboBox();
+            ? selectedItem.OriginalTable
+            : GetTableNameFromComboBox();
 
                 if (!string.IsNullOrEmpty(tableName))
                 {
-                    dbContext.UpdateItem(tableName, selectedItem);  // Ažuriraj stavku u bazi
+                    dbContext.UpdateItemAcrossTables(selectedItem);
                     ClearTextBoxes();
                     LoadData();
-
-                    // Pozivamo funkciju za proveru zaliha nakon ažuriranja
                     CheckForLowStock();
                 }
                 else
@@ -464,25 +462,21 @@ namespace PetkusApplication.Views
         private void LoadData()
         {
             string tableName = GetTableNameFromComboBox();
+
             if (string.IsNullOrEmpty(tableName) || tableName == "Svi podaci")
             {
+                // Preuzmi sve podatke iz svih tabela
                 data = dbContext.GetItemsFromAllTables();
             }
             else
             {
-                data = dbContext.GetItemsFromTable(tableName);
+                // Preuzmi podatke iz specifične tabele (ali NE koristi UpdateItemAcrossTables)
+                data = dbContext.GetItemsFromTable(tableName); // Ova metoda vraća podatke iz odabrane tabele
             }
 
-            // Uklanjanje duplikata pomoću Distinct() ili GroupBy() po određenom ključu
-            data = data.GroupBy(item => item.Fabricki_kod)
-                       .Select(group => group.First()) // Uzmi prvi element iz svake grupe
-                       .ToList();
-
-            // Postavi očišćene podatke u DataGrid
             dataGrid.ItemsSource = data;
             dataGrid.Items.Refresh();
         }
-
 
 
         private string GetTableNameFromComboBox()
