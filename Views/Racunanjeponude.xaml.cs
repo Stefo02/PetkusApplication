@@ -81,7 +81,6 @@ namespace PetkusApplication.Views
 
         private void UpdateAndExport_Click(object sender, RoutedEventArgs e)
         {
-            // Prvo proverite sve stavke pre nego što obrišete redove
             var selectedNacinPokretanja = _formiranjePonudeView.comboBox1.SelectedItem as ComboBoxItem;
             var selectedProizvodac = _formiranjePonudeView.comboBox2.SelectedItem as ComboBoxItem;
             var selectedBrojSmerova = _formiranjePonudeView.comboBox3.SelectedItem as ComboBoxItem;
@@ -106,7 +105,6 @@ namespace PetkusApplication.Views
                         int newQuantity = currentQuantity - item.KolicinaZaNarucivanje;
                         if (newQuantity < 0)
                         {
-                            // Ako količina pređe ispod 0, prikaži poruku i postavi flag
                             MessageBox.Show($"Nema dovoljno zaliha za {item.Opis}.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
                             allQuantitiesValid = false;
                             break;
@@ -120,32 +118,17 @@ namespace PetkusApplication.Views
                     }
                 }
 
-                // Ako su sve količine validne, brišemo redove i nastavljamo sa operacijom
                 if (allQuantitiesValid)
                 {
-                    // Ažuriraj bazu
                     foreach (var item in selectedItems)
                     {
-                        string tableName = FindTableWithFabrickiKod(item.Fabricki_kod);
-                        if (tableName != null)
-                        {
-                            int newQuantity = GetCurrentQuantity(tableName, item.Fabricki_kod) - item.KolicinaZaNarucivanje;
-                            using (var command = new MySqlCommand($"UPDATE {tableName} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
-                            {
-                                command.Parameters.AddWithValue("@Kolicina", newQuantity);
-                                command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
-                                command.ExecuteNonQuery();
-                            }
-                        }
+                        // Ažuriraj sve tabele sa istim fabričkim kodom
+                        UpdateAllTablesWithFabrickiKod(item.Fabricki_kod, item.KolicinaZaNarucivanje);
                     }
 
-                    // Export podataka u Excel
                     GenerateExcelFile(selectedItems);
-
-                    // Osveži podatke u FormiranjePonudeView
                     _formiranjePonudeView.RefreshData();
 
-                    // Brišemo stavke iz gridova samo ako je sve validno
                     if (_formiranjePonudeView.GroupedItems != null)
                     {
                         _formiranjePonudeView.GroupedItems.Clear();
@@ -157,6 +140,55 @@ namespace PetkusApplication.Views
                         SelectedItemsDataGrid.Items.Refresh();
                     }
                 }
+            }
+        }
+
+        private void UpdateAllTablesWithFabrickiKod(string fabrickiKod, int quantityChange)
+        {
+            var tableNames = GetAllTableNames();
+
+            foreach (var tableName in tableNames)
+            {
+                if (TableContainsFabrickiKod(tableName) && TableContainsKolicina(tableName))
+                {
+                    int currentQuantity = GetCurrentQuantity(tableName, fabrickiKod);
+                    int newQuantity = currentQuantity - quantityChange;
+
+                    using (var command = new MySqlCommand($"UPDATE {tableName} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
+                    {
+                        command.Parameters.AddWithValue("@Kolicina", newQuantity);
+                        command.Parameters.AddWithValue("@Fabricki_kod", fabrickiKod);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        private bool TableContainsFabrickiKod(string tableName)
+        {
+            using (var command = new MySqlCommand($@"
+        SELECT COUNT(*)
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_NAME = @TableName
+        AND COLUMN_NAME = 'Fabricki_kod'
+        AND TABLE_SCHEMA = 'myappdb';", connection))
+            {
+                command.Parameters.AddWithValue("@TableName", tableName);
+                return Convert.ToInt32(command.ExecuteScalar()) > 0;
+            }
+        }
+
+        private bool TableContainsKolicina(string tableName)
+        {
+            using (var command = new MySqlCommand($@"
+        SELECT COUNT(*)
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_NAME = @TableName
+        AND COLUMN_NAME = 'Kolicina'
+        AND TABLE_SCHEMA = 'myappdb';", connection))
+            {
+                command.Parameters.AddWithValue("@TableName", tableName);
+                return Convert.ToInt32(command.ExecuteScalar()) > 0;
             }
         }
 
@@ -263,6 +295,12 @@ namespace PetkusApplication.Views
 
         private int GetCurrentQuantity(string tableName, string fabrickiKod)
         {
+            // Proveri da li tabela sadrži kolonu 'Kolicina'
+            if (!TableContainsKolicina(tableName))
+            {
+                throw new Exception($"Tabela '{tableName}' nema kolonu 'Kolicina'.");
+            }
+
             using (var command = new MySqlCommand($"SELECT Kolicina FROM {tableName} WHERE Fabricki_kod = @Fabricki_kod", connection))
             {
                 command.Parameters.AddWithValue("@Fabricki_kod", fabrickiKod);
@@ -320,6 +358,27 @@ namespace PetkusApplication.Views
                     item.Kolicina = currentQuantity;
                 }
             }
+        }
+
+        private void ShowTotalPrice_Click(object sender, RoutedEventArgs e)
+        {
+            // Izračunaj ukupnu cenu iz kolone Puna_cena
+            decimal totalPrice = 0;
+
+            foreach (var item in SelectedItemsDataGrid.Items)
+            {
+                if (item is PonudaItem ponudaItem)
+                {
+                    totalPrice += ponudaItem.Puna_cena;
+                }
+            }
+
+            // Prikaži popup sa ukupnom cenom
+            TotalPriceTextBlock.Text = $"Ukupna cena: {totalPrice:C}";
+
+            // Postavi popup da se pojavi ispod dugmeta
+            PricePopup.PlacementTarget = (Button)sender; // Vežemo popup za dugme
+            PricePopup.IsOpen = true; // Otvaramo popup
         }
 
         private void GenerateExcelFile(List<PonudaItem> items)
