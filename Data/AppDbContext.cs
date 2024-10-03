@@ -154,8 +154,8 @@ namespace PetkusApplication.Data
             {
                 connection.Open();
 
-                string query = @"INSERT INTO AuditLogs (UserId, Action, TableAffected, RecordId, Timestamp, OldValue, NewValue)
-                         VALUES (@UserId, @Action, @TableAffected, @RecordId, @Timestamp, @OldValue, @NewValue)";
+                string query = @"INSERT INTO AuditLogs (UserId, Action, TableAffected, RecordId, Timestamp, OldValue, NewValue, Username)
+                         VALUES (@UserId, @Action, @TableAffected, @RecordId, @Timestamp, @OldValue, @NewValue, @Username)";
 
                 using (var cmd = new MySqlCommand(query, connection))
                 {
@@ -166,6 +166,7 @@ namespace PetkusApplication.Data
                     cmd.Parameters.AddWithValue("@Timestamp", auditLog.Timestamp);
                     cmd.Parameters.AddWithValue("@OldValue", auditLog.OldValue);
                     cmd.Parameters.AddWithValue("@NewValue", auditLog.NewValue);
+                    cmd.Parameters.AddWithValue("@Username", auditLog.Username);
 
                     cmd.ExecuteNonQuery();
                 }

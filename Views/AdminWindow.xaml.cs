@@ -114,8 +114,6 @@ namespace PetkusApplication.Views
             popupExample.IsOpen = false;
         }
 
-
-
         private void DeleteUserBtn_Click(object sender, RoutedEventArgs e)
         {
             if (lstUsers.SelectedItem == null)

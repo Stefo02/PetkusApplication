@@ -34,18 +34,19 @@ namespace PetkusApplication.Views
                 if (!user.IsAdmin)
                 {
                     user.LastLogin = DateTime.Now;
+
+                    // Dodajemo sesiju samo ako korisnik nije administrator
+                    var session = new UserSession
+                    {
+                        UserId = user.Id,
+                        LoginTime = DateTime.Now,
+                        IsActive = true,
+                        Username = user.Username // Dodaj ovo
+                    };
+                    _context.UserSessions.Add(session);
                 }
 
                 user.IsLoggedIn = true;
-                _context.SaveChanges();
-
-                var session = new UserSession
-                {
-                    UserId = user.Id,
-                    LoginTime = DateTime.Now,
-                    IsActive = true
-                };
-                _context.UserSessions.Add(session);
                 _context.SaveChanges();
 
                 // Set _currentUser to the logged-in user
@@ -61,8 +62,6 @@ namespace PetkusApplication.Views
                 MessageBox.Show("Nevažeće korisničko ime ili lozinka. Pokušajte ponovo.", "Prijava nije uspela", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
 
         private void exitApp(object sender, RoutedEventArgs e)
         {

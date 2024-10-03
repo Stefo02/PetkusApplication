@@ -16,5 +16,6 @@ namespace PetkusApplication.Models
         public DateTime Timestamp { get; set; }
         public string OldValue { get; set; }
         public string NewValue { get; set; }
+        public string Username { get; set; }
     }
 }

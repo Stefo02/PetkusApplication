@@ -400,6 +400,12 @@ namespace PetkusApplication.Views
                     // Preuzmite ID trenutno prijavljenog korisnika
                     int currentUserId = GetCurrentUserId();
 
+                    // Dohvati korisnika kako bi dobio username
+                    string username = dbContext.Users
+                        .Where(u => u.Id == currentUserId)
+                        .Select(u => u.Username)
+                        .FirstOrDefault();
+
                     // Kreirajte audit log zapis
                     var oldValues = GetOldValues(oldData, selectedItem);  // Samo stare vrednosti
                     var newValues = GetNewValues(oldData, selectedItem);  // Samo nove vrednosti
@@ -413,7 +419,8 @@ namespace PetkusApplication.Views
                         RecordId = selectedItem.Id,
                         Timestamp = DateTime.Now,
                         OldValue = oldValues,  // Konvertujte staru vrednost u string
-                        NewValue = newValues  // Konvertujte novu vrednost u string
+                        NewValue = newValues,  // Konvertujte novu vrednost u string
+                        Username = username
                     };
 
                     // Sačuvajte audit log
