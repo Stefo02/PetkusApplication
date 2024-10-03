@@ -352,6 +352,24 @@ namespace PetkusApplication.Views
             string tableName = GetTableNameFromComboBox();
             dbContext.AddItem(tableName, newItem);
 
+            // Kreiranje audit log zapisa
+            int currentUserId = GetCurrentUserId(); // Dobij ID trenutnog korisnika
+            string currentUsername = GetCurrentUsername(); // Dodajte metodu koja vraća trenutnog korisnika
+            var auditLog = new AuditLog
+            {
+                UserId = currentUserId,
+                Action = "Dodato",
+                TableAffected = tableName,
+                RecordId = newItem.Id, // Pretpostavljamo da newItem ima svoj ID
+                Timestamp = DateTime.Now,
+                OldValue = string.Empty, // Nema stare vrednosti, jer je nova stavka
+                NewValue = newItem.ToString(), // Ovdje bi trebalo konvertovati u string, zavisno od tvoje implementacije
+                Username = currentUsername
+            };
+
+            // Sačuvaj audit log
+            dbContext.SaveAuditLog(auditLog);
+
             // Očisti polja nakon dodavanja
             ClearTextBoxes();
             LoadData();
@@ -363,6 +381,11 @@ namespace PetkusApplication.Views
             CheckForLowStock();
         }
 
+        private string GetCurrentUsername()
+        {
+            // Pretpostavljamo da imate neku globalnu promenljivu ili metodu koja vraća trenutnog korisnika
+            return App.CurrentUser?.Username ?? "Nepoznat korisnik"; // Vraća "Nepoznat korisnik" ako nema trenutnog korisnika
+        }
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
@@ -531,12 +554,34 @@ namespace PetkusApplication.Views
             if (selectedItem != null)
             {
                 string tableName = GetTableNameFromComboBox();
+
+                // Uzmite trenutnog korisnika za audit log
+                int currentUserId = GetCurrentUserId();
+                string currentUsername = GetCurrentUsername();
+
+                // Kreirajte audit log pre brisanja
+                var auditLog = new AuditLog
+                {
+                    UserId = currentUserId,
+                    Action = "Obrisano",
+                    TableAffected = tableName,
+                    RecordId = selectedItem.Id,
+                    Timestamp = DateTime.Now,
+                    OldValue = selectedItem.ToString(), // Ovde konvertujte u string ako je potrebno
+                    NewValue = string.Empty, // Nema nove vrednosti, jer se stavka briše
+                    Username = currentUsername
+                };
+
+                // Sačuvajte audit log pre nego što obrišete stavku
+                dbContext.SaveAuditLog(auditLog);
+
+                // Obrisi stavku
                 dbContext.DeleteItem(tableName, selectedItem.Id);
 
                 ClearTextBoxes();
                 LoadData();
 
-                // Pozivamo funkciju za proveru zaliha nakon brisanja stavke
+                // Proverite zalihe nakon brisanja stavke
                 CheckForLowStock();
             }
             else
@@ -652,6 +697,5 @@ namespace PetkusApplication.Views
                 MessageBox.Show("Excel fajl je uspešno sačuvan.");
             }
         }
-
     }
 }
