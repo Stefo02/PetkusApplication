@@ -64,8 +64,8 @@
                 <Popup x:Name="popupExample" Placement="Mouse" StaysOpen="False" IsOpen="False">
                     <Border Background="White" BorderBrush="#001f5b" BorderThickness="2" CornerRadius="10">
                         <StackPanel Width="600" Height="400">
-                            <TextBlock Text="Audit Logs" FontSize="18" FontWeight="Bold" Foreground="#001f5b" HorizontalAlignment="Center" Margin="10"/>
-                            <DataGrid x:Name="auditLogsGrid" AutoGenerateColumns="True" CanUserAddRows="False" Height="300" />
+                            <TextBlock Text="Beleženje praćenih izmena" FontSize="18" FontWeight="Bold" Foreground="#001f5b" HorizontalAlignment="Center" Margin="10"/>
+                            <DataGrid x:Name="auditLogsGrid" AutoGenerateColumns="True" CanUserAddRows="False" Height="300" AutoGeneratingColumn="AuditLogsGrid_AutoGeneratingColumn"/>
                             <Button Content="Zatvori" Click="ClosePopupBtn_Click" Width="100" Background="#001f5b" 
                             Foreground="White" HorizontalAlignment="Center" Margin="10" materialDesign:ButtonAssist.CornerRadius="10"/>
                         </StackPanel>

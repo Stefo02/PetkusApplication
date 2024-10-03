@@ -108,6 +108,36 @@ namespace PetkusApplication.Views
             popupExample.IsOpen = true;
         }
 
+        private void AuditLogsGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            switch (e.Column.Header.ToString())
+            {
+                case "Username":
+                    e.Column.Header = "Korisničko Ime";
+                    break;
+                case "Action":
+                    e.Column.Header = "Akcija";
+                    break;
+                case "TableAffected":
+                    e.Column.Header = "Tabela";
+                    break;
+                case "Timestamp":
+                    e.Column.Header = "Vreme";
+                    break;
+                case "OldValue":
+                    e.Column.Header = "Stare Vrednosti";
+                    break;
+                case "NewValue":
+                    e.Column.Header = "Nove Vrednosti";
+                    break;
+                case "Id": // Izbaci ID kolonu
+                case "RecordId": // Izbaci ID Zapisa kolonu
+                case "UserId": // Izbaci UserId kolonu
+                    e.Cancel = true;
+                    break;
+            }
+        }
+
         private void ClosePopupBtn_Click(object sender, RoutedEventArgs e)
         {
             // Zatvori popup

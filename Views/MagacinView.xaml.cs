@@ -286,7 +286,7 @@ namespace PetkusApplication.Views
                     tezinaTextBox.Text = selectedItem.Tezina.ToString();
                     vrednostRabataTextBox.Text = selectedItem.Vrednost_rabata.ToString();
                     minKolicinaTextBox.Text = selectedItem.MinKolicina.ToString();
-
+                    jedinicamereComboBox.Text = selectedItem.JedinicaMere.ToString();
                 }
             }
             else
@@ -556,6 +556,7 @@ namespace PetkusApplication.Views
             tezinaTextBox.Text = string.Empty;
             vrednostRabataTextBox.Text = string.Empty;
             minKolicinaTextBox.Text = string.Empty;
+            jedinicamereComboBox.Text = string.Empty;
         }
 
         private void LoadData()
