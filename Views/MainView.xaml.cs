@@ -64,20 +64,14 @@ namespace PetkusApplication.Views
 
                     MessageBox.Show("Vaša sesija je istekla.");
                     LogOutCurrentUser();
+                    this.Close(); 
                 }
             }
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            // Kreirajte instancu Login prozora
-            var loginWindow = new Login();
-
-            // Prikazivanje Login prozora
-            loginWindow.Show();
-
-            // Zatvaranje trenutnog prozora
-            this.Close();
+            LogOutCurrentUser();
         }
 
         private void MainView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -104,13 +98,6 @@ namespace PetkusApplication.Views
             // Ažuriranje korisnika
             _context.Users.Update(_currentUser);
             _context.SaveChanges();
-
-            // Handle the `Closed` event to show the Login window after the current window closes
-            this.Closed += (s, e) =>
-            {
-                var loginWindow = new Login();
-                loginWindow.Show();
-            };
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
