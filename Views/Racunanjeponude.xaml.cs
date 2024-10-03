@@ -360,27 +360,6 @@ namespace PetkusApplication.Views
             }
         }
 
-        private void ShowTotalPrice_Click(object sender, RoutedEventArgs e)
-        {
-            // Izračunaj ukupnu cenu iz kolone Puna_cena
-            decimal totalPrice = 0;
-
-            foreach (var item in SelectedItemsDataGrid.Items)
-            {
-                if (item is PonudaItem ponudaItem)
-                {
-                    totalPrice += ponudaItem.Puna_cena;
-                }
-            }
-
-            // Prikaži popup sa ukupnom cenom
-            TotalPriceTextBlock.Text = $"Ukupna cena: {totalPrice:C}";
-
-            // Postavi popup da se pojavi ispod dugmeta
-            PricePopup.PlacementTarget = (Button)sender; // Vežemo popup za dugme
-            PricePopup.IsOpen = true; // Otvaramo popup
-        }
-
         private void GenerateExcelFile(List<PonudaItem> items)
         {
             // Postavite licencni kontekst
