@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Admin Panel" Height="739" Width="450"
+        Title="Admin Panel" Height="770" Width="450"
         WindowStartupLocation="CenterScreen"
         Background="#ffb81c"
         ResizeMode="NoResize">
@@ -19,20 +19,29 @@
 
         <Border Grid.ColumnSpan="2" Background="White" CornerRadius="10" Margin="20,20,0,-67" Padding="20">
             <StackPanel>
-                <Image Margin="0 25 0 5" Source="Images/petkus.png" Height="107" RenderTransformOrigin="0.492,-0.009"/>
+                <!-- Dugme u gornjem desnom uglu -->
+                <Grid HorizontalAlignment="Right">
+                    <Button x:Name="OpenPopupBtn" Width="65" Height="41" HorizontalAlignment="Left" VerticalAlignment="Center"
+                    Margin="218,0,0,0" Background="Transparent" BorderBrush="Transparent" Click="OpenPopupBtn_Click">
+                        <Image Source="Images/list.png" Stretch="Uniform" />
+                    </Button>
+
+                </Grid>
+
+                <!-- Ostatak vašeg StackPanel koda ovde -->
+                <Image Margin="0 15 0 5" Source="Images/petkus.png" Height="107" RenderTransformOrigin="0.492,-0.009"/>
                 <TextBlock Margin="0 15 0 25" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Text="Admin Panel" Foreground="#001f5b" />
                 <TextBox x:Name="txtNewUsername" Width="300" FontSize="18" Margin="0 10 0 0"
-                         materialDesign:HintAssist.Hint="Novi Korisnik" BorderThickness="2"
-                         BorderBrush="{DynamicResource MaterialDesignDivider}" Style="{StaticResource MaterialDesignOutlinedTextBox}" Foreground="#001f5b"/>
+             materialDesign:HintAssist.Hint="Novi Korisnik" BorderThickness="2"
+             BorderBrush="{DynamicResource MaterialDesignDivider}" Style="{StaticResource MaterialDesignOutlinedTextBox}" Foreground="#001f5b"/>
                 <PasswordBox x:Name="txtNewPassword" Width="300" FontSize="18" Margin="0 10 0 0"
-                             materialDesign:HintAssist.Hint="Nova Lozinka" BorderThickness="2"
-                             BorderBrush="{DynamicResource MaterialDesignDivider}" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Foreground="#001f5b"/>
+                 materialDesign:HintAssist.Hint="Nova Lozinka" BorderThickness="2"
+                 BorderBrush="{DynamicResource MaterialDesignDivider}" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Foreground="#001f5b"/>
                 <Button Margin="0 20 0 0" x:Name="addUserBtn" Style="{StaticResource MaterialDesignFlatMidBgButton}"
-                        materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                        Height="53" Width="207" materialDesign:ButtonAssist.CornerRadius="10"
-                        FontSize="18" Content="Dodaj Korisnika" Background="#001f5b" Click="AddUserBtn_Click"/>
+            materialDesign:ShadowAssist.ShadowDepth="Depth0"
+            Height="53" Width="207" materialDesign:ButtonAssist.CornerRadius="10"
+            FontSize="18" Content="Dodaj Korisnika" Background="#001f5b" Click="AddUserBtn_Click"/>
 
-                <!-- ScrollViewer sa ListBox-om -->
                 <ListBox x:Name="lstUsers" SelectionMode="Single" DisplayMemberPath="Username" Margin="0 10 0 0" Width="300" Foreground="#001f5b" Height="117">
                     <ListBox.Resources>
                         <Style TargetType="ScrollViewer">
@@ -40,19 +49,32 @@
                             <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
                         </Style>
                     </ListBox.Resources>
-                    <!-- Stavke će biti dodane ovde -->
                 </ListBox>
-                
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="54" Margin="20 10 0 0" Width="310">
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="54" Margin="20 5 0 0" Width="310">
                     <Button x:Name="deleteUserBtn" Style="{StaticResource MaterialDesignFlatMidBgButton}"
-                            materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                            Height="44" Width="133" materialDesign:ButtonAssist.CornerRadius="10"
-                            FontSize="18" Content="Obriši" Background="#001f5b" Click="DeleteUserBtn_Click"/>
+                materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                Height="44" Width="133" materialDesign:ButtonAssist.CornerRadius="10"
+                FontSize="18" Content="Obriši" Background="#001f5b" Click="DeleteUserBtn_Click"/>
                     <Button x:Name="Logout" Style="{StaticResource MaterialDesignFlatMidBgButton}" materialDesign:ShadowAssist.ShadowDepth="Depth0" materialDesign:ButtonAssist.CornerRadius="10"
-                            Content="Odjavi se" Width="133" Height="44" Click="LogOutBtn_Click" RenderTransformOrigin="0.535,0.549" Background="#001f5b" FontSize="18" Margin="30 0 0 0" Padding="5"/>
+                Content="Odjavi se" Width="133" Height="44" Click="LogOutBtn_Click" RenderTransformOrigin="0.535,0.549" Background="#001f5b" FontSize="18" Margin="30 0 0 0" Padding="5"/>
                 </StackPanel>
 
+                <!-- Popup kontrola -->
+                <Popup x:Name="popupExample" Placement="Mouse" StaysOpen="False" IsOpen="False">
+                    <Border Background="White" BorderBrush="#001f5b" BorderThickness="2" CornerRadius="10">
+                        <StackPanel Width="600" Height="400">
+                            <TextBlock Text="Audit Logs" FontSize="18" FontWeight="Bold" Foreground="#001f5b" HorizontalAlignment="Center" Margin="10"/>
+                            <DataGrid x:Name="auditLogsGrid" AutoGenerateColumns="True" CanUserAddRows="False" Height="300" />
+                            <Button Content="Zatvori" Click="ClosePopupBtn_Click" Width="100" Background="#001f5b" 
+                            Foreground="White" HorizontalAlignment="Center" Margin="10" materialDesign:ButtonAssist.CornerRadius="7"/>
+                        </StackPanel>
+                    </Border>
+                </Popup>
+
+
             </StackPanel>
+
         </Border>
 
     </Grid>

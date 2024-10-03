@@ -12,10 +12,17 @@ namespace PetkusApplication.Data
     {
         public DbSet<User> Users { get; set; }
         public DbSet<UserSession> UserSessions { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
+
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+        public List<AuditLog> GetAuditLogs()
+        {
+            return AuditLogs.ToList(); // Vraća sve podatke iz tabele AuditLogs
+        }
+
 
         public void UpdateItemAcrossTables(Item item)
         {

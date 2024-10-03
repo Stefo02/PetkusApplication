@@ -22,6 +22,7 @@
     <None Remove="Views\Images\delete.png" />
     <None Remove="Views\Images\Download.png" />
     <None Remove="Views\Images\Exchange.png" />
+    <None Remove="Views\Images\list.png" />
     <None Remove="Views\Images\logo-page.jpg" />
     <None Remove="Views\Images\petkus-removebg-previeww.png" />
     <None Remove="Views\Images\petkus.png" />
@@ -52,6 +53,7 @@
     <Resource Include="Views\Images\delete.png" />
     <Resource Include="Views\Images\Download.png" />
     <Resource Include="Views\Images\Exchange.png" />
+    <Resource Include="Views\Images\list.png" />
     <Resource Include="Views\Images\logo-page.jpg" />
     <Resource Include="Views\Images\petkus-removebg-previeww.png" />
     <Resource Include="Views\Images\petkus.png" />

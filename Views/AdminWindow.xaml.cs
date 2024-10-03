@@ -88,6 +88,34 @@ namespace PetkusApplication.Views
             txtNewPassword.Password = "";
         }
 
+        private void OpenPopupBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // Kreiraj DbContextOptions sa konekcijskim stringom
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseMySql("server=localhost;database=myappdb;user=root;password=;", new MySqlServerVersion(new Version(10, 4, 32)));
+
+            // Kreiraj instancu AppDbContext koristeći opcije
+            using (var context = new AppDbContext(optionsBuilder.Options))
+            {
+                // Dohvati podatke iz tabele audit logs
+                var auditLogs = context.GetAuditLogs();
+
+                // Postavi izvor podataka za DataGrid
+                auditLogsGrid.ItemsSource = auditLogs;
+            }
+
+            // Otvori popup
+            popupExample.IsOpen = true;
+        }
+
+        private void ClosePopupBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // Zatvori popup
+            popupExample.IsOpen = false;
+        }
+
+
+
         private void DeleteUserBtn_Click(object sender, RoutedEventArgs e)
         {
             if (lstUsers.SelectedItem == null)
