@@ -67,7 +67,7 @@
                             <TextBlock Text="Audit Logs" FontSize="18" FontWeight="Bold" Foreground="#001f5b" HorizontalAlignment="Center" Margin="10"/>
                             <DataGrid x:Name="auditLogsGrid" AutoGenerateColumns="True" CanUserAddRows="False" Height="300" />
                             <Button Content="Zatvori" Click="ClosePopupBtn_Click" Width="100" Background="#001f5b" 
-                            Foreground="White" HorizontalAlignment="Center" Margin="10" materialDesign:ButtonAssist.CornerRadius="7"/>
+                            Foreground="White" HorizontalAlignment="Center" Margin="10" materialDesign:ButtonAssist.CornerRadius="10"/>
                         </StackPanel>
                     </Border>
                 </Popup>

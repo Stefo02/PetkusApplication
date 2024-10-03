@@ -25,13 +25,9 @@ namespace PetkusApplication.Views
         private Item selectedItem;
         private DispatcherTimer stockCheckTimer;
         private bool isNotificationShown = false;
-        private const string AppDataFolder = "PetkusApplication";
-        private const string DataFileName = "ComboBoxSelections.json";
-
 
         private Dictionary<string, string> tableMap = new Dictionary<string, string>
         {
-            // Table mapping remains the same
             { "d_se_bimetali", "Bimetali D SE " },
             { "d_se_dodatna_oprema", "Dodatna oprema D SE" },
             { "d_se_osiguraci", "Osigurači D SE" },
@@ -87,9 +83,6 @@ namespace PetkusApplication.Views
             dataGrid.ItemsSource = data;
             LoadTableComboBox();
             ApplyRowStyle();
-            LoadComboBoxSelections();
-
-            Application.Current.Exit += OnApplicationExit;
 
             stockCheckTimer = new DispatcherTimer
             {
@@ -99,6 +92,7 @@ namespace PetkusApplication.Views
             stockCheckTimer.Start(); // Pokreni timer
             CheckForLowStock();
         }
+
         private void MagacinView_Loaded(object sender, RoutedEventArgs e)
         {
             // Postavi "Svi podaci" kao selektovanu opciju
@@ -111,7 +105,6 @@ namespace PetkusApplication.Views
             CheckForLowStock();
         }
 
-
         private void LowStockList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (lowStockList.SelectedItem is Item selectedItem)
@@ -119,13 +112,6 @@ namespace PetkusApplication.Views
                 // Prekopiraj opis iz izabrane stavke u searchTextBox
                 searchTextBox.Text = selectedItem.Opis ?? string.Empty;
             }
-        }
-
-
-
-        private void OnApplicationExit(object sender, ExitEventArgs e)
-        {
-            SaveComboBoxSelections(); // Sačuvaj selekcije pre zatvaranja aplikacije
         }
 
         private void StockCheckTimer_Tick(object sender, EventArgs e)
@@ -145,7 +131,6 @@ namespace PetkusApplication.Views
             tableComboBox.ItemsSource = tableOptions;
 
         }
-
 
         private void ApplyRowStyle()
         {
@@ -193,8 +178,6 @@ namespace PetkusApplication.Views
             CheckForLowStock();
         }
 
-
-
         private DateTime lastWarningTime = DateTime.MinValue;
 
         private void CheckForLowStock()
@@ -216,8 +199,6 @@ namespace PetkusApplication.Views
                 isNotificationShown = false;
             }
         }
-
-
 
         private void NotificationBell_Click(object sender, RoutedEventArgs e)
         {
@@ -459,7 +440,7 @@ namespace PetkusApplication.Views
             {
                 return App.CurrentUser.Id;
             }
-            return 0;  // Return 0 if no user is logged in
+            return 0;
         }
 
         public string GetOldValues(Item oldItem, Item newItem)
@@ -567,7 +548,7 @@ namespace PetkusApplication.Views
             dimenzijeTextBox.Text = string.Empty;
             tezinaTextBox.Text = string.Empty;
             vrednostRabataTextBox.Text = string.Empty;
-            minKolicinaTextBox.Text = string.Empty; // Added clearing
+            minKolicinaTextBox.Text = string.Empty;
         }
 
         private void LoadData()
@@ -588,7 +569,6 @@ namespace PetkusApplication.Views
             dataGrid.ItemsSource = data;
             dataGrid.Items.Refresh();
         }
-
 
         private string GetTableNameFromComboBox()
         {
@@ -662,45 +642,6 @@ namespace PetkusApplication.Views
                 }
 
                 MessageBox.Show("Excel fajl je uspešno sačuvan.");
-            }
-        }
-
-        private string GetAppDataPath()
-        {
-            string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppDataFolder);
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-            return Path.Combine(folderPath, DataFileName);
-        }
-
-        private void SaveComboBoxSelections()
-        {
-            // Grupisanje po 'Id' i uzimanje prvog elementa iz svake grupe kako bi se izbegli duplikati
-            var selections = dataGrid.ItemsSource.Cast<Item>()
-                .GroupBy(item => item.Id)
-                .ToDictionary(group => group.Key, group => group.First().JedinicaMere);
-
-            string json = JsonSerializer.Serialize(selections);
-            File.WriteAllText(GetAppDataPath(), json);
-        }
-
-
-        private void LoadComboBoxSelections()
-        {
-            if (File.Exists(GetAppDataPath()))
-            {
-                string json = File.ReadAllText(GetAppDataPath());
-                var selections = JsonSerializer.Deserialize<Dictionary<int, string>>(json);
-
-                foreach (var item in dataGrid.ItemsSource.Cast<Item>())
-                {
-                    if (selections.ContainsKey(item.Id))
-                    {
-                        item.JedinicaMere = selections[item.Id];
-                    }
-                }
             }
         }
 
