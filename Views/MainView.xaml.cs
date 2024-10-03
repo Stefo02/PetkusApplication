@@ -19,6 +19,9 @@ namespace PetkusApplication.Views
             InitializeComponent();
             _currentUser = currentUser;
 
+            // Dodaj event handlere za praćenje aktivnosti
+            this.PreviewKeyDown += MainView_PreviewKeyDown;
+            this.PreviewMouseMove += MainView_PreviewMouseMove;
 
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
@@ -36,6 +39,25 @@ namespace PetkusApplication.Views
 
         public FormiranjePonudeView FormiranjePonudeView { get; set; }
         public MagacinView MagacinView { get; set; }
+
+        private void MainView_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            ResetSessionTimer(); // Resetuje tajmer kada korisnik koristi tastaturu
+        }
+
+        private void MainView_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ResetSessionTimer(); // Resetuje tajmer kada korisnik pomera miš
+        }
+
+        private void ResetSessionTimer()
+        {
+            // Zaustavi trenutni tajmer
+            sessionTimer.Stop();
+
+            // Ponovo startuj tajmer
+            sessionTimer.Start();
+        }
 
         private void StartSessionTimer()
         {

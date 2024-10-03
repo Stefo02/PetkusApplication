@@ -331,18 +331,53 @@ namespace PetkusApplication.Views
                 return;
             }
 
+            // Validacija unosa za Kolicina (int)
+            if (!int.TryParse(kolicinaTextBox.Text, out int kolicina))
+            {
+                MessageBox.Show("Uneta količina nije ispravna. Molimo unesite ceo broj.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Validacija unosa za Puna cena (decimal)
+            if (!decimal.TryParse(punaCenaTextBox.Text, out decimal punaCena))
+            {
+                MessageBox.Show("Uneta puna cena nije ispravna. Molimo unesite decimalan broj.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Validacija unosa za Tezina (decimal)
+            if (!decimal.TryParse(tezinaTextBox.Text, out decimal tezina))
+            {
+                MessageBox.Show("Uneta težina nije ispravna. Molimo unesite decimalan broj.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Validacija unosa za Vrednost rabata (decimal)
+            if (!decimal.TryParse(vrednostRabataTextBox.Text, out decimal vrednostRabata))
+            {
+                MessageBox.Show("Uneta vrednost rabata nije ispravna. Molimo unesite decimalan broj.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Validacija unosa za MinKolicina (int)
+            if (!int.TryParse(minKolicinaTextBox.Text, out int minKolicina))
+            {
+                MessageBox.Show("Uneta minimalna količina nije ispravna. Molimo unesite ceo broj.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             // Kreiranje novog Item-a
             var newItem = new Item
             {
                 Opis = opisTextBox.Text,
                 Proizvodjac = proizvodjacTextBox.Text,
                 Fabricki_kod = fabrickiKodTextBox.Text,
-                Kolicina = int.Parse(kolicinaTextBox.Text),
-                Puna_cena = decimal.Parse(punaCenaTextBox.Text),
+                Kolicina = kolicina,
+                Puna_cena = punaCena,
                 Dimenzije = dimenzijeTextBox.Text,
-                Tezina = decimal.Parse(tezinaTextBox.Text),
-                Vrednost_rabata = decimal.Parse(vrednostRabataTextBox.Text),
-                MinKolicina = int.Parse(minKolicinaTextBox.Text),
+                Tezina = tezina,
+                Vrednost_rabata = vrednostRabata,
+                MinKolicina = minKolicina,
 
                 // Ovde dodaj izabranu jedinicu mere
                 JedinicaMere = jedinicaMere  // Dodavanje jedinice mere
@@ -398,12 +433,63 @@ namespace PetkusApplication.Views
                 selectedItem.Opis = opisTextBox.Text;
                 selectedItem.Proizvodjac = proizvodjacTextBox.Text;
                 selectedItem.Fabricki_kod = fabrickiKodTextBox.Text;
-                selectedItem.Kolicina = int.Parse(kolicinaTextBox.Text);
-                selectedItem.Puna_cena = decimal.Parse(punaCenaTextBox.Text);
+
+                // Validacija unosa za Kolicina (int)
+                if (int.TryParse(kolicinaTextBox.Text, out int kolicina))
+                {
+                    selectedItem.Kolicina = kolicina;
+                }
+                else
+                {
+                    MessageBox.Show("Uneta količina nije ispravna. Molimo unesite ceo broj.");
+                    return;
+                }
+
+                // Validacija unosa za Puna cena (decimal)
+                if (decimal.TryParse(punaCenaTextBox.Text, out decimal punaCena))
+                {
+                    selectedItem.Puna_cena = punaCena;
+                }
+                else
+                {
+                    MessageBox.Show("Uneta puna cena nije ispravna. Molimo unesite decimalan broj.");
+                    return;
+                }
+
                 selectedItem.Dimenzije = dimenzijeTextBox.Text;
-                selectedItem.Tezina = decimal.Parse(tezinaTextBox.Text);
-                selectedItem.Vrednost_rabata = decimal.Parse(vrednostRabataTextBox.Text);
-                selectedItem.MinKolicina = int.Parse(minKolicinaTextBox.Text);
+
+                // Validacija unosa za Tezina (decimal)
+                if (decimal.TryParse(tezinaTextBox.Text, out decimal tezina))
+                {
+                    selectedItem.Tezina = tezina;
+                }
+                else
+                {
+                    MessageBox.Show("Uneta težina nije ispravna. Molimo unesite decimalan broj.");
+                    return;
+                }
+
+                // Validacija unosa za Vrednost rabata (decimal)
+                if (decimal.TryParse(vrednostRabataTextBox.Text, out decimal vrednostRabata))
+                {
+                    selectedItem.Vrednost_rabata = vrednostRabata;
+                }
+                else
+                {
+                    MessageBox.Show("Uneta vrednost rabata nije ispravna. Molimo unesite decimalan broj.");
+                    return;
+                }
+
+                // Validacija unosa za MinKolicina (int)
+                if (int.TryParse(minKolicinaTextBox.Text, out int minKolicina))
+                {
+                    selectedItem.MinKolicina = minKolicina;
+                }
+                else
+                {
+                    MessageBox.Show("Uneta minimalna količina nije ispravna. Molimo unesite ceo broj.");
+                    return;
+                }
 
                 // Preuzimanje vrednosti iz ComboBox-a
                 string jedinicaMere = (jedinicamereComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
@@ -413,8 +499,8 @@ namespace PetkusApplication.Views
                 }
 
                 string tableName = !string.IsNullOrEmpty(selectedItem.OriginalTable)
-            ? selectedItem.OriginalTable
-            : GetTableNameFromComboBox();
+                    ? selectedItem.OriginalTable
+                    : GetTableNameFromComboBox();
 
                 if (!string.IsNullOrEmpty(tableName))
                 {
@@ -433,7 +519,6 @@ namespace PetkusApplication.Views
                     var oldValues = GetOldValues(oldData, selectedItem);  // Samo stare vrednosti
                     var newValues = GetNewValues(oldData, selectedItem);  // Samo nove vrednosti
 
-                    // Kreirajte audit log zapis
                     var auditLog = new AuditLog
                     {
                         UserId = currentUserId,  // Ovaj parametar je korisnički ID
@@ -446,7 +531,6 @@ namespace PetkusApplication.Views
                         Username = username
                     };
 
-                    // Sačuvajte audit log
                     dbContext.SaveAuditLog(auditLog);
 
                     ClearTextBoxes();
