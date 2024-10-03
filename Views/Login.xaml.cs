@@ -31,20 +31,33 @@ namespace PetkusApplication.Views
 
             if (user != null)
             {
-                if (!user.IsAdmin)
-                {
-                    user.LastLogin = DateTime.Now;
+                // Provera da li ima više od 200 sesija
+                var sessionCount = _context.UserSessions.Count();
 
-                    // Dodajemo sesiju samo ako korisnik nije administrator
-                    var session = new UserSession
-                    {
-                        UserId = user.Id,
-                        LoginTime = DateTime.Now,
-                        IsActive = true,
-                        Username = user.Username // Dodaj ovo
-                    };
-                    _context.UserSessions.Add(session);
+                if (sessionCount > 200)
+                {
+                    // Pronalaženje najstarijih 20 sesija i brisanje
+                    var sessionsToDelete = _context.UserSessions
+                        .OrderBy(s => s.LoginTime)
+                        .Take(20)  // Uvek brišemo prvih 20 najstarijih sesija
+                        .ToList();
+
+                    // Brisanje najstarijih sesija
+                    _context.UserSessions.RemoveRange(sessionsToDelete);
                 }
+
+                // Ažuriraj poslednju prijavu za korisnika
+                user.LastLogin = DateTime.Now;
+
+                // Dodajemo sesiju za sve korisnike (uključujući administratore)
+                var session = new UserSession
+                {
+                    UserId = user.Id,
+                    LoginTime = DateTime.Now,
+                    IsActive = true,
+                    Username = user.Username
+                };
+                _context.UserSessions.Add(session);
 
                 user.IsLoggedIn = true;
                 _context.SaveChanges();
