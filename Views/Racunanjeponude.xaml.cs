@@ -360,6 +360,18 @@ namespace PetkusApplication.Views
             }
         }
 
+        private void ShowPriceButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Izračunaj ukupnu cenu sabiranjem svih vrednosti iz kolone "Puna cena" pomnožene sa "KolicinaZaNarucivanje"
+            decimal totalPrice = selectedItems.Sum(item => item.Puna_cena * item.KolicinaZaNarucivanje);
+
+            // Ažuriraj tekst u popup-u
+            PriceTextBlock.Text = $"Formirana cena: {totalPrice} EUR";
+
+            // Prikaži popup
+            PricePopup.IsOpen = true;
+        }
+
         private void GenerateExcelFile(List<PonudaItem> items)
         {
             // Postavite licencni kontekst

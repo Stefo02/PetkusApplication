@@ -64,6 +64,18 @@
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,10">
                     <Button Content="Formiraj ponudu" Click="GenerateExcel_Click" Margin="25,0,10,0" Width="157" Background="#001f5b"/>
                     <Button Content="Potvrdi ponudu" Click="UpdateAndExport_Click" Width="157" Background="#001f5b"/>
+                    <Button Name="ShowPriceButton" Click="ShowPriceButton_Click" Width="80" Height="80" Margin="20" Background="Transparent" BorderThickness="0">
+                        <Image Source="Images/save-money.png" Stretch="Uniform"/>
+                    </Button>
+
+
+
+                    <!-- Popup koji se pojavljuje kada se klikne dugme -->
+                    <Popup Name="PricePopup" Placement="Bottom" StaysOpen="False" PlacementTarget="{Binding ElementName=ShowPriceButton}">
+                        <Border Background="White" BorderBrush="Black" BorderThickness="1" Padding="10">
+                            <TextBlock Name="PriceTextBlock" Text="Formirana cena: 0 RSD" FontSize="16" FontWeight="Bold"/>
+                        </Border>
+                    </Popup>
                 </StackPanel>
             </Grid>
         </Border>

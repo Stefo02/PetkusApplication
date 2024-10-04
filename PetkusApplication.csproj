@@ -27,6 +27,7 @@
     <None Remove="Views\Images\petkus-removebg-previeww.png" />
     <None Remove="Views\Images\petkus.png" />
     <None Remove="Views\Images\pozadina3.jpg" />
+    <None Remove="Views\Images\save-money.png" />
     <None Remove="Views\Images\Search.png" />
     <None Remove="Views\Images\Untitled.jpg" />
     <None Remove="Views\Images\Untitled.png" />
@@ -58,6 +59,7 @@
     <Resource Include="Views\Images\petkus-removebg-previeww.png" />
     <Resource Include="Views\Images\petkus.png" />
     <Resource Include="Views\Images\pozadina3.jpg" />
+    <Resource Include="Views\Images\save-money.png" />
     <Resource Include="Views\Images\Search.png" />
     <Resource Include="Views\Images\Untitled.jpg" />
   </ItemGroup>
