@@ -65,22 +65,6 @@ namespace PetkusApplication.Views
             }
         }
 
-        // Metoda za dodavanje novih stavki u već otvoren prozor
-        public void DodajNoveStavke(List<PonudaItem> noveStavke)
-        {
-            foreach (var stavka in noveStavke)
-            {
-                // Proveri da li je stavka već dodana kako bi se izbeglo dupliranje
-                if (!PonudaItems.Any(p => p.Fabricki_kod == stavka.Fabricki_kod))
-                {
-                    PonudaItems.Add(stavka); // Dodaj novu stavku u kolekciju samo ako ne postoji
-                }
-            }
-
-            // Osvježi prikaz u DataGrid-u (ako postoji)
-            SelectedItemsDataGrid.Items.Refresh();
-        }
-
         private void UpdateAndExport_Click(object sender, RoutedEventArgs e)
         {
             var selectedNacinPokretanja = _formiranjePonudeView.comboBox1.SelectedItem as ComboBoxItem;
@@ -170,10 +154,10 @@ namespace PetkusApplication.Views
         {
             using (var command = new MySqlCommand($@"
         SELECT COUNT(*)
-        FROM INFORMATION_SCHEMA.COLUMNS
-        WHERE TABLE_NAME = @TableName
-        AND COLUMN_NAME = 'Fabricki_kod'
-        AND TABLE_SCHEMA = 'myappdb';", connection))
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_NAME = @TableName
+                AND COLUMN_NAME = 'Fabricki_kod'
+                AND TABLE_SCHEMA = 'myappdb';", connection))
             {
                 command.Parameters.AddWithValue("@TableName", tableName);
                 return Convert.ToInt32(command.ExecuteScalar()) > 0;
@@ -183,11 +167,11 @@ namespace PetkusApplication.Views
         private bool TableContainsKolicina(string tableName)
         {
             using (var command = new MySqlCommand($@"
-        SELECT COUNT(*)
-        FROM INFORMATION_SCHEMA.COLUMNS
-        WHERE TABLE_NAME = @TableName
-        AND COLUMN_NAME = 'Kolicina'
-        AND TABLE_SCHEMA = 'myappdb';", connection))
+            SELECT COUNT(*)
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = @TableName
+                    AND COLUMN_NAME = 'Kolicina'
+                    AND TABLE_SCHEMA = 'myappdb';", connection))
             {
                 command.Parameters.AddWithValue("@TableName", tableName);
                 return Convert.ToInt32(command.ExecuteScalar()) > 0;
@@ -201,11 +185,11 @@ namespace PetkusApplication.Views
 
             // Pronađi sve tabele koje imaju kolonu 'Fabricki_kod', osim 'FabrickiKodovi'
             using (var command = new MySqlCommand(@"
-        SELECT TABLE_NAME
-        FROM INFORMATION_SCHEMA.COLUMNS
-        WHERE COLUMN_NAME = 'Fabricki_kod'
-        AND TABLE_SCHEMA = 'myappdb'
-        AND TABLE_NAME != 'FabrickiKodovi';", connection))
+                SELECT TABLE_NAME
+                    FROM INFORMATION_SCHEMA.COLUMNS
+                    WHERE COLUMN_NAME = 'Fabricki_kod'
+                        AND TABLE_SCHEMA = 'myappdb'
+                        AND TABLE_NAME != 'FabrickiKodovi';", connection))
             {
                 using (var reader = command.ExecuteReader())
                 {
@@ -234,45 +218,6 @@ namespace PetkusApplication.Views
             {
                 command.Parameters.AddWithValue("@Fabricki_kod", fabrickiKod);
                 return Convert.ToInt32(command.ExecuteScalar()) > 0;
-            }
-        }
-
-        private void UpdateDatabase(List<PonudaItem> items, int brojKomada)
-        {
-            // Retrieve all table names from the database
-            var tablesToUpdate = GetAllTableNames();
-
-            foreach (var item in items)
-            {
-                item.Kolicina = brojKomada;
-                bool updated = false;
-
-                foreach (var table in tablesToUpdate)
-                {
-                    // Check if the table contains the 'Fabricki_kod' column and 'Kolicina' column
-                    if (TableContainsFabrickiKod(table, item.Fabricki_kod) && TableContainsColumn(table, "Kolicina"))
-                    {
-                        // Retrieve the current quantity
-                        int currentQuantity = GetCurrentQuantity(table, item.Fabricki_kod);
-
-                        // Calculate the new quantity
-                        int newQuantity = currentQuantity + brojKomada;
-
-                        using (var command = new MySqlCommand($"UPDATE {table} SET Kolicina = @Kolicina WHERE Fabricki_kod = @Fabricki_kod", connection))
-                        {
-                            command.Parameters.AddWithValue("@Kolicina", newQuantity);
-                            command.Parameters.AddWithValue("@Fabricki_kod", item.Fabricki_kod);
-                            command.ExecuteNonQuery();
-                            updated = true;
-                            break; // If updated, break out of the loop
-                        }
-                    }
-                }
-
-                if (!updated)
-                {
-                    MessageBox.Show($"Fabrički kod {item.Fabricki_kod} nije pronađen ili kolona 'Količina' nedostaje u nekoj od tabela.", "Upozorenje", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
             }
         }
 
@@ -376,6 +321,9 @@ namespace PetkusApplication.Views
 
         private void GenerateExcelFile(List<PonudaItem> items)
         {
+            // Preračunaj totalPrice pre generisanja Excel fajla
+            totalPrice = items.Sum(item => item.Puna_cena * item.KolicinaZaNarucivanje);
+
             // Postavite licencni kontekst
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -424,6 +372,9 @@ namespace PetkusApplication.Views
                 // Postavite ukupnu cenu ispod poslednjeg reda
                 worksheet.Cells[row + 1, 1].Value = "Ukupna cena"; // Oznaka u prvom stupcu
                 worksheet.Cells[row + 1, 2].Value = totalPrice; // Ukupna cena u sledećem stupcu
+
+                // Automatski prilagodi širinu svih kolona
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 
                 // Sačuvaj Excel fajl
                 SaveFileDialog saveFileDialog = new SaveFileDialog
