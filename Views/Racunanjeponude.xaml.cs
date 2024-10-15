@@ -19,6 +19,8 @@ namespace PetkusApplication.Views
         private List<PonudaItem> selectedItems;
         public ObservableCollection<PonudaItem> PonudaItems { get; set; }
 
+        private decimal totalPrice;
+
         public Racunanjeponude(FormiranjePonudeView parent, List<PonudaItem> selectedItems)
         {
             InitializeComponent();
@@ -363,7 +365,7 @@ namespace PetkusApplication.Views
         private void ShowPriceButton_Click(object sender, RoutedEventArgs e)
         {
             // Izračunaj ukupnu cenu sabiranjem svih vrednosti iz kolone "Puna cena" pomnožene sa "KolicinaZaNarucivanje"
-            decimal totalPrice = selectedItems.Sum(item => item.Puna_cena * item.KolicinaZaNarucivanje);
+            totalPrice = selectedItems.Sum(item => item.Puna_cena * item.KolicinaZaNarucivanje);
 
             // Ažuriraj tekst u popup-u
             PriceTextBlock.Text = $"Formirana cena: {totalPrice} EUR";
@@ -418,6 +420,10 @@ namespace PetkusApplication.Views
 
                     row++;
                 }
+
+                // Postavite ukupnu cenu ispod poslednjeg reda
+                worksheet.Cells[row + 1, 1].Value = "Ukupna cena"; // Oznaka u prvom stupcu
+                worksheet.Cells[row + 1, 2].Value = totalPrice; // Ukupna cena u sledećem stupcu
 
                 // Sačuvaj Excel fajl
                 SaveFileDialog saveFileDialog = new SaveFileDialog

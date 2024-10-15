@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Microsoft.EntityFrameworkCore;
 using PetkusApplication.Data;
 using PetkusApplication.Models;
@@ -46,29 +47,47 @@ namespace PetkusApplication.Views
                     _context.UserSessions.RemoveRange(sessionsToDelete);
                 }
 
-                // Ažuriraj poslednju prijavu za korisnika
+                // Ažuriraj poslednju prijavu i stanje korisnika
                 user.LastLogin = DateTime.Now;
-
-                // Dodajemo sesiju za sve korisnike (uključujući administratore)
-                var session = new UserSession
-                {
-                    UserId = user.Id,
-                    LoginTime = DateTime.Now,
-                    IsActive = true,
-                    Username = user.Username
-                };
-                _context.UserSessions.Add(session);
-
                 user.IsLoggedIn = true;
                 _context.SaveChanges();
 
-                // Set _currentUser to the logged-in user
-                App.CurrentUser = user;
+                // Prikaži loading animaciju
+                LoadingWindow loadingWindow = new LoadingWindow();
+                loadingWindow.Show();
 
-                // Open the appropriate window
-                Window targetWindow = user.IsAdmin ? new AdminWindow() : new MainView(user);
-                targetWindow.Show();
-                this.Close();
+                // Pokretanje tajmera za 3 sekunde
+                DispatcherTimer timer = new DispatcherTimer();
+                timer.Interval = TimeSpan.FromSeconds(5);
+                timer.Tick += (s, args) =>
+                {
+                    timer.Stop();
+                    loadingWindow.Close();
+
+                    // Dodajemo sesiju samo za obične korisnike
+                    if (!user.IsAdmin)
+                    {
+                        var session = new UserSession
+                        {
+                            UserId = user.Id,
+                            LoginTime = DateTime.Now,
+                            IsActive = true,
+                            Username = user.Username
+                        };
+                        _context.UserSessions.Add(session);
+                    }
+
+                    _context.SaveChanges();
+
+                    // Set _currentUser to the logged-in user
+                    App.CurrentUser = user;
+
+                    // Otvori sledeći prozor nakon što se loading završi
+                    Window targetWindow = user.IsAdmin ? new AdminWindow() : new MainView(user);
+                    targetWindow.Show();
+                    this.Close();  // Zatvori login prozor
+                };
+                timer.Start();
             }
             else
             {
