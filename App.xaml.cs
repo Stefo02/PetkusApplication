@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Net.Http;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using PetkusApplication.Data; // Update with the correct namespace
 using PetkusApplication.Models; // Update with the correct namespace if needed
+using Squirrel;
 
 namespace PetkusApplication
 {
@@ -16,7 +18,7 @@ namespace PetkusApplication
         }
         private static DbContextOptions<AppDbContext> _dbContextOptions;
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             // Initialize DbContextOptions here
@@ -25,8 +27,28 @@ namespace PetkusApplication
                 .UseMySql("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;", serverVersion)
                 .Options;
 
+            await CheckForUpdates();
+
             // Initialize session or other startup logic here
             // Example: _currentUser = userService.GetCurrentUser();
+        }
+
+        private async Task CheckForUpdates()
+        {
+            string token = "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"; // Your Personal Access Token
+            string repositoryUrl = $"https://{token}:x-oauth-basic@github.com/Stefo02/PetkusApplication/releases";
+
+            try
+            {
+                using (var mgr = await UpdateManager.GitHubUpdateManager(repositoryUrl))
+                {
+                    await mgr.UpdateApp();
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                MessageBox.Show($"Update check failed: {ex.Message}", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         protected override void OnExit(ExitEventArgs e)
