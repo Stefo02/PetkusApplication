@@ -12,7 +12,7 @@ namespace PetkusApplication.Views
         private const int numberOfCircles = 8; // Broj elipsi
         private const double circleRadius = 15; // Poluprečnik elipse
         private const double animationRadius = 50; // Poluprečnik kruga
-        private const double rotationSpeed = 4; // Brzina rotacije
+        private const double rotationSpeed = 3; // Brzina rotacije
         private double angle = 0; // Početni ugao
 
         public LoadingWindow()

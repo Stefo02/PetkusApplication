@@ -65,7 +65,7 @@
             <!-- Popup za obaveštenja o zalihama -->
             <!-- Popup za obaveštenja o zalihama -->
             <Popup Name="notificationPopup" PlacementTarget="{Binding ElementName=notificationBell}" 
-       Placement="Top" StaysOpen="False" AllowsTransparency="True" >
+       Placement="Top" StaysOpen="False" AllowsTransparency="True" Width="550">
                 <Border BorderBrush="Gray" BorderThickness="1" Background="White" CornerRadius="5" Padding="10">
                     <StackPanel>
                         <TextBlock Text="Obaveštenja o niskim zalihama:" FontWeight="Bold" Margin="0,0,20,20"/>
@@ -74,8 +74,8 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Opis}" Width="150"/>
-                                        <Border Width="1" Background="Gray" Margin="5,0" />
+                                        <TextBlock Text="{Binding Opis}" Width="350"/>
+                                        <Border Width="1" Background="Gray" Margin="55,0" />
                                         <!-- Ova linija razdvaja -->
                                         <TextBlock Text="{Binding Kolicina}" Width="50"/>
                                     </StackPanel>
@@ -141,9 +141,9 @@
                     <DataGridTextColumn Header="Jedinica Mere" Binding="{Binding JedinicaMere}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Min količina" Binding="{Binding MinKolicina}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}" Width="*" Foreground="#001f5b"/>
-                    <DataGridTextColumn Header="Dimenzije" Binding="{Binding Dimenzije}" Width="*" Foreground="#001f5b"/>
-                    <DataGridTextColumn Header="Težina" Binding="{Binding Tezina}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Dimenzije (Š, V, D)" Binding="{Binding Dimenzije}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Težina" Binding="{Binding Tezina}" Width="*" Foreground="#001f5b"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
