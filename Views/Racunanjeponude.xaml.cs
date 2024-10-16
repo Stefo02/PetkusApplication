@@ -20,6 +20,8 @@ namespace PetkusApplication.Views
         public ObservableCollection<PonudaItem> PonudaItems { get; set; }
 
         private decimal totalPrice;
+        private decimal totalDissipation;
+        private decimal totalWeight;
 
         public Racunanjeponude(FormiranjePonudeView parent, List<PonudaItem> selectedItems)
         {
@@ -311,9 +313,11 @@ namespace PetkusApplication.Views
         {
             // Izračunaj ukupnu cenu sabiranjem svih vrednosti iz kolone "Puna cena" pomnožene sa "KolicinaZaNarucivanje"
             totalPrice = selectedItems.Sum(item => item.Puna_cena * item.KolicinaZaNarucivanje);
+            totalDissipation = selectedItems.Sum(item => item.Disipacija * item.KolicinaZaNarucivanje);
+            totalWeight = selectedItems.Sum(item => item.Tezina * item.KolicinaZaNarucivanje);
 
             // Ažuriraj tekst u popup-u
-            PriceTextBlock.Text = $"Formirana cena: {totalPrice} EUR";
+            PriceTextBlock.Text = $"Formirana cena: {totalPrice} EUR\nUkupna disipacija: {totalDissipation} W\nUkupna težina: {totalWeight} kg";
 
             // Prikaži popup
             PricePopup.IsOpen = true;
@@ -372,6 +376,13 @@ namespace PetkusApplication.Views
                 // Postavite ukupnu cenu ispod poslednjeg reda
                 worksheet.Cells[row + 1, 1].Value = "Ukupna cena"; // Oznaka u prvom stupcu
                 worksheet.Cells[row + 1, 2].Value = totalPrice; // Ukupna cena u sledećem stupcu
+                                                                // Place total dissipation and weight below the last row
+                worksheet.Cells[row + 2, 1].Value = "Ukupna disipacija";
+                worksheet.Cells[row + 2, 2].Value = totalDissipation;
+
+                worksheet.Cells[row + 3, 1].Value = "Ukupna težina";
+                worksheet.Cells[row + 3, 2].Value = totalWeight;
+
 
                 // Automatski prilagodi širinu svih kolona
                 worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
