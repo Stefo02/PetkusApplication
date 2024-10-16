@@ -25,7 +25,7 @@ namespace PetkusApplication.Views
 
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
-            optionsBuilder.UseMySql("Server=localhost;Database=myappdb;Uid=root;Pwd=;", serverVersion);
+            optionsBuilder.UseMySql("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;", serverVersion);
             _context = new AppDbContext(optionsBuilder.Options);
 
             this.DataContext = this;
@@ -72,7 +72,7 @@ namespace PetkusApplication.Views
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
-            optionsBuilder.UseMySql("Server=localhost;Database=myappdb;Uid=root;Pwd=;", serverVersion);
+            optionsBuilder.UseMySql("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;", serverVersion);
 
             using (var context = new AppDbContext(optionsBuilder.Options))
             {

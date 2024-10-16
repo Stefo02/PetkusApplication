@@ -75,7 +75,7 @@ namespace PetkusApplication.Views
         {
             InitializeComponent();
             dbContext = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>()
-                .UseMySql("server=localhost;database=myappdb;user=root;password=;", new MySqlServerVersion(new Version(10, 4, 32)))
+                .UseMySql("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;", new MySqlServerVersion(new Version(10, 4, 32)))
                 .Options); // Initialize AppDbContext with options
 
             data = new List<Item>();  // Inicijalizacija liste pre upotrebe

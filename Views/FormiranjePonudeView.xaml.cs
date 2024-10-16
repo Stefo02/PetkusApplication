@@ -54,7 +54,7 @@ namespace PetkusApplication.Views
 
         private void InitializeDatabaseConnection()
         {
-            string connectionString = "server=localhost;database=myappdb;user=root;password=;";
+            string connectionString = "Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;";
             connection = new MySqlConnection(connectionString);
             connection.Open();
         }

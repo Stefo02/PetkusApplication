@@ -22,7 +22,7 @@ namespace PetkusApplication
             // Initialize DbContextOptions here
             var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
             _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
-                .UseMySql("Server=localhost;Database=myappdb;Uid=root;Pwd=;", serverVersion)
+                .UseMySql("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;", serverVersion)
                 .Options;
 
             // Initialize session or other startup logic here
