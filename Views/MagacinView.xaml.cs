@@ -284,6 +284,7 @@ namespace PetkusApplication.Views
                     punaCenaTextBox.Text = selectedItem.Puna_cena.ToString();
                     dimenzijeTextBox.Text = selectedItem.Dimenzije ?? string.Empty;
                     tezinaTextBox.Text = selectedItem.Tezina.ToString();
+                    disipacijaTextBox.Text = selectedItem.Disipacija.ToString();
                     vrednostRabataTextBox.Text = selectedItem.Vrednost_rabata.ToString();
                     minKolicinaTextBox.Text = selectedItem.MinKolicina.ToString();
                     jedinicamereComboBox.Text = selectedItem.JedinicaMere.ToString();
@@ -352,6 +353,13 @@ namespace PetkusApplication.Views
                 return;
             }
 
+            // Validacija unosa za Tezina (decimal)
+            if (!decimal.TryParse(disipacijaTextBox.Text, out decimal disipacija))
+            {
+                MessageBox.Show("Uneta disipacija nije ispravna. Molimo unesite decimalan broj.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             // Validacija unosa za Vrednost rabata (decimal)
             if (!decimal.TryParse(vrednostRabataTextBox.Text, out decimal vrednostRabata))
             {
@@ -376,8 +384,10 @@ namespace PetkusApplication.Views
                 Puna_cena = punaCena,
                 Dimenzije = dimenzijeTextBox.Text,
                 Tezina = tezina,
+                Disipacija = disipacija,
                 Vrednost_rabata = vrednostRabata,
                 MinKolicina = minKolicina,
+
 
                 // Ovde dodaj izabranu jedinicu mere
                 JedinicaMere = jedinicaMere  // Dodavanje jedinice mere
@@ -468,6 +478,18 @@ namespace PetkusApplication.Views
                     MessageBox.Show("Uneta težina nije ispravna. Molimo unesite decimalan broj.");
                     return;
                 }
+
+                // Validacija unosa za Disipacija (decimal)
+                if (decimal.TryParse(disipacijaTextBox.Text, out decimal disipacija))
+                {
+                    selectedItem.Disipacija = disipacija;
+                }
+                else
+                {
+                    MessageBox.Show("Uneta disipacija nije ispravna. Molimo unesite decimalan broj.");
+                    return;
+                }
+
 
                 // Validacija unosa za Vrednost rabata (decimal)
                 if (decimal.TryParse(vrednostRabataTextBox.Text, out decimal vrednostRabata))
@@ -582,6 +604,9 @@ namespace PetkusApplication.Views
             if (oldItem.Tezina != newItem.Tezina)
                 oldValues.Add(nameof(oldItem.Tezina), oldItem.Tezina);
 
+            if (oldItem.Disipacija != newItem.Disipacija)
+                oldValues.Add(nameof(oldItem.Disipacija), oldItem.Disipacija);
+
             if (oldItem.Vrednost_rabata != newItem.Vrednost_rabata)
                 oldValues.Add(nameof(oldItem.Vrednost_rabata), oldItem.Vrednost_rabata);
 
@@ -619,6 +644,9 @@ namespace PetkusApplication.Views
 
             if (oldItem.Tezina != newItem.Tezina)
                 newValues.Add(nameof(newItem.Tezina), newItem.Tezina);
+
+            if (oldItem.Disipacija != newItem.Disipacija)
+                newValues.Add(nameof(newItem.Disipacija), newItem.Disipacija);
 
             if (oldItem.Vrednost_rabata != newItem.Vrednost_rabata)
                 newValues.Add(nameof(newItem.Vrednost_rabata), newItem.Vrednost_rabata);
@@ -683,6 +711,7 @@ namespace PetkusApplication.Views
             punaCenaTextBox.Text = string.Empty;
             dimenzijeTextBox.Text = string.Empty;
             tezinaTextBox.Text = string.Empty;
+            disipacijaTextBox.Text = string.Empty;
             vrednostRabataTextBox.Text = string.Empty;
             minKolicinaTextBox.Text = string.Empty;
             jedinicamereComboBox.Text = string.Empty;
@@ -755,9 +784,10 @@ namespace PetkusApplication.Views
                     worksheet.Cell(1, 5).Value = "Puna cena";
                     worksheet.Cell(1, 6).Value = "Dimenzije";
                     worksheet.Cell(1, 7).Value = "Tezina";
-                    worksheet.Cell(1, 8).Value = "Vrednost rabata";
-                    worksheet.Cell(1, 9).Value = "Min Kolicina";
-                    worksheet.Cell(1, 10).Value = "Kolicina za narucivanje";
+                    worksheet.Cell(1, 8).Value = "Disipacija";
+                    worksheet.Cell(1, 9).Value = "Vrednost rabata";
+                    worksheet.Cell(1, 10).Value = "Min Kolicina";
+                    worksheet.Cell(1, 11).Value = "Kolicina za narucivanje";
 
                     // Add data rows
                     for (int i = 0; i < selectedItems.Count; i++)
@@ -770,8 +800,9 @@ namespace PetkusApplication.Views
                         worksheet.Cell(i + 2, 5).Value = item.Puna_cena;
                         worksheet.Cell(i + 2, 6).Value = item.Dimenzije;
                         worksheet.Cell(i + 2, 7).Value = item.Tezina;
-                        worksheet.Cell(i + 2, 8).Value = item.Vrednost_rabata;
-                        worksheet.Cell(i + 2, 9).Value = item.MinKolicina;
+                        worksheet.Cell(i + 2, 8).Value = item.Disipacija;
+                        worksheet.Cell(i + 2, 9).Value = item.Vrednost_rabata;
+                        worksheet.Cell(i + 2, 10).Value = item.MinKolicina;
                     }
 
                     // Save the workbook

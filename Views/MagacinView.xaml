@@ -143,6 +143,7 @@
                     <DataGridTextColumn Header="Puna cena" Binding="{Binding Puna_cena}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Vrednost rabata" Binding="{Binding Vrednost_rabata}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Dimenzije (Š, V, D)" Binding="{Binding Dimenzije}" Width="*" Foreground="#001f5b"/>
+                    <DataGridTextColumn Header="Disipacija" Binding="{Binding Disipacija}" Width="*" Foreground="#001f5b"/>
                     <DataGridTextColumn Header="Težina" Binding="{Binding Tezina}" Width="*" Foreground="#001f5b"/>
                 </DataGrid.Columns>
             </DataGrid>
@@ -193,20 +194,26 @@
          materialDesign:HintAssist.Hint="Puna cena"
          Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
 
+            <TextBox x:Name="vrednostRabataTextBox" Width="120" Height="50" Margin="5" Background="White"
+           BorderThickness="2"
+        materialDesign:HintAssist.Hint="Vrednost rabata"
+        Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
             <TextBox x:Name="dimenzijeTextBox" Width="90" Height="50" Margin="5" Background="White"
          BorderThickness="2"
          materialDesign:HintAssist.Hint="Dimenzije"
          Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
 
-            <TextBox x:Name="tezinaTextBox" Width="70" Height="50" Margin="5" Background="White"
-         BorderThickness="2"
-         materialDesign:HintAssist.Hint="Težina"
-         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+            <TextBox x:Name="disipacijaTextBox" Width="90" Height="50" Margin="5" Background="White"
+        BorderThickness="2"
+        materialDesign:HintAssist.Hint="Disipacija"
+        Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
 
-            <TextBox x:Name="vrednostRabataTextBox" Width="120" Height="50" Margin="5" Background="White"
-         BorderThickness="2"
-         materialDesign:HintAssist.Hint="Vrednost rabata"
-         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+            <TextBox x:Name="tezinaTextBox" Width="70" Height="50" Margin="5" Background="White"
+            BorderThickness="2"
+            materialDesign:HintAssist.Hint="Težina"
+            Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
 
             <Button Width="63" Height="40" Margin="5" Click="AddButton_Click" Background="Transparent" BorderThickness="0">
                 <Image Source="Images/Add.png" Width="30" Height="30"/>

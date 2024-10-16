@@ -182,7 +182,7 @@ namespace PetkusApplication.Data
             {
                 connection.Open();
                 string query = $@"
-    SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina, JedinicaMere
+    SELECT Id, Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina, JedinicaMere, Disipacija
     FROM `{tableName}`";
 
                 using (var command = new MySqlCommand(query, connection))
@@ -201,6 +201,7 @@ namespace PetkusApplication.Data
                                 Puna_cena = reader.IsDBNull(reader.GetOrdinal("Puna_cena")) ? 0 : reader.GetDecimal("Puna_cena"),
                                 Dimenzije = reader.IsDBNull(reader.GetOrdinal("Dimenzije")) ? string.Empty : reader.GetString("Dimenzije"),
                                 Tezina = reader.IsDBNull(reader.GetOrdinal("Tezina")) ? 0 : reader.GetDecimal("Tezina"),
+                                Disipacija = reader.IsDBNull(reader.GetOrdinal("Disipacija")) ? 0 : reader.GetDecimal("Disipacija"),
                                 Vrednost_rabata = reader.IsDBNull(reader.GetOrdinal("Vrednost_rabata")) ? 0 : reader.GetDecimal("Vrednost_rabata"),
                                 MinKolicina = reader.IsDBNull(reader.GetOrdinal("Min_Kolicina")) ? 0 : reader.GetInt32("Min_Kolicina"),
                                 JedinicaMere = reader.IsDBNull(reader.GetOrdinal("JedinicaMere")) ? string.Empty : reader.GetString("JedinicaMere"),  // Dodaj čitanje JedinicaMere
@@ -281,10 +282,10 @@ namespace PetkusApplication.Data
                 connection.Open();
 
                 string query = $@"
-INSERT INTO `{tableName}` (Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina, JedinicaMere)
-VALUES (@Opis, @Proizvodjac, @Fabricki_kod, @Kolicina, @Puna_cena, @Dimenzije, @Tezina, @Vrednost_rabata, @Min_Kolicina, @JedinicaMere)";
-
-                using (var cmd = new MySqlCommand(query, connection))
+        INSERT INTO `{tableName}` (Opis, Proizvodjac, Fabricki_kod, Kolicina, Puna_cena, Dimenzije, Tezina, Vrednost_rabata, Min_Kolicina, JedinicaMere, Disipacija)  
+        VALUES (@Opis, @Proizvodjac, @Fabricki_kod, @Kolicina, @Puna_cena, @Dimenzije, @Tezina, @Vrednost_rabata, @Min_Kolicina, @JedinicaMere, @Disipacija)";
+        
+        using (var cmd = new MySqlCommand(query, connection))
                 {
                     cmd.Parameters.AddWithValue("@Opis", item.Opis);
                     cmd.Parameters.AddWithValue("@Proizvodjac", item.Proizvodjac);
@@ -295,12 +296,14 @@ VALUES (@Opis, @Proizvodjac, @Fabricki_kod, @Kolicina, @Puna_cena, @Dimenzije, @
                     cmd.Parameters.AddWithValue("@Tezina", item.Tezina);
                     cmd.Parameters.AddWithValue("@Vrednost_rabata", item.Vrednost_rabata);
                     cmd.Parameters.AddWithValue("@Min_Kolicina", item.MinKolicina);
-                    cmd.Parameters.AddWithValue("@JedinicaMere", item.JedinicaMere);  // Postavi vrednost JedinicaMere
+                    cmd.Parameters.AddWithValue("@JedinicaMere", item.JedinicaMere);
+                    cmd.Parameters.AddWithValue("@Disipacija", item.Disipacija);  // Ensure this is included
 
                     cmd.ExecuteNonQuery();
                 }
             }
         }
+
 
 
         // Method to update an item in a table
@@ -311,18 +314,19 @@ VALUES (@Opis, @Proizvodjac, @Fabricki_kod, @Kolicina, @Puna_cena, @Dimenzije, @
                 connection.Open();
 
                 string query = $@"
-UPDATE `{tableName}` SET 
-Opis = @Opis, 
-Proizvodjac = @Proizvodjac, 
-Fabricki_kod = @Fabricki_kod, 
-Kolicina = @Kolicina, 
-Puna_cena = @Puna_cena, 
-Dimenzije = @Dimenzije, 
-Tezina = @Tezina, 
-Vrednost_rabata = @Vrednost_rabata,
-Min_Kolicina = @Min_Kolicina,
-JedinicaMere = @JedinicaMere  -- Uklonjen backtick
-WHERE Id = @Id";
+        UPDATE `{tableName}` SET 
+        Opis = @Opis, 
+        Proizvodjac = @Proizvodjac, 
+        Fabricki_kod = @Fabricki_kod, 
+        Kolicina = @Kolicina, 
+        Puna_cena = @Puna_cena, 
+        Dimenzije = @Dimenzije, 
+        Tezina = @Tezina, 
+        Vrednost_rabata = @Vrednost_rabata,
+        Min_Kolicina = @Min_Kolicina,
+        JedinicaMere = @JedinicaMere,  -- Add the missing comma here
+        Disipacija = @Disipacija
+        WHERE Id = @Id";
 
                 using (var cmd = new MySqlCommand(query, connection))
                 {
@@ -335,7 +339,8 @@ WHERE Id = @Id";
                     cmd.Parameters.AddWithValue("@Tezina", item.Tezina);
                     cmd.Parameters.AddWithValue("@Vrednost_rabata", item.Vrednost_rabata);
                     cmd.Parameters.AddWithValue("@Min_Kolicina", item.MinKolicina);
-                    cmd.Parameters.AddWithValue("@JedinicaMere", item.JedinicaMere);  // Ažuriraj JedinicaMere
+                    cmd.Parameters.AddWithValue("@JedinicaMere", item.JedinicaMere);
+                    cmd.Parameters.AddWithValue("@Disipacija", item.Disipacija);
                     cmd.Parameters.AddWithValue("@Id", item.Id);
 
                     cmd.ExecuteNonQuery();

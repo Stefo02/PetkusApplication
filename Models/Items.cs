@@ -21,6 +21,7 @@ namespace PetkusApplication.Models
         public int MinKolicina { get; set; }
         public string OriginalTable { get; set; }
         public string JedinicaMere { get; set; }
+        public decimal Disipacija { get; set; }
 
         public override string ToString()
         {
