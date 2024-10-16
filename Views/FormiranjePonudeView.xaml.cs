@@ -1201,29 +1201,20 @@ namespace PetkusApplication.Views
             // Transfer selected items to GroupedDataGrid and accumulate in allGroupedItems
             foreach (var item in selectedItems)
             {
-                // Check if the item exists in GroupedItems (even if it was deleted before, allow re-adding)
-                var existingGroupedItem = GroupedItems.FirstOrDefault(g => g.GroupName == item.Fabricki_kod);
-                if (existingGroupedItem == null)
+                // Dodaj stavku bez provere da li već postoji
+                allGroupedItems.Add(item);  // Store in case we need to re-add later
+                GroupedItems.Add(new GroupedItem
                 {
-                    // Add the item if it's not already present
-                    allGroupedItems.Add(item);  // Store in case we need to re-add later
-                    GroupedItems.Add(new GroupedItem
-                    {
-                        Opis = item.Opis,
-                        GroupName = item.Fabricki_kod,
-                        Quantity = 0 // Adjust logic if needed
-                    });
-                }
-                else
-                {
-                    
-                    continue;
-                }
+                    Opis = item.Opis,
+                    GroupName = item.Fabricki_kod,
+                    Quantity = 0 // Adjust logic if needed
+                });
             }
 
             // Optionally clear the selection from ResultsDataGrid after moving
             ResultsDataGrid.SelectedItems.Clear();
         }
+
 
 
         private void Button_Click(object sender, RoutedEventArgs e)
