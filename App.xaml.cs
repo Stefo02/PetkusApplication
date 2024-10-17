@@ -21,34 +21,19 @@ namespace PetkusApplication
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            // Initialize DbContextOptions here
+
+            // Step 1: Initialize DbContextOptions
             var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
             _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
-                .UseMySql("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;", serverVersion)
+                .UseMySql("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;", serverVersion)
                 .Options;
 
-            await CheckForUpdates();
+            // You can now use _dbContextOptions to initialize your DbContext wherever needed in your application
 
-            // Initialize session or other startup logic here
-            // Example: _currentUser = userService.GetCurrentUser();
-        }
+            
 
-        private async Task CheckForUpdates()
-        {
-            string token = "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"; // Your Personal Access Token
-            string repositoryUrl = $"https://{token}:x-oauth-basic@github.com/Stefo02/PetkusApplication/releases";
-
-            try
-            {
-                using (var mgr = await UpdateManager.GitHubUpdateManager(repositoryUrl))
-                {
-                    await mgr.UpdateApp();
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                MessageBox.Show($"Update check failed: {ex.Message}", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            // Continue with other startup logic if needed
+            // Example: Initialize session, load main window, etc.
         }
 
         protected override void OnExit(ExitEventArgs e)

@@ -11,6 +11,10 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="Window">
+                <Setter Property="Icon" Value="Views/Images/petkus.ico"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

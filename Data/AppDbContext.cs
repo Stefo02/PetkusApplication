@@ -89,7 +89,7 @@ namespace PetkusApplication.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;", new MySqlServerVersion(new Version(10, 4, 32)));
+                optionsBuilder.UseMySql("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;", new MySqlServerVersion(new Version(10, 4, 32)));
             }
         }
 
@@ -122,7 +122,7 @@ namespace PetkusApplication.Data
         {
             var tableNames = new List<string>();
 
-            using (var connection = new MySqlConnection("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;"))
+            using (var connection = new MySqlConnection("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;"))
             {
                 connection.Open();
                 string query = @"
@@ -150,7 +150,7 @@ namespace PetkusApplication.Data
 
         public void SaveAuditLog(AuditLog auditLog)
         {
-            using (var connection = new MySqlConnection("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;"))
+            using (var connection = new MySqlConnection("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;"))
             {
                 connection.Open();
 
@@ -178,7 +178,7 @@ namespace PetkusApplication.Data
         {
             var items = new List<Item>();
 
-            using (var connection = new MySqlConnection("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;"))
+            using (var connection = new MySqlConnection("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;"))
             {
                 connection.Open();
                 string query = $@"
@@ -235,7 +235,7 @@ namespace PetkusApplication.Data
         {
             var items = new List<Item>();
 
-            using (var connection = new MySqlConnection("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;"))
+            using (var connection = new MySqlConnection("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;"))
             {
                 connection.Open();
                 string query = $@"
@@ -277,7 +277,7 @@ namespace PetkusApplication.Data
         // Method to add an item to a table
         public void AddItem(string tableName, Item item)
         {
-            using (var connection = new MySqlConnection("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;"))
+            using (var connection = new MySqlConnection("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;"))
             {
                 connection.Open();
 
@@ -309,7 +309,7 @@ namespace PetkusApplication.Data
         // Method to update an item in a table
         public void UpdateItem(string tableName, Item item)
         {
-            using (var connection = new MySqlConnection("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;"))
+            using (var connection = new MySqlConnection("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;"))
             {
                 connection.Open();
 
@@ -353,7 +353,7 @@ namespace PetkusApplication.Data
         // Method to delete an item from a table
         public void DeleteItem(string tableName, int id)
         {
-            using (var connection = new MySqlConnection("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;"))
+            using (var connection = new MySqlConnection("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;"))
             {
                 connection.Open();
                 string query = $@"

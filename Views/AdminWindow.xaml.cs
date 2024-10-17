@@ -29,7 +29,7 @@ namespace PetkusApplication.Views
             InitializeComponent();
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             var serverVersion = new MySqlServerVersion(new Version(10, 4, 32)); // Adjust version as per your MySQL server version
-            optionsBuilder.UseMySql("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;", serverVersion);
+            optionsBuilder.UseMySql("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;", serverVersion);
 
             _dbContext = new AppDbContext(optionsBuilder.Options);
 
@@ -92,7 +92,7 @@ namespace PetkusApplication.Views
         {
             // Kreiraj DbContextOptions sa konekcijskim stringom
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseMySql("Server=10.10.10.103;Database=myappdb;Uid=root;Pwd=;", new MySqlServerVersion(new Version(10, 4, 32)));
+            optionsBuilder.UseMySql("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;", new MySqlServerVersion(new Version(10, 4, 32)));
 
             // Kreiraj instancu AppDbContext koristeći opcije
             using (var context = new AppDbContext(optionsBuilder.Options))

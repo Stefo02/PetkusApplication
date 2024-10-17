@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Views\Images\petkus.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,6 +32,10 @@
     <None Remove="Views\Images\Search.png" />
     <None Remove="Views\Images\Untitled.jpg" />
     <None Remove="Views\Images\Untitled.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Views\Images\petkus.ico" />
   </ItemGroup>
 
   <ItemGroup>
