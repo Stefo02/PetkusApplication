@@ -47,7 +47,7 @@
             <TabItem Header="Magacin">
                 <views:MagacinView />
             </TabItem>
-            <TabItem Header="Provera verzije">
+            <TabItem Header="Provera Verzije">
                 <Grid Margin="10">
                     <StackPanel Orientation="Vertical">
                         <TextBox x:Name="CurrentVersionTextBox" IsReadOnly="True" Margin="0,0,0,10" Width="200"/>
