@@ -2,9 +2,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using DocumentFormat.OpenXml.ExtendedProperties;
 using Microsoft.EntityFrameworkCore;
 using PetkusApplication.Data;
 using PetkusApplication.Models;
+using Squirrel;
 
 namespace PetkusApplication.Views
 {
@@ -13,6 +15,7 @@ namespace PetkusApplication.Views
         private readonly User _currentUser;
         private readonly AppDbContext _context;
         private DispatcherTimer sessionTimer;
+        UpdateManager manager;
 
         public MainView(User currentUser)
         {
@@ -34,11 +37,42 @@ namespace PetkusApplication.Views
 
             StartSessionTimer();
 
+            Loaded += Mainwindow_Loaded;
+
             this.Closing += MainView_Closing; 
         }
 
         public FormiranjePonudeView FormiranjePonudeView { get; set; }
         public MagacinView MagacinView { get; set; }
+
+        private async void Mainwindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            manager = await UpdateManager
+                .GitHubUpdateManager(@"https://github.com/Stefo02/PetkusApplication");
+
+            CurrentVersionTextBox.Text = manager.CurrentlyInstalledVersion().ToString();
+        }
+
+        private async void CheckForUpdatesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var updateInfo = await manager.CheckForUpdate();
+
+            if (updateInfo.ReleasesToApply.Count> 0)
+            {
+                UpdateButton.IsEnabled = true;
+            }
+            else 
+            {
+                UpdateButton.IsEnabled = false;
+            }
+        }
+
+        private async void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            await manager.UpdateApp();
+
+            MessageBox.Show("Ažuriranje uspešno");
+        }
 
         private void MainView_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {

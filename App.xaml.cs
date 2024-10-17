@@ -4,7 +4,7 @@ using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using PetkusApplication.Data; // Update with the correct namespace
 using PetkusApplication.Models; // Update with the correct namespace if needed
-using Squirrel;
+
 
 namespace PetkusApplication
 {
@@ -30,7 +30,7 @@ namespace PetkusApplication
 
             // You can now use _dbContextOptions to initialize your DbContext wherever needed in your application
 
-            
+
 
             // Continue with other startup logic if needed
             // Example: Initialize session, load main window, etc.

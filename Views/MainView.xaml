@@ -47,6 +47,15 @@
             <TabItem Header="Magacin">
                 <views:MagacinView />
             </TabItem>
+            <TabItem Header="Provera verzije">
+                <Grid Margin="10">
+                    <StackPanel Orientation="Vertical">
+                        <TextBox x:Name="CurrentVersionTextBox" IsReadOnly="True" Margin="0,0,0,10" Width="200"/>
+                        <Button x:Name="CheckForUpdatesButton" Content="Check for Updates" Click="CheckForUpdatesButton_Click" Margin="0,0,0,10"/>
+                        <Button x:Name="UpdateButton" Content="Update" Click="UpdateButton_Click" IsEnabled="False"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
             <TabItem Header="Odjavite se">
                 <!-- Ovo može ostati prazno jer će se logout funkcija izvršiti automatski -->
             </TabItem>
