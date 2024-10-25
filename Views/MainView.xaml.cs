@@ -47,13 +47,10 @@ namespace PetkusApplication.Views
             #if !DEBUG
                 try
                     {
-                string token = "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";
-                string url = $"https://{token}:x-oauth-basic@github.com/Stefo02/PetkusApplication";
+                       manager = await UpdateManager
+                        .GitHubUpdateManager(@"https://github.com/Stefo02/PetkusApplication");
 
-                manager = await UpdateManager
-                    .GitHubUpdateManager(url);
-
-                CurrentVersionTextBox.Text = manager.CurrentlyInstalledVersion().ToString();
+                        CurrentVersionTextBox.Text = manager.CurrentlyInstalledVersion().ToString();
         }
         catch (Exception ex)
         {
