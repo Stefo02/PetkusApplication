@@ -10,6 +10,7 @@ namespace PetkusApplication
 {
     public partial class App : Application
     {
+        public static string ConnectionString { get; private set; }
         private static User _currentUser; // Assuming you have a way to access the current user
         public static User CurrentUser
         {
@@ -18,22 +19,23 @@ namespace PetkusApplication
         }
         private static DbContextOptions<AppDbContext> _dbContextOptions;
 
-        protected override async void OnStartup(StartupEventArgs e)
+        protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            // Step 1: Initialize DbContextOptions
+            // Define the connection string once here
+            ConnectionString = "Server=localhost;Database=myappdb;Uid=root;Pwd=;";
+
+            // Initialize DbContextOptions if using Entity Framework DbContext
             var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
             _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
-                .UseMySql("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;", serverVersion)
+                .UseMySql(ConnectionString, serverVersion)
                 .Options;
+        }
 
-            // You can now use _dbContextOptions to initialize your DbContext wherever needed in your application
-
-
-
-            // Continue with other startup logic if needed
-            // Example: Initialize session, load main window, etc.
+        public static DbContextOptions<AppDbContext> GetDbContextOptions()
+        {
+            return _dbContextOptions;
         }
 
         protected override void OnExit(ExitEventArgs e)

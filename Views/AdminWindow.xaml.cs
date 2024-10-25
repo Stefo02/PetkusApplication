@@ -27,11 +27,7 @@ namespace PetkusApplication.Views
         public AdminWindow()
         {
             InitializeComponent();
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            var serverVersion = new MySqlServerVersion(new Version(10, 4, 32)); // Adjust version as per your MySQL server version
-            optionsBuilder.UseMySql("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;", serverVersion);
-
-            _dbContext = new AppDbContext(optionsBuilder.Options);
+            _dbContext = new AppDbContext(App.GetDbContextOptions());
 
             LoadUsers();
         }

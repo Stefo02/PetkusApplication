@@ -16,11 +16,7 @@ namespace PetkusApplication.Views
         {
             InitializeComponent();
 
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
-            optionsBuilder.UseMySql("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;", serverVersion);
-
-            _context = new AppDbContext(optionsBuilder.Options);
+            _context = new AppDbContext(App.GetDbContextOptions());
         }
 
         private void LoginBtn_Click(object sender, RoutedEventArgs e)

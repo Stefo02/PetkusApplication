@@ -26,10 +26,7 @@ namespace PetkusApplication.Views
             this.PreviewKeyDown += MainView_PreviewKeyDown;
             this.PreviewMouseMove += MainView_PreviewMouseMove;
 
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
-            optionsBuilder.UseMySql("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;", serverVersion);
-            _context = new AppDbContext(optionsBuilder.Options);
+            _context = new AppDbContext(App.GetDbContextOptions());
 
             this.DataContext = this;
             FormiranjePonudeView = new FormiranjePonudeView();
@@ -104,11 +101,8 @@ namespace PetkusApplication.Views
 
         private void EndInactiveSessions()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
-            optionsBuilder.UseMySql("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;", serverVersion);
-
-            using (var context = new AppDbContext(optionsBuilder.Options))
+            // Use the globally defined DbContextOptions from App.xaml.cs
+            using (var context = new AppDbContext(App.GetDbContextOptions()))
             {
                 var session = context.UserSessions.FirstOrDefault(s => s.UserId == _currentUser.Id && s.IsActive);
                 if (session != null && DateTime.Now - session.LoginTime > TimeSpan.FromMinutes(30))
@@ -118,9 +112,9 @@ namespace PetkusApplication.Views
                     context.UserSessions.Update(session);
                     context.SaveChanges();
 
-                    MessageBox.Show("Vaša sesija je istekla.");
+                    MessageBox.Show("Your session has expired.");
                     LogOutCurrentUser();
-                    this.Close(); 
+                    this.Close();
                 }
             }
         }
