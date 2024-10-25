@@ -90,8 +90,7 @@
 
 		<Exec Command="$(NugetTools)\NuGet.exe pack $(NuspecFile) -Version $(Version) -Properties Configuration=Release -OutputDirectory $(SolutionDir)Deployment\GeneratedNugets" />
 
-		<Exec Command="$(SquirrelTools)\Squirrel.exe --releasify $(SolutionDir)Deployment\GeneratedNugets\@(ID).$(Version).nupkg --releaseDir=$(SolutionDir)Deployment\Releases" />
-		<Copy SourceFiles="$(SolutionDir)Deployment\Releases\update.exe" DestinationFolder="$(OutputPath)" Condition="Exists('$(SolutionDir)Deployment\Releases\update.exe')" />
+		<Exec Command="$(SquirrelTools)\Squirrel.exe --releasify $(SolutionDir)Deployment\GeneratedNugets\@(ID).$(Version).nupkg --releaseDir=$(SolutionDir)Deployment\Releases" />    
 	</Target>
 
 </Project>
