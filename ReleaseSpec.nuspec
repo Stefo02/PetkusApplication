@@ -3,19 +3,19 @@
   <metadata>
     <id>PetkusApplication</id>
     <version>0.0.0</version>
-    <title>Title</title>
+    <title>Automatizacija</title>
     <authors>StefanZiko</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <!-- <icon>icon.png</icon> -->
     <projectUrl>http://project_url_here_or_delete_this_line/</projectUrl>
-    <description>This is a brief description of the package</description>
+    <description>Prva verzija aplikacije</description>
     <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
-    <copyright>$copyright$</copyright>
+    <copyright>2024</copyright>
     <tags>Tag1 Tag2</tags>
   </metadata>
   
   <files>
-	<file src="bin\Release\net8.0-windows\**" target="lib\net45"/>
+	<file src="bin\Release\**" target="lib\net45"/>
   </files>
 </package>
