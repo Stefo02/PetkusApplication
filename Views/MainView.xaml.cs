@@ -44,50 +44,26 @@ namespace PetkusApplication.Views
 
         private async void Mainwindow_Loaded(object sender, RoutedEventArgs e)
         {
-            #if !DEBUG
-                try
-                    {
-                       manager = await UpdateManager
-                        .GitHubUpdateManager(@"https://github.com/Stefo02/PetkusApplication");
-
-                        CurrentVersionTextBox.Text = manager.CurrentlyInstalledVersion().ToString();
+            manager = await UpdateManager
+                .GitHubUpdateManager(@"https://github.com/Stefo02/PetkusApplication");
+            CurrentVersionTextBox.Text = manager.CurrentlyInstalledVersion().ToString();
         }
-        catch (Exception ex)
-        {
-            MessageBox.Show("Error while checking for updates: " + ex.Message);
-        }
-            #else
-            // In debug mode, skip update check
-            CurrentVersionTextBox.Text = "Debug mode: Update check skipped.";
-            #endif
-        }
-
         private async void CheckForUpdatesButton_Click(object sender, RoutedEventArgs e)
         {
-            #if !DEBUG
-                if (manager == null) return; // Ensure manager is initialized
-
-                var updateInfo = await manager.CheckForUpdate();
-
-                UpdateButton.IsEnabled = updateInfo.ReleasesToApply.Count > 0;
-            #else
-            // In debug mode, disable the button or handle accordingly
-            UpdateButton.IsEnabled = false;
-            #endif
+            var updateInfo = await manager.CheckForUpdate();
+            if (updateInfo.ReleasesToApply.Count > 0)
+            {
+                UpdateButton.IsEnabled = true;
+            }
+            else
+            {
+                UpdateButton.IsEnabled = false;
+            }
         }
-
         private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            #if !DEBUG
-                if (manager != null)
-        {
-                    await manager.UpdateApp();
-                    MessageBox.Show("Ažuriranje uspešno");
-        }
-            #else
-            // In debug mode, inform the user that updates are not available
-            MessageBox.Show("Update functionality is disabled in debug mode.");
-            #endif
+            await manager.UpdateApp();
+            MessageBox.Show("Ažuriranje uspešno");
         }
 
         private void MainView_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
