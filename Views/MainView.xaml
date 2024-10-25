@@ -52,8 +52,8 @@
                 <Grid Margin="10">
                     <StackPanel Orientation="Vertical">
                         <TextBox x:Name="CurrentVersionTextBox" IsReadOnly="True" Margin="0,0,0,10" Width="200"/>
-                        <Button x:Name="CheckForUpdatesButton" Content="Check for Updates" Click="CheckForUpdatesButton_Click" Background="#001f5b" Margin="0,0,0,10" Width="200" materialDesign:ButtonAssist.CornerRadius="10"/>
-                        <Button x:Name="UpdateButton" Content="Update" Background="#001f5b" Click="UpdateButton_Click" IsEnabled="False" Width="200" materialDesign:ButtonAssist.CornerRadius="10"/>
+                        <Button x:Name="CheckForUpdatesButton" Content="Proveri dostupnost nove verzije" Click="CheckForUpdatesButton_Click" Background="#001f5b" Margin="0,0,0,10" Width="250" materialDesign:ButtonAssist.CornerRadius="10"/>
+                        <Button x:Name="UpdateButton" Content="Ažuriraj" Background="#001f5b" Click="UpdateButton_Click" IsEnabled="False" Width="200" materialDesign:ButtonAssist.CornerRadius="10"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
