@@ -36,7 +36,7 @@ namespace PetkusApplication.Views
 
             Loaded += Mainwindow_Loaded;
 
-            this.Closing += MainView_Closing; 
+            this.Closing += MainView_Closing;
         }
 
         public FormiranjePonudeView FormiranjePonudeView { get; set; }
@@ -45,21 +45,31 @@ namespace PetkusApplication.Views
         private async void Mainwindow_Loaded(object sender, RoutedEventArgs e)
         {
             #if DEBUG
-            CurrentVersionTextBox.Text = "Update checks are disabled in debug mode.";
-            CheckForUpdatesButton.IsEnabled = false;
-            UpdateButton.IsEnabled = false;
-            #else
+                    CurrentVersionTextBox.Text = "Update checks are disabled in debug mode.";
+                    CheckForUpdatesButton.IsEnabled = false;
+                    UpdateButton.IsEnabled = false;
+                #else
+            try
+            {
                 manager = await UpdateManager
-                    .GitHubUpdateManager(@"https://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:x-oauth-basic@github.com/Stefo02/PetkusApplication");
-                        CurrentVersionTextBox.Text = manager.CurrentlyInstalledVersion().ToString();
-            #endif
+                    .GitHubUpdateManager(@"https://github.com/Stefo02/PetkusApplication");
+                CurrentVersionTextBox.Text = manager.CurrentlyInstalledVersion().ToString();
+            }
+            catch (Exception ex)
+            {
+                // Prikaz poruke o grešci
+                MessageBox.Show("Neuspešno pronalaženje ažuriranja. Proverite internet vezu ili ispravnost URL-a.\n\n" + ex.Message,
+                                "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+                #endif
         }
+
 
         private async void CheckForUpdatesButton_Click(object sender, RoutedEventArgs e)
         {
             #if DEBUG
             MessageBox.Show("Update functionality is disabled in debug mode.");
-            return;
+            return;       
             #endif
 
             var updateInfo = await manager.CheckForUpdate();
