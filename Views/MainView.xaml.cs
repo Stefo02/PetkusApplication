@@ -50,7 +50,7 @@ namespace PetkusApplication.Views
             UpdateButton.IsEnabled = false;
             #else
                 manager = await UpdateManager
-                    .GitHubUpdateManager(@"https://github.com/Stefo02/PetkusApplication");
+                    .GitHubUpdateManager(@"https://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:x-oauth-basic@github.com/Stefo02/PetkusApplication");
                         CurrentVersionTextBox.Text = manager.CurrentlyInstalledVersion().ToString();
             #endif
         }
