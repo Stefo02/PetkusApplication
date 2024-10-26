@@ -44,12 +44,24 @@ namespace PetkusApplication.Views
 
         private async void Mainwindow_Loaded(object sender, RoutedEventArgs e)
         {
-            manager = await UpdateManager
-                .GitHubUpdateManager(@"https://github.com/Stefo02/PetkusApplication");
-            CurrentVersionTextBox.Text = manager.CurrentlyInstalledVersion().ToString();
+            #if DEBUG
+            CurrentVersionTextBox.Text = "Update checks are disabled in debug mode.";
+            CheckForUpdatesButton.IsEnabled = false;
+            UpdateButton.IsEnabled = false;
+            #else
+                manager = await UpdateManager
+                    .GitHubUpdateManager(@"https://github.com/Stefo02/PetkusApplication");
+                        CurrentVersionTextBox.Text = manager.CurrentlyInstalledVersion().ToString();
+            #endif
         }
+
         private async void CheckForUpdatesButton_Click(object sender, RoutedEventArgs e)
         {
+            #if DEBUG
+            MessageBox.Show("Update functionality is disabled in debug mode.");
+            return;
+            #endif
+
             var updateInfo = await manager.CheckForUpdate();
             if (updateInfo.ReleasesToApply.Count > 0)
             {
@@ -60,11 +72,18 @@ namespace PetkusApplication.Views
                 UpdateButton.IsEnabled = false;
             }
         }
+
         private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
+            #if DEBUG
+            MessageBox.Show("Update functionality is disabled in debug mode.");
+            return;
+            #endif
+
             await manager.UpdateApp();
             MessageBox.Show("Ažuriranje uspešno");
         }
+
 
         private void MainView_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
