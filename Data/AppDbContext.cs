@@ -128,7 +128,7 @@ namespace PetkusApplication.Data
                 string query = @"
             SELECT DISTINCT TABLE_NAME
             FROM INFORMATION_SCHEMA.COLUMNS
-            WHERE TABLE_SCHEMA = 'myappdb'
+            WHERE TABLE_SCHEMA = 'Petkus'
             AND COLUMN_NAME IN ('Id', 'Opis', 'Proizvodjac', 'Fabricki_kod', 'Kolicina', 'Puna_cena', 'Dimenzije', 'Tezina', 'Vrednost_rabata', 'Min_Kolicina', 'JedinicaMere')
             GROUP BY TABLE_NAME
             HAVING COUNT(DISTINCT COLUMN_NAME) = 11";  // Promeni na 11 zbog dodatne kolone

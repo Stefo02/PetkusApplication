@@ -24,10 +24,10 @@ namespace PetkusApplication
             base.OnStartup(e);
 
             // Define the connection string once here
-            ConnectionString = "Server=localhost;Database=myappdb;Uid=root;Pwd=;";
+            ConnectionString = "Server=10.10.10.130;Database=Petkus;Uid=Petkus;Pwd=Petkus1995;Port=3307;";
 
             // Initialize DbContextOptions if using Entity Framework DbContext
-            var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
+            var serverVersion = new MySqlServerVersion(new Version(10, 4, 28));
             _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
                 .UseMySql(ConnectionString, serverVersion)
                 .Options;
