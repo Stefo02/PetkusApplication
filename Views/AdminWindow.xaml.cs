@@ -86,21 +86,17 @@ namespace PetkusApplication.Views
 
         private void OpenPopupBtn_Click(object sender, RoutedEventArgs e)
         {
-            // Kreiraj DbContextOptions sa konekcijskim stringom
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseMySql("Server=192.168.8.118;Port=3307;Database=myappdb;Uid=username;Pwd=;", new MySqlServerVersion(new Version(10, 4, 32)));
-
-            // Kreiraj instancu AppDbContext koristeći opcije
-            using (var context = new AppDbContext(optionsBuilder.Options))
+            // Use the DbContextOptions defined in App.xaml.cs
+            using (var context = new AppDbContext(App.GetDbContextOptions()))
             {
-                // Dohvati podatke iz tabele audit logs
+                // Retrieve data from the audit logs table
                 var auditLogs = context.GetAuditLogs();
 
-                // Postavi izvor podataka za DataGrid
+                // Set the data source for the DataGrid
                 auditLogsGrid.ItemsSource = auditLogs;
             }
 
-            // Otvori popup
+            // Open the popup
             popupExample.IsOpen = true;
         }
 

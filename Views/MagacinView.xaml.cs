@@ -663,7 +663,10 @@ namespace PetkusApplication.Views
         {
             if (selectedItem != null)
             {
-                string tableName = GetTableNameFromComboBox();
+                // Use the OriginalTable if available, otherwise fallback to the ComboBox
+                string tableName = !string.IsNullOrEmpty(selectedItem.OriginalTable)
+                    ? selectedItem.OriginalTable
+                    : GetTableNameFromComboBox();
 
                 // Uzmite trenutnog korisnika za audit log
                 int currentUserId = GetCurrentUserId();
@@ -674,10 +677,10 @@ namespace PetkusApplication.Views
                 {
                     UserId = currentUserId,
                     Action = "Obrisano",
-                    TableAffected = tableName,
+                    TableAffected = tableName, // This will now have the correct table name
                     RecordId = selectedItem.Id,
                     Timestamp = DateTime.Now,
-                    OldValue = selectedItem.ToString(), // Ovde konvertujte u string ako je potrebno
+                    OldValue = selectedItem.ToString(), // Adjust if necessary
                     NewValue = string.Empty, // Nema nove vrednosti, jer se stavka briše
                     Username = currentUsername
                 };
