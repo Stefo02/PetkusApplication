@@ -27,7 +27,7 @@ namespace PetkusApplication
             ConnectionString = "Server=localhost;Database=myappdb;Uid=root;Pwd=;";
 
             // Initialize DbContextOptions if using Entity Framework DbContext
-            var serverVersion = new MySqlServerVersion(new Version(10, 4, 28));
+            var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
             _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
                 .UseMySql(ConnectionString, serverVersion)
                 .Options;

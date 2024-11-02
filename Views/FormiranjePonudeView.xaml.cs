@@ -1212,9 +1212,6 @@ namespace PetkusApplication.Views
             // Optionally clear the selection from ResultsDataGrid after moving
             ResultsDataGrid.SelectedItems.Clear();
         }
-
-
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (GroupedItems == null || GroupedItems.Count == 0)
@@ -1287,12 +1284,13 @@ namespace PetkusApplication.Views
                             KolicinaZaNarucivanje = ukupnaKolicina // Osiguraj da je ukupnaKolicina ispravna i nije 0
                         };
 
-                        // Ostatak koda za izračunavanje vrednosti
+                        // Izračunaj vrednosti pre dodavanja u listu
                         itemForOrder.Ukupna_puna = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Puna_cena;
                         itemForOrder.Ukupna_rabat = Math.Round(itemForOrder.KolicinaZaNarucivanje * itemForOrder.Puna_cena * (1 - itemForOrder.Vrednost_rabata), 2);
                         itemForOrder.Ukupna_Disipacija = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Disipacija;
                         itemForOrder.Ukupna_Tezina = itemForOrder.KolicinaZaNarucivanje * itemForOrder.Tezina;
 
+                        // Dodaj stavku u listu novih stavki
                         noviSelectedItems.Add(itemForOrder);
                     }
                 }
@@ -1305,27 +1303,46 @@ namespace PetkusApplication.Views
                 return;
             }
 
+            // Grupisanje stavki po fabričkom kodu
+            var grupisaneStavke = noviSelectedItems
+                .GroupBy(item => item.Fabricki_kod)
+                .Select(group => new PonudaItem
+                {
+                    Fabricki_kod = group.Key,
+                    Opis = group.First().Opis, // Možeš prilagoditi kako želiš
+                    Puna_cena = group.First().Puna_cena, // Pretpostavljamo da je cena ista za sve u grupi
+                    Dimenzije = group.First().Dimenzije, // Isti princip
+                    Disipacija = group.First().Disipacija,
+                    Tezina = group.First().Tezina,
+                    Vrednost_rabata = group.First().Vrednost_rabata,
+                    KolicinaZaNarucivanje = group.Sum(item => item.KolicinaZaNarucivanje), // Saberi količine
+                    Ukupna_puna = group.Sum(item => item.Ukupna_puna), // Saberi ukupne cene
+                    Ukupna_rabat = Math.Round(group.Sum(item => item.Ukupna_rabat), 2), // Saberi ukupne rabate
+                    Ukupna_Disipacija = group.Sum(item => item.Ukupna_Disipacija), // Saberi disipaciju
+                    Ukupna_Tezina = group.Sum(item => item.Ukupna_Tezina) // Saberi težinu
+                }).ToList();
+
             // Proveri da li je prozor RacunanjePonude već otvoren
             if (racunanjePonudeWindow != null)
             {
                 racunanjePonudeWindow.Close(); // Zatvori stari prozor
                 racunanjePonudeWindow = null;
             }
+
             // Kreiraj listu svih prenesenih stavki
             List<PonudaItem> svePreneseneStavke = new List<PonudaItem>();
 
             // Dodaj sve prenesene kodove koji su već u listi
             svePreneseneStavke.AddRange(preneseniKodovi.Select(kod => allGroupedItems.First(p => p.Fabricki_kod == kod)));
 
-            // Dodaj nove stavke koje nisu ranije prenesene
-            svePreneseneStavke.AddRange(noviSelectedItems);
+            // Dodaj grupisane stavke
+            svePreneseneStavke.AddRange(grupisaneStavke);
 
             // Otvori novi prozor sa novim stavkama
             racunanjePonudeWindow = new Racunanjeponude(this, svePreneseneStavke);
             racunanjePonudeWindow.PonudaItems = new ObservableCollection<PonudaItem>(svePreneseneStavke);
             racunanjePonudeWindow.Closed += (s, args) => racunanjePonudeWindow = null;
             racunanjePonudeWindow.Show();
-
         }
 
         private void GroupedDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
