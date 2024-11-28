@@ -27,7 +27,7 @@ namespace PetkusApplication.Views
         public AdminWindow()
         {
             InitializeComponent();
-            _dbContextttttt = new AppDbContext(App.GetDbContextOptions());
+            _dbContext = new AppDbContext(App.GetDbContextOptions());
 
             LoadUsers();
         }
